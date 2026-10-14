@@ -372,7 +372,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card rn-map-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">La matinée en carte</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « matinée type » de l’onglet Explorer. Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. Le bouton Lecture rejoue la matinée depuis 7 h. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « matinée type » de l’onglet Explorer. Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
         </div>
         <div class="rn-map-bar">
           <label class="rn-field" for="carte-jour"><span>Matinée</span><select id="carte-jour"></select></label>
@@ -1600,12 +1600,15 @@ dash.calc('acces_creneau', {
     const play = document.getElementById('carte-play');
     const range = document.getElementById('carte-temps');
     const clock = document.getElementById('carte-heure');
-    const state = { jour: null, k: 8, timer: null, touche: false };
+    // reprise : vrai quand la lecture doit reprendre là où elle en est (pause ou curseur déplacé à la main).
+    // Sinon, la lecture repart de 7 h, même si le plan s'est ouvert sur le pire relevé.
+    const state = { jour: null, k: 8, timer: null, touche: false, reprise: false };
     let geo = null, lastW = 0, lastSig = '';
 
     const stop = () => { if (state.timer) { clearInterval(state.timer); state.timer = null; } play.textContent = '▶ Lecture'; play.setAttribute('aria-label', 'Lancer l’animation'); };
     const start = () => {
-      if (state.k >= CRENEAUX.length - 1) state.k = 0;
+      if (!state.reprise || state.k >= CRENEAUX.length - 1) state.k = 0;
+      state.reprise = true;
       play.textContent = '❚❚ Pause'; play.setAttribute('aria-label', 'Mettre en pause');
       state.timer = setInterval(() => {
         if (state.k >= CRENEAUX.length - 1) { stop(); return; }
@@ -1614,8 +1617,8 @@ dash.calc('acces_creneau', {
       frame();
     };
     play.addEventListener('click', () => { state.touche = true; if (state.timer) stop(); else start(); });
-    range.addEventListener('input', () => { state.touche = true; stop(); state.k = Number(range.value); frame(); });
-    sel.addEventListener('change', () => { state.touche = true; stop(); state.jour = sel.value; drawAll(); });
+    range.addEventListener('input', () => { state.touche = true; stop(); state.reprise = true; state.k = Number(range.value); frame(); });
+    sel.addEventListener('change', () => { state.touche = true; stop(); state.reprise = false; state.jour = sel.value; drawAll(); });
 
     function buildGeo(lignes, W) {
       const tous = Object.values(lignes).flat();
