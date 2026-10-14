@@ -977,8 +977,10 @@ dash.calc('acces_creneau', {
   const trier = (tr) => tr.slice().sort((a, b) => a.ordre - b.ordre);
   const horsZone = (tr) => { const s = tr.find((x) => x.id === 's7'); return s ? s.debut_m : null; };
   const segDe = (tr) => (d) => { const s = tr.find((x) => d >= x.debut_m && d < x.fin_m); return s ? s.nom : null; };
-  function reperesRN(tr, fin) {
-    const out = tr.map((x) => ({ d: x.debut_m, txt: (REPERES[x.id] || { txt: x.nom }).txt, fort: !!(REPERES[x.id] || {}).fort, ligne: true }));
+  function reperesRN(tr, fin, court) {
+    // Sur un écran étroit, le nom du feu est raccourci : l'Intermarché est nommé juste avant.
+    const nom = (x) => (court && x.id === 's3' ? 'Feu, 1 km plus loin' : (REPERES[x.id] || { txt: x.nom }).txt);
+    const out = tr.map((x) => ({ d: x.debut_m, txt: nom(x), fort: !!(REPERES[x.id] || {}).fort, ligne: true }));
     const h = horsZone(tr);
     if (h != null) out.push({ d: (h + fin) / 2, txt: 'vers Pont-de-Claix', fort: false, ligne: false });
     return out;
@@ -1037,8 +1039,10 @@ dash.calc('acces_creneau', {
         g.append('line').attr('x1', xx).attr('x2', xx).attr('y1', (r.rang + 1) * LH - 2).attr('y2', H - 4)
           .attr('stroke', r.fort ? cssVar('--color-fg-muted') : cssVar('--cds-chart-reference')).attr('stroke-width', r.fort ? 1.2 : 1).attr('stroke-dasharray', '3 3').attr('pointer-events', 'none');
       }
+      // Halo de la couleur du fond : les traits pointillés ne traversent pas les noms.
       svg.append('text').attr('x', r.x0).attr('y', 11 + r.rang * LH).attr('font-size', fs).attr('font-weight', r.fort ? 600 : null)
-        .attr('fill', r.fort ? cssVar('--color-fg') : cssVar('--color-fg-muted')).text(r.txt);
+        .attr('fill', r.fort ? cssVar('--color-fg') : cssVar('--color-fg-muted'))
+        .attr('stroke', cssVar('--color-panel')).attr('stroke-width', 4).attr('stroke-linejoin', 'round').attr('paint-order', 'stroke').text(r.txt);
     });
     const card = el.closest('.rn-card'), tip = tipIn(card);
     const hi = svg.append('rect').attr('fill', 'none').attr('stroke', cssVar('--color-fg')).attr('stroke-width', 1.5).attr('visibility', 'hidden').attr('pointer-events', 'none');
@@ -1072,7 +1076,7 @@ dash.calc('acces_creneau', {
     const parC = new Map(dash.data('matinee_type').data.map((r) => [r.creneau, r]));
     const nb = c[0].rouge.length, fin = nb * 100;
     drawET(el, {
-      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), ou: segDe(tr), ch: 16,
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin, el.clientWidth < 520), ou: segDe(tr), ch: 16,
       aria: 'Diagramme de la matinée type sur la RN85 : distance depuis Vizille en largeur, heure de 7 h à 9 h en hauteur, couleur selon la fréquence du rouge',
       cell: (cr, i) => { const r = parC.get(cr); return r ? cellType(r.part[i], r.matinees) : null; },
     });
@@ -1118,7 +1122,7 @@ dash.calc('acces_creneau', {
     const parC = new Map(c.filter((r) => r.date === j).map((r) => [r.creneau, r]));
     const nb = c[0].rouge.length, fin = nb * 100;
     drawET(el, {
-      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), ou: segDe(tr), ch: 16,
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin, el.clientWidth < 520), ou: segDe(tr), ch: 16,
       aria: 'Diagramme d’une matinée sur la RN85 : distance depuis Vizille en largeur, heure en hauteur, couleur relevée sur Google Maps',
       cell: (cr, i) => { const r = parC.get(cr); return r ? cellJour(r.rouge[i] === '1' ? '1' : (r.hors_vert[i] === '1' ? '2' : '0')) : null; },
     });
