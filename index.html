@@ -386,7 +386,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card rn-map-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">La matinée en carte</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. Le bouton Lecture rejoue la matinée depuis 7 h. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « Où et quand ça bouchonne » de l’onglet « Le détail ». Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre à 7 h sur la matinée du pire relevé. Le bouton Lecture rejoue la matinée depuis 7 h. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « Où et quand ça bouchonne » de l’onglet « Le détail ». Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
         </div>
         <div class="rn-map-bar">
           <label class="rn-field" for="carte-jour"><span>Matinée</span><select id="carte-jour"></select></label>
@@ -1555,7 +1555,7 @@ dash.calc('acces_creneau', {
     const clock = document.getElementById('carte-heure');
     // reprise : vrai quand la lecture doit reprendre là où elle en est (pause ou curseur déplacé à la main).
     // Sinon, la lecture repart de 7 h, même si le plan s'est ouvert sur le pire relevé.
-    const state = { jour: null, k: 8, timer: null, touche: false, reprise: false };
+    const state = { jour: null, k: 0, timer: null, touche: false, reprise: false };
     let geo = null, lastW = 0, lastSig = '';
 
     const stop = () => { if (state.timer) { clearInterval(state.timer); state.timer = null; } play.textContent = '▶ Lecture'; play.setAttribute('aria-label', 'Lancer l’animation'); };
@@ -1682,7 +1682,7 @@ dash.calc('acces_creneau', {
     function remplirSelect() {
       const valeurs = optionsMatinees(sel, true, 'rn');
       const p = pire();
-      if (!state.touche && p) { state.jour = p.max_date; const k = CRENEAUX.indexOf(p.max_creneau); if (k >= 0) state.k = k; }
+      if (!state.touche && p) { state.jour = p.max_date; state.k = 0; }
       if (!state.jour || !valeurs.includes(state.jour)) state.jour = valeurs.includes('type') ? (p && valeurs.includes(p.max_date) ? p.max_date : 'type') : null;
       if (state.jour) sel.value = state.jour;
     }
