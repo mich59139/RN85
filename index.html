@@ -195,6 +195,21 @@ h3.rn-card-title { font-size: 21px; }
 .rn-aide summary:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: 3px; border-radius: 2px; }
 .rn-aide p { margin: 8px 0 0; padding: 12px 14px; background: var(--rn-fond-doux); border-radius: 4px; line-height: 1.55; }
 
+/* Détail replié sous un graphique (résumé de chaque matinée). */
+.rn-plus { border-top: 1px solid var(--color-border-line); padding-top: 4px; }
+.rn-plus summary {
+  cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: 16px; font-weight: 600; padding: 10px 0; min-height: 24px;
+}
+.rn-plus summary::-webkit-details-marker { display: none; }
+.rn-plus summary::after {
+  content: ""; flex: none; width: 7px; height: 7px; margin-right: 4px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+.rn-plus[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+.rn-plus summary:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: 3px; border-radius: 2px; }
+.rn-plus > .rn-note { margin: 0 0 10px; }
+
 /* ---------- Graphiques ---------- */
 .rn-chart { position: relative; min-height: 120px; }
 .rn-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--color-fg-muted); }
@@ -249,7 +264,7 @@ h3.rn-card-title { font-size: 21px; }
 #table-jours td:first-child { white-space: nowrap; }
 @media (max-width: 640px) { .rn-table .rn-opt { display: none; } .rn-table th, .rn-table td { padding-left: 5px; padding-right: 5px; } }
 
-/* ---------- Accès et méthode (onglet Explorer) ---------- */
+/* ---------- Accès et méthode (onglet « Le détail ») ---------- */
 .rn-stats { display: grid; gap: 24px 32px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .rn-stat { padding-top: 12px; border-top: 2px solid var(--color-fg); display: grid; gap: 4px; align-content: start; }
 .rn-stat-titre { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
@@ -334,13 +349,12 @@ h3.rn-card-title { font-size: 21px; }
   </section>
 
   <nav class="rn-tabs" role="tablist" aria-label="Parties de la page">
-    <button type="button" role="tab" id="onglet-comprendre" aria-controls="comprendre" data-tab="comprendre">Comprendre</button>
-    <button type="button" role="tab" id="onglet-comparer" aria-controls="comparer" data-tab="comparer">Comparer</button>
-    <button type="button" role="tab" id="onglet-explorer" aria-controls="explorer" data-tab="explorer">Explorer</button>
+    <button type="button" role="tab" id="onglet-essentiel" aria-controls="essentiel" data-tab="essentiel">L’essentiel</button>
+    <button type="button" role="tab" id="onglet-detail" aria-controls="detail" data-tab="detail">Le détail</button>
   </nav>
 
-  <!-- ===================== COMPRENDRE ===================== -->
-  <section class="rn-page" id="comprendre" role="tabpanel" aria-labelledby="onglet-comprendre">
+  <!-- ===================== L’ESSENTIEL ===================== -->
+  <section class="rn-page" id="essentiel" role="tabpanel" aria-labelledby="onglet-essentiel">
     <section class="rn-section" id="heure">
       <div class="rn-card">
         <div class="rn-card-tete">
@@ -372,7 +386,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card rn-map-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">La matinée en carte</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. Le bouton Lecture rejoue la matinée depuis 7 h. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « matinée type » de l’onglet Explorer. Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. Le bouton Lecture rejoue la matinée depuis 7 h. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « Où et quand ça bouchonne » de l’onglet « Le détail ». Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
         </div>
         <div class="rn-map-bar">
           <label class="rn-field" for="carte-jour"><span>Matinée</span><select id="carte-jour"></select></label>
@@ -395,29 +409,6 @@ h3.rn-card-title { font-size: 21px; }
       </div>
     </section>
 
-    <section class="rn-section" id="synthese-troncons">
-      <div class="rn-card">
-        <div class="rn-card-tete">
-          <h2 class="rn-card-title">Tronçon par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée sur le tronçon. Relevés avec bouchon : au moins 50 m du tronçon en rouge. Moyennes arrondies à 10 m près. Le détail complet se trouve dans l’onglet Explorer.</p></details>
-        </div>
-        <div class="rn-wrap">
-          <table class="rn-table" id="table-synthese" data-source="par_troncon" data-row-key="id">
-            <thead><tr>
-              <th data-field="nom">Tronçon</th>
-              <th data-field="max_m">Pic observé</th>
-              <th data-field="moyenne_m" class="rn-opt">Rouge moyen</th>
-              <th data-field="pct_bouchon">Relevés avec bouchon</th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </section>
-
-  <!-- ===================== COMPARER ===================== -->
-  <section class="rn-page" id="comparer" role="tabpanel" aria-labelledby="onglet-comparer" hidden>
     <section class="rn-section" id="pics-matinees">
       <div class="rn-card">
         <div class="rn-card-tete">
@@ -435,20 +426,65 @@ h3.rn-card-title { font-size: 21px; }
             <div class="rn-chart" id="barres-feu" style="min-height: 240px"></div>
           </div>
         </div>
+        <details class="rn-plus">
+          <summary>Résumé de chaque matinée</summary>
+          <p class="rn-note">Pour chaque matinée : le pic de chaque zone avec son heure, puis la moyenne. Quand le pic revient plusieurs fois dans la matinée, l’heure indiquée est la première. Le pire relevé additionne toute la longueur en rouge de la zone relevée au même moment. Sur téléphone, les moyennes et le nombre de relevés sont masqués.</p>
+          <div class="rn-wrap">
+          <table class="rn-table" id="table-jours" data-source="par_jour" data-row-key="date">
+            <thead><tr>
+              <th data-field="date">Matinée</th>
+              <th data-field="releves" class="rn-opt">Relevés</th>
+              <th data-field="vizille_pic">Vizille, pic</th>
+              <th data-field="vizille" class="rn-opt">Vizille, moyenne</th>
+              <th data-field="feu_pic">Jarrie → feu, pic</th>
+              <th data-field="feu" class="rn-opt">Jarrie → feu, moyenne</th>
+              <th data-field="pire_m">Pire relevé cumulé</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        </details>
       </div>
     </section>
+  </section>
 
-    <section class="rn-section" id="et-matinee">
+  <!-- ===================== LE DÉTAIL ===================== -->
+  <section class="rn-page" id="detail" role="tabpanel" aria-labelledby="onglet-detail" hidden>
+    <section class="rn-section" id="ou">
       <div class="rn-card">
         <div class="rn-card-top">
           <div>
-            <h2 class="rn-card-title" id="et-jour-titre">Une matinée, minute par minute</h2>
-            <details class="rn-aide"><summary>Comment lire</summary><p>Même lecture que le diagramme « matinée type » de l’onglet Explorer, pour une seule matinée : chaque case montre la couleur relevée sur Google Maps à ce moment-là. Une case hachurée signale l’absence de relevé.</p></details>
+            <h2 class="rn-card-title" id="et-type-titre">Où et quand ça bouchonne</h2>
+            <p class="rn-chapo">Chaque case représente une portion de 100 m à une heure donnée. En matinée type, plus la case est foncée, plus la portion a été souvent en rouge. Pour une matinée choisie, la case reprend la couleur relevée sur Google Maps.</p>
+            <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. Au-dessus du diagramme figurent les feux, en dessous les distances et les lieux traversés. De haut en bas, l’heure, de 7 h à 9 h. En matinée type, chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus). Pour une matinée choisie, chaque case montre la couleur relevée à ce moment-là ; une case hachurée signale l’absence de relevé. Au-delà de la fin du relevé, vers Pont-de-Claix, les cases sont plus pâles.</p></details>
           </div>
           <label class="rn-field" for="et-jour"><span>Matinée</span><select id="et-jour"></select></label>
         </div>
-        <div class="rn-legend" id="et-jour-legende"></div>
-        <div class="rn-chart" id="et-jour-chart" data-source="carte_releves troncons"></div>
+        <div class="rn-legend" id="et-type-legende"></div>
+        <div class="rn-chart" id="et-type" data-source="carte_releves troncons"></div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="troncons-detail">
+      <div class="rn-card">
+        <div class="rn-card-tete">
+          <h2 class="rn-card-title">Tronçon par tronçon</h2>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
+        </div>
+        <div class="rn-wrap">
+          <table class="rn-table" id="table-troncons" data-source="par_troncon" data-row-key="id">
+            <thead><tr>
+              <th data-field="nom">Tronçon</th>
+              <th data-field="longueur_m" class="rn-opt">Longueur</th>
+              <th data-field="max_m">Pic observé</th>
+              <th data-field="moyenne_m">Rouge moyen</th>
+              <th data-field="part" class="rn-opt">Part du tronçon</th>
+              <th data-field="pct_bouchon">Avec bouchon</th>
+              <th data-field="pct_sature" class="rn-opt">Saturé</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
@@ -466,44 +502,6 @@ h3.rn-card-title { font-size: 21px; }
           </div>
         </div>
         <div class="rn-chart" id="grille" data-source="releves"></div>
-      </div>
-    </section>
-  </section>
-
-  <!-- ===================== EXPLORER ===================== -->
-  <section class="rn-page" id="explorer" role="tabpanel" aria-labelledby="onglet-explorer" hidden>
-    <section class="rn-section" id="ou">
-      <div class="rn-card">
-        <div class="rn-card-tete">
-          <h2 class="rn-card-title" id="et-type-titre">Où et quand ça bouchonne : la matinée type</h2>
-          <p class="rn-chapo">Chaque case représente une portion de 100 m à une heure donnée : plus elle est foncée, plus cette portion a été souvent en rouge.</p>
-          <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. Au-dessus du diagramme figurent les feux, en dessous les distances et les lieux traversés. De haut en bas, l’heure, de 7 h à 9 h. Chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus). Au-delà de la fin du relevé, vers Pont-de-Claix, les cases sont plus pâles.</p></details>
-        </div>
-        <div class="rn-legend" id="et-type-legende"></div>
-        <div class="rn-chart" id="et-type" data-source="carte_releves troncons"></div>
-      </div>
-    </section>
-
-    <section class="rn-section" id="troncons-detail">
-      <div class="rn-card">
-        <div class="rn-card-tete">
-          <h2 class="rn-card-title">Tableau complet par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
-        </div>
-        <div class="rn-wrap">
-          <table class="rn-table" id="table-troncons" data-source="par_troncon" data-row-key="id">
-            <thead><tr>
-              <th data-field="nom">Tronçon</th>
-              <th data-field="longueur_m" class="rn-opt">Longueur</th>
-              <th data-field="max_m">Pic observé</th>
-              <th data-field="moyenne_m">Rouge moyen</th>
-              <th data-field="part" class="rn-opt">Part du tronçon</th>
-              <th data-field="pct_bouchon">Avec bouchon</th>
-              <th data-field="pct_sature" class="rn-opt">Saturé</th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
       </div>
     </section>
 
@@ -539,29 +537,6 @@ h3.rn-card-title { font-size: 21px; }
         <div class="rn-chart" id="et-peage" data-source="acces_releves acces_trace"></div>
         <div class="rn-et-nom">Avenue Maurice-Thorez</div>
         <div class="rn-chart" id="et-thorez" data-source="acces_releves acces_trace"></div>
-      </div>
-    </section>
-
-    <section class="rn-section" id="matinees-detail">
-      <div class="rn-card">
-        <div class="rn-card-tete">
-          <h2 class="rn-card-title">Résumé de chaque matinée</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pour chaque matinée : le pic de chaque zone avec son heure, puis la moyenne. Quand le pic revient plusieurs fois dans la matinée, l’heure indiquée est la première. Le pire relevé additionne toute la longueur en rouge de la zone relevée au même moment. Sur téléphone, les moyennes et le nombre de relevés sont masqués.</p></details>
-        </div>
-        <div class="rn-wrap">
-          <table class="rn-table" id="table-jours" data-source="par_jour" data-row-key="date">
-            <thead><tr>
-              <th data-field="date">Matinée</th>
-              <th data-field="releves" class="rn-opt">Relevés</th>
-              <th data-field="vizille_pic">Vizille, pic</th>
-              <th data-field="vizille" class="rn-opt">Vizille, moyenne</th>
-              <th data-field="feu_pic">Jarrie → feu, pic</th>
-              <th data-field="feu" class="rn-opt">Jarrie → feu, moyenne</th>
-              <th data-field="pire_m">Pire relevé cumulé</th>
-            </tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
       </div>
     </section>
 
@@ -608,7 +583,7 @@ h3.rn-card-title { font-size: 21px; }
     </section>
   </section>
 </div>
-<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes de 7 h à 9 h en semaine, sens Vizille → Grenoble, analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet Explorer.</footer>
+<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes de 7 h à 9 h en semaine, sens Vizille → Grenoble, analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet « Le détail ».</footer>
 </div>
 <script src="d3.v7.min.js"></script>
 <script>
@@ -1237,24 +1212,6 @@ dash.calc('acces_creneau', {
     el.style.minHeight = H + 'px';
   }
 
-  function drawETType() {
-    const el = document.getElementById('et-type');
-    if (!estVisible(el)) return;
-    const st = etat(['carte_releves', 'troncons', 'matinee_type']);
-    if (st === 'error') { fail(el); return; }
-    if (st !== 'ok') { attente(el); return; }
-    pret(el);
-    legende(document.getElementById('et-type-legende'), 'type');
-    const c = dash.data('carte_releves').data, tr = trier(dash.data('troncons').data);
-    const parC = new Map(dash.data('matinee_type').data.map((r) => [r.creneau, r]));
-    const nb = c[0].rouge.length, fin = nb * 100;
-    drawET(el, {
-      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), km: true, ou: segDe(tr), ch: 16,
-      aria: 'Diagramme de la matinée type sur la RN85 : distance depuis Vizille en largeur, heure de 7 h à 9 h en hauteur, couleur selon la fréquence du rouge',
-      cell: (cr, i) => { const r = parC.get(cr); return r ? cellType(r.part[i], r.matinees) : null; },
-    });
-  }
-
   // ================= Sélecteurs de matinée =================
   const signatures = {};
   function optionsMatinees(sel, avecType, source) {
@@ -1275,29 +1232,36 @@ dash.calc('acces_creneau', {
     if (signatures[sel.id] !== sig) { sel.replaceChildren(...opts.map(([v, t]) => new Option(t, v))); signatures[sel.id] = sig; }
     return opts.map((o) => o[0]);
   }
-  const jourB = () => { const j = dash.params().jour || 'pire'; const p = pire(); return j === 'pire' ? (p ? p.max_date : null) : j; };
-  document.getElementById('et-jour').addEventListener('change', (e) => dash.setParams({ jour: e.target.value }));
+  document.getElementById('et-jour').addEventListener('change', (e) => dash.setParams({ vue_ou: e.target.value }));
   document.getElementById('acces-jour').addEventListener('change', (e) => dash.setParams({ jour_acces: e.target.value }));
 
-  function drawETJour() {
-    const el = document.getElementById('et-jour-chart');
+  // Où et quand ça bouchonne : la matinée type (toutes les matinées) ou une matinée au choix, dans le même diagramme.
+  function drawOu() {
+    const el = document.getElementById('et-type');
     const sel = document.getElementById('et-jour');
-    const valeurs = optionsMatinees(sel, false, 'rn');
-    const j = jourB();
-    if (j && valeurs.includes(j)) sel.value = j;
+    const valeurs = optionsMatinees(sel, true, 'rn');
+    let j = dash.params().vue_ou || 'type';
+    if (!valeurs.includes(j)) j = 'type';
+    sel.value = j;
     if (!estVisible(el)) return;
-    const st = etat(['carte_releves', 'troncons', 'synthese']);
+    const st = etat(['carte_releves', 'troncons', 'matinee_type', 'synthese']);
     if (st === 'error') { fail(el); return; }
-    if (st !== 'ok' || !j) { attente(el); return; }
+    if (st !== 'ok') { attente(el); return; }
     pret(el);
-    legende(document.getElementById('et-jour-legende'), 'jour');
+    const type = j === 'type';
+    legende(document.getElementById('et-type-legende'), type ? 'type' : 'jour');
     const c = dash.data('carte_releves').data, tr = trier(dash.data('troncons').data);
-    const parC = new Map(c.filter((r) => r.date === j).map((r) => [r.creneau, r]));
     const nb = c[0].rouge.length, fin = nb * 100;
+    const parType = new Map(dash.data('matinee_type').data.map((r) => [r.creneau, r]));
+    const parJour = new Map(c.filter((r) => r.date === j).map((r) => [r.creneau, r]));
     drawET(el, {
       nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), km: true, ou: segDe(tr), ch: 16,
-      aria: 'Diagramme d’une matinée sur la RN85 : distance depuis Vizille en largeur, heure en hauteur, couleur relevée sur Google Maps',
-      cell: (cr, i) => { const r = parC.get(cr); return r ? cellJour(r.rouge[i] === '1' ? '1' : (r.hors_vert[i] === '1' ? '2' : '0')) : null; },
+      aria: type
+        ? 'Diagramme de la matinée type sur la RN85 : distance depuis Vizille en largeur, heure de 7 h à 9 h en hauteur, couleur selon la fréquence du rouge'
+        : 'Diagramme d’une matinée sur la RN85 : distance depuis Vizille en largeur, heure en hauteur, couleur relevée sur Google Maps',
+      cell: type
+        ? (cr, i) => { const r = parType.get(cr); return r ? cellType(r.part[i], r.matinees) : null; }
+        : (cr, i) => { const r = parJour.get(cr); return r ? cellJour(r.rouge[i] === '1' ? '1' : (r.hors_vert[i] === '1' ? '2' : '0')) : null; },
     });
   }
 
@@ -1357,22 +1321,6 @@ dash.calc('acces_creneau', {
   }
 
   // ================= Tableaux =================
-  function drawTableSynthese() {
-    const tb = document.querySelector('#table-synthese tbody');
-    const d = dash.data('par_troncon');
-    if (d.status !== 'ok') { tb.replaceChildren(); return; }
-    tb.replaceChildren(...trier(d.data).map((r) => {
-      const tr = document.createElement('tr'); tr.dataset.key = r.id;
-      if (r.id === 's7') tr.className = 'rn-out';
-      [r.nom + (r.id === 's7' ? ' (hors zone)' : ''), metres(r.max_m), metres(r.moyenne_m), pct(r.pct_bouchon)].forEach((c, i) => {
-        const td = document.createElement('td'); td.textContent = c;
-        if (i === 1) td.className = 'rn-pic';
-        if (i === 2) td.className = 'rn-opt';
-        tr.appendChild(td);
-      });
-      return tr;
-    }));
-  }
   function drawTableTroncons() {
     const tb = document.querySelector('#table-troncons tbody');
     const d = dash.data('par_troncon');
@@ -1914,12 +1862,14 @@ dash.calc('acces_creneau', {
   })();
 
   // ================= Onglets et dessin =================
-  const PAGES = ['comprendre', 'comparer', 'explorer'];
-  let page = 'comprendre';
+  const PAGES = ['essentiel', 'detail'];
+  // Anciens liens (trois onglets) : ils mènent à l'onglet qui contient désormais leurs parties.
+  const ANCIENS = { comprendre: 'essentiel', comparer: 'essentiel', explorer: 'detail' };
+  let page = 'essentiel';
   const onglets = Array.from(document.querySelectorAll('.rn-tabs [data-tab]'));
   function montrer(p) {
-    if (!PAGES.includes(p)) p = 'comprendre';
-    if (p !== 'comprendre') carte.stop();
+    if (!PAGES.includes(p)) p = 'essentiel';
+    if (p !== 'essentiel') carte.stop();
     page = p;
     PAGES.forEach((id) => { document.getElementById(id).hidden = id !== p; });
     onglets.forEach((b) => { const on = b.dataset.tab === p; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
@@ -1938,17 +1888,16 @@ dash.calc('acces_creneau', {
 
   function dessiner() {
     remplirTextes();
-    drawTableSynthese(); drawTableTroncons(); drawTableJours(); drawTableMethodes();
-    if (page === 'comprendre') { drawPics(); carte.maj(); }
-    if (page === 'comparer') { drawBarres(); drawETJour(); drawGrille(); }
-    if (page === 'explorer') { drawETType(); drawAcces(); }
+    drawTableTroncons(); drawTableJours(); drawTableMethodes();
+    if (page === 'essentiel') { drawPics(); carte.maj(); drawBarres(); }
+    if (page === 'detail') { drawOu(); drawGrille(); drawAcces(); }
   }
 
   const lien = location.hash.slice(1);
   const cible = lien ? document.getElementById(lien) : null;
   let defile = false;
-  if (cible) { const pg = cible.closest('.rn-page'); montrer(pg ? pg.id : (PAGES.includes(lien) ? lien : 'comprendre')); }
-  else montrer('comprendre');
+  if (cible) { const pg = cible.closest('.rn-page'); montrer(pg ? pg.id : (PAGES.includes(lien) ? lien : 'essentiel')); }
+  else montrer(ANCIENS[lien] || 'essentiel');
 
   dash.onData(() => {
     dessiner();
