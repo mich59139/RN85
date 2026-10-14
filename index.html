@@ -75,7 +75,10 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 /* ---------- Jetons propres à la page ---------- */
 .rn {
   /* Couleurs du trafic : réservées aux graphiques et aux cartes. */
-  --tr-vert: #1f9d55; --tr-orange: #f0961c; --tr-rouge: #e0362c; --tr-fonce: #8e1712; --tr-pale: #f6d58c;
+  --tr-orange: #f0961c; --tr-rouge: #e0362c; --tr-fonce: #8e1712; --tr-pale: #f6d58c;
+  /* Pas de vert dans l'analyse : l'absence de rouge ou d'orange s'affiche en gris neutre. */
+  --tr-neutre: #e2e6e9;              /* cases des diagrammes */
+  --tr-neutre-trait: #a1aab2;        /* tronçons de la carte, plus foncés que la route vide (pas de relevé) */
   /* Titres à empattements, texte et chiffres en caractères sans empattements. */
   --rn-serif: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
   --rn-encre-douce: #353d44;          /* introductions : un peu plus douce que le texte courant */
@@ -89,6 +92,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 @media (prefers-color-scheme: dark) {
   .rn {
     --rn-encre-douce: #cdd3d8; --rn-accent: #86b6ff; --rn-fond-doux: #1b2025;
+    --tr-neutre: #2b3238; --tr-neutre-trait: #67727c;
     --rn-bande: #242b31; --rn-bande-doux: #aab4bc; --rn-bande-filet: rgba(255, 255, 255, .12); --rn-mini-bas: #4a535c;
   }
 }
@@ -297,7 +301,7 @@ h3.rn-card-title { font-size: 21px; }
 <div class="rn">
   <header class="rn-head" id="haut">
     <h1 class="rn-title">Les bouchons du matin sur la RN85</h1>
-    <p class="rn-lede">De Vizille vers Grenoble, en semaine de 7 h à 9 h, deux files se forment chaque matin, chacune en amont d’un feu. Entre les deux, la route reste fluide : un bouchon n’y apparaît que dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s3" class="dash-skeleton">—</span> des relevés.</p>
+    <p class="rn-lede">En semaine, de 7 h à 9 h, la RN85 se bouche à deux endroits entre Vizille et Grenoble, chaque fois en amont d’un feu. Un bouchon apparaît entre l’Intermarché et le feu situé 1 km plus loin dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s2" class="dash-skeleton">—</span> des relevés et avant le feu de Champagnier dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s5" class="dash-skeleton">—</span>.</p>
     <dl class="rn-fiche" aria-label="Période et relevés">
       <div><dt>Période</dt><dd>du <span data-source="synthese" data-field="date_min" data-row="0" class="dash-skeleton">—</span> au <span data-source="synthese" data-field="date_max" data-row="0" class="dash-skeleton">—</span> 2026</dd></div>
       <div><dt>Relevés</dt><dd><span data-source="synthese" data-field="releves" data-row="0" class="dash-skeleton">—</span> captures Google Maps sur <span data-source="synthese" data-field="matinees" data-row="0" class="dash-skeleton">—</span> matinées</dd></div>
@@ -308,17 +312,17 @@ h3.rn-card-title { font-size: 21px; }
   <section class="rn-chiffres" id="chiffres" aria-label="Chiffres clés">
     <article class="rn-chiffre">
       <h2 class="rn-chiffre-titre">Sortie de Vizille</h2>
-      <p class="rn-chiffre-sous">File la plus longue relevée, jusqu’au feu 1 km après l’Intermarché</p>
+      <p class="rn-chiffre-sous">File la plus longue relevée, jusqu’au feu 1 km après l’Intermarché</p>
       <p class="rn-chiffre-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_vizille" data-row="0">—</p>
       <p class="rn-chiffre-quand">le <span data-source="synthese" data-field="pic_vizille_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
-      <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_vizille_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_vizille" data-row="0">—</span>.</p>
+      <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_vizille_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_vizille" data-row="0">—</span>.</p>
     </article>
     <article class="rn-chiffre">
       <h2 class="rn-chiffre-titre">Approche du feu de Champagnier</h2>
       <p class="rn-chiffre-sous">File la plus longue relevée, depuis Basse-Jarrie</p>
       <p class="rn-chiffre-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_feu" data-row="0">—</p>
       <p class="rn-chiffre-quand">le <span data-source="synthese" data-field="pic_feu_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
-      <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_feu_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_feu" data-row="0">—</span>.</p>
+      <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_feu_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_feu" data-row="0">—</span>.</p>
     </article>
     <article class="rn-chiffre">
       <h2 class="rn-chiffre-titre">Pire moment</h2>
@@ -395,7 +399,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">Tronçon par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée sur le tronçon. Relevés avec bouchon : au moins 50 m du tronçon en rouge. Moyennes arrondies à 10 m près. Le détail complet se trouve dans l’onglet Explorer.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée sur le tronçon. Relevés avec bouchon : au moins 50 m du tronçon en rouge. Moyennes arrondies à 10 m près. Le détail complet se trouve dans l’onglet Explorer.</p></details>
         </div>
         <div class="rn-wrap">
           <table class="rn-table" id="table-synthese" data-source="par_troncon" data-row-key="id">
@@ -472,8 +476,8 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title" id="et-type-titre">Où et quand ça bouchonne : la matinée type</h2>
-          <p class="rn-chapo">Chaque case représente une portion de 100 m à une heure donnée : plus elle est foncée, plus cette portion a été souvent en rouge.</p>
-          <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. Au-dessus du diagramme figurent les feux, en dessous les distances et les lieux traversés. De haut en bas, l’heure, de 7 h à 9 h. Chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus). Au-delà de la fin du relevé, vers Pont-de-Claix, les cases sont plus pâles.</p></details>
+          <p class="rn-chapo">Chaque case représente une portion de 100 m à une heure donnée : plus elle est foncée, plus cette portion a été souvent en rouge.</p>
+          <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. Au-dessus du diagramme figurent les feux, en dessous les distances et les lieux traversés. De haut en bas, l’heure, de 7 h à 9 h. Chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus). Au-delà de la fin du relevé, vers Pont-de-Claix, les cases sont plus pâles.</p></details>
         </div>
         <div class="rn-legend" id="et-type-legende"></div>
         <div class="rn-chart" id="et-type" data-source="carte_releves troncons"></div>
@@ -484,7 +488,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">Tableau complet par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
         </div>
         <div class="rn-wrap">
           <table class="rn-table" id="table-troncons" data-source="par_troncon" data-row-key="id">
@@ -505,21 +509,21 @@ h3.rn-card-title { font-size: 21px; }
 
     <section class="rn-section" id="acces">
       <h2 class="rn-h2">Les accès à la RN85 dans Vizille</h2>
-      <p class="rn-lede">Depuis Le Péage, la D1091 reste fluide jusqu’à l’entrée de Vizille. Le rouge n’apparaît que sur la fin du parcours, juste avant le carrefour avec la RN85 : c’est la file de la sortie de Vizille qui remonte. Même chose sur l’avenue Maurice-Thorez, où seule l’approche du carrefour se bloque. Ces relevés existent depuis le <span data-source="acces_synthese" data-field="date_min" data-row="0">—</span> : <span data-source="acces_synthese" data-field="releves" data-row="0">—</span> relevés sur <span data-source="acces_synthese" data-field="matinees" data-row="0">—</span> matinées.</p>
+      <p class="rn-lede">Sur la D1091 depuis Le Péage, le rouge n’apparaît qu’à la fin du parcours, juste avant le carrefour avec la RN85 : c’est la file de la sortie de Vizille qui remonte. Même chose sur l’avenue Maurice-Thorez, où seule l’approche du carrefour se bloque. Ces relevés existent depuis le <span data-source="acces_synthese" data-field="date_min" data-row="0">—</span> : <span data-source="acces_synthese" data-field="releves" data-row="0">—</span> relevés sur <span data-source="acces_synthese" data-field="matinees" data-row="0">—</span> matinées.</p>
       <div class="rn-stats">
         <article class="rn-stat">
           <h3 class="rn-stat-titre">D1091 depuis Le Péage</h3>
           <p class="rn-stat-sous">File la plus longue relevée</p>
           <p class="rn-stat-val dash-skeleton" data-unite="m" data-source="acces_synthese" data-field="pic_peage" data-row="0">—</p>
           <p class="rn-stat-quand">le <span data-source="acces_synthese" data-field="pic_peage_jour" data-row="0">—</span> <span data-source="acces_synthese" data-field="pic_peage_date" data-row="0">—</span> à <span data-source="acces_synthese" data-field="pic_peage_heure" data-row="0">—</span></p>
-          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_peage" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_peage" data-row="0">—</span>.</p>
+          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_peage" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_peage" data-row="0">—</span>.</p>
         </article>
         <article class="rn-stat">
           <h3 class="rn-stat-titre">Avenue Maurice-Thorez</h3>
           <p class="rn-stat-sous">File la plus longue relevée</p>
           <p class="rn-stat-val dash-skeleton" data-unite="m" data-source="acces_synthese" data-field="pic_thorez" data-row="0">—</p>
           <p class="rn-stat-quand">le <span data-source="acces_synthese" data-field="pic_thorez_jour" data-row="0">—</span> <span data-source="acces_synthese" data-field="pic_thorez_date" data-row="0">—</span> à <span data-source="acces_synthese" data-field="pic_thorez_heure" data-row="0">—</span></p>
-          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_thorez" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_thorez" data-row="0">—</span>.</p>
+          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_thorez" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_thorez" data-row="0">—</span>.</p>
         </article>
       </div>
       <div class="rn-card">
@@ -565,12 +569,12 @@ h3.rn-card-title { font-size: 21px; }
       <h2 class="rn-h2">Méthode et limites</h2>
       <div class="rn-method">
         <h3>Ce qui est mesuré</h3>
-        <p>Chaque capture Google Maps (couche trafic, cadrage fixe, toutes les 5 minutes de 7 h à 9 h en semaine) est lue le long de l’axe de la RN85, du carrefour de l’avenue Maurice-Thorez à Vizille jusqu’après le feu de Champagnier, puis au-delà vers Pont-de-Claix. Une portion compte comme rouge quand la chaussée y est rouge ou rouge foncé. Les morceaux de moins de 50 m sont écartés, pour ne pas confondre une étiquette de la carte avec un bouchon. Les temps de parcours ne sont pas utilisés.</p>
+        <p>Chaque capture Google Maps (couche trafic, cadrage fixe, toutes les 5 minutes de 7 h à 9 h en semaine) est lue le long de l’axe de la RN85, du carrefour de l’avenue Maurice-Thorez à Vizille jusqu’après le feu de Champagnier, puis au-delà vers Pont-de-Claix. Une portion compte comme rouge quand la chaussée y est rouge ou rouge foncé. Les morceaux de moins de 50 m sont écartés, pour ne pas confondre une étiquette de la carte avec un bouchon. Les temps de parcours ne sont pas utilisés.</p>
         <h3>Définitions</h3>
         <ul>
           <li><b>Pic observé</b> : plus grande longueur en rouge relevée, avec le jour et l’heure.</li>
-          <li><b>Rouge moyen</b> : moyenne de tous les relevés, relevés sans rouge compris, arrondie à 10 m près. La somme de deux tronçons arrondis peut donc différer de 10 m du total de la zone.</li>
-          <li><b>Avec bouchon</b> : au moins 50 m du tronçon en rouge. <b>Saturé</b> : la moitié du tronçon ou plus en rouge.</li>
+          <li><b>Rouge moyen</b> : moyenne de tous les relevés, relevés sans rouge compris, arrondie à 10 m près. La somme de deux tronçons arrondis peut donc différer de 10 m du total de la zone.</li>
+          <li><b>Avec bouchon</b> : au moins 50 m du tronçon en rouge. <b>Saturé</b> : la moitié du tronçon ou plus en rouge.</li>
           <li><b>Longueur cumulée</b> : somme de toutes les portions rouges de la zone au même moment. Elle peut additionner plusieurs files distinctes.</li>
           <li><b>Matinée incomplète</b> : moins de 20 relevés sur 25, parce que le relevé a commencé tard, s’est arrêté tôt ou a eu des trous.</li>
         </ul>
@@ -588,22 +592,22 @@ h3.rn-card-title { font-size: 21px; }
           </table>
         </div>
         <h3>Relevés écartés</h3>
-        <p id="rn-ecartees">Le 12 octobre, les captures de 7 h 45 et de 8 h 00 sont des copies de la capture précédente : la carte Google n’avait pas été rafraîchie. Elles sont écartées des calculs, comme la capture large de 7 h 45 pour les accès. Les fichiers d’origine sont conservés. Aucun autre doublon n’a été trouvé.</p>
+        <p id="rn-ecartees">Le 12 octobre, les captures de 7 h 45 et de 8 h 00 sont des copies de la capture précédente : la carte Google n’avait pas été rafraîchie. Elles sont écartées des calculs, comme la capture large de 7 h 45 pour les accès. Les fichiers d’origine sont conservés. Aucun autre doublon n’a été trouvé.</p>
         <h3>Limites</h3>
         <ul>
           <li>Les résultats valent pour les matinées observées. Ils ne mesurent pas tous les jours de circulation.</li>
           <li>Google Maps indique un état de la circulation, pas un nombre de véhicules.</li>
-          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et juste avant l’autopont de Jarrie. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
-          <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres clés et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
+          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et juste avant l’autopont de Jarrie. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
+          <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres clés et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
           <li>La zone « après le feu » dépasse la zone relevée, en direction de Pont-de-Claix.</li>
-          <li>Tôt le matin, Google n’affiche parfois aucune couleur sur l’avenue Maurice-Thorez. Ces relevés sont comptés comme manquants pour l’avenue, jamais comme fluides.</li>
+          <li>Tôt le matin, Google n’affiche parfois aucune couleur sur l’avenue Maurice-Thorez. Ces relevés sont comptés comme manquants pour l’avenue, jamais comme des relevés sans bouchon.</li>
           <li>Les longueurs suivent de très près la colonne « Longueur en rouge » du tableau Historique RN85, en un peu plus bas, car elles ne comptent que l’axe de la route.</li>
         </ul>
       </div>
     </section>
   </section>
 </div>
-<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes de 7 h à 9 h en semaine, sens Vizille → Grenoble, analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet Explorer.</footer>
+<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes de 7 h à 9 h en semaine, sens Vizille → Grenoble, analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet Explorer.</footer>
 </div>
 <script src="d3.v7.min.js"></script>
 <script>
@@ -985,7 +989,8 @@ dash.calc('acces_creneau', {
   const rn = document.querySelector('.rn');
   const cssVar = (n) => getComputedStyle(root).getPropertyValue(n).trim();
   const trv = (n) => getComputedStyle(rn).getPropertyValue(n).trim();
-  const couleurNiveau = (lvl) => [trv('--tr-vert'), trv('--tr-pale'), trv('--tr-orange'), trv('--tr-rouge'), trv('--tr-fonce')][lvl];
+  // Niveau 0 (jamais en rouge) : gris neutre, plus foncé pour les tronçons de la carte que pour les cases des diagrammes.
+  const couleurNiveau = (lvl, trait) => [trv(trait ? '--tr-neutre-trait' : '--tr-neutre'), trv('--tr-pale'), trv('--tr-orange'), trv('--tr-rouge'), trv('--tr-fonce')][lvl];
   const estVisible = (el) => !!el && el.offsetParent !== null && el.clientWidth > 0;
   let uid = 0;
 
@@ -1072,8 +1077,12 @@ dash.calc('acces_creneau', {
     }
     const p = dash.data('par_troncon');
     if (p.status === 'ok') {
-      const r = p.data.find((x) => x.id === 's3');
-      document.querySelectorAll('[data-source="par_troncon"][data-field="pct_bouchon"][data-where="id=s3"]').forEach((el) => { el.textContent = r ? pct(r.pct_bouchon) : '—'; el.classList.remove('dash-skeleton'); });
+      // Chiffre d'un tronçon précis dans un texte (introduction) : data-where="id=s2", par exemple.
+      document.querySelectorAll('[data-source="par_troncon"][data-field][data-where^="id="]').forEach((el) => {
+        const r = p.data.find((x) => x.id === el.dataset.where.slice(3));
+        el.textContent = r ? formatChamp(el.dataset.field, r[el.dataset.field]) : '—';
+        el.classList.remove('dash-skeleton');
+      });
     }
   }
   const pire = () => { const s = dash.data('synthese'); return s.status === 'ok' && s.data.length ? s.data[0] : null; };
@@ -1090,14 +1099,14 @@ dash.calc('acces_creneau', {
     s.append(i, document.createTextNode(txt)); return s;
   }
   const hachureCSS = () => 'repeating-linear-gradient(45deg, ' + cssVar('--color-border-line') + ' 0 1.5px, transparent 1.5px 5px)';
-  const vertPale = () => 'color-mix(in srgb, ' + trv('--tr-vert') + ' 32%, transparent)';
+  const neutre = () => trv('--tr-neutre');
   function legende(el, mode) {
     el.replaceChildren();
     if (mode === 'type') {
-      el.append(sw(vertPale(), 'Jamais en rouge'));
+      el.append(sw(neutre(), 'Jamais en rouge'));
       for (let l = 1; l < 5; l++) el.append(sw(couleurNiveau(l), NIVEAUX[l]));
     } else {
-      el.append(sw(vertPale(), 'Fluide'), sw(trv('--tr-orange'), 'Orange'), sw(trv('--tr-rouge'), 'Rouge ou rouge foncé'));
+      el.append(sw(neutre(), 'Ni orange ni rouge'), sw(trv('--tr-orange'), 'Orange'), sw(trv('--tr-rouge'), 'Rouge ou rouge foncé'));
     }
     el.append(sw(hachureCSS(), 'Pas de relevé'));
   }
@@ -1105,14 +1114,14 @@ dash.calc('acces_creneau', {
     const lvl = niveau(part);
     const k = Math.round(part * n);
     return {
-      fill: couleurNiveau(lvl), op: lvl === 0 ? 0.32 : 1,
+      fill: couleurNiveau(lvl), op: 1,
       texte: (k === 0 ? 'Jamais en rouge sur ' + n + ' matinées' : 'En rouge ' + k + ' matinée' + (k > 1 ? 's' : '') + ' sur ' + n) + (lvl > 0 ? ' (' + NIVEAUX[lvl].toLowerCase() + ')' : ''),
     };
   }
   function cellJour(code) {
     if (code === '1') return { fill: trv('--tr-rouge'), op: 1, texte: 'Rouge ou rouge foncé' };
     if (code === '2') return { fill: trv('--tr-orange'), op: 1, texte: 'Orange' };
-    return { fill: trv('--tr-vert'), op: 0.32, texte: 'Fluide' };
+    return { fill: neutre(), op: 1, texte: 'Ni orange ni rouge' };
   }
 
   // ================= Diagramme lieu × heure =================
@@ -1574,7 +1583,7 @@ dash.calc('acces_creneau', {
         cell: (cr, i) => {
           const r = parC.get(cr);
           if (!r) return null;
-          // Accès sans couleur sur la carte : case hachurée (relevé manquant), jamais comptée comme fluide.
+          // Accès sans couleur sur la carte : case hachurée (relevé manquant), jamais comptée comme sans bouchon.
           if (jj === 'type') return r[k] ? cellType(r[k][i], r['matinees_' + k]) : null;
           return r['bins_' + k] ? cellJour(r['bins_' + k][i]) : null;
         },
@@ -1632,17 +1641,17 @@ dash.calc('acces_creneau', {
       }
       return out;
     }
-    const couleurCode = (code) => (code === '1' ? trv('--tr-rouge') : (code === '2' ? trv('--tr-orange') : trv('--tr-vert')));
-    const couleurType = (p) => couleurNiveau(niveau(p));
+    const couleurCode = (code) => (code === '1' ? trv('--tr-rouge') : (code === '2' ? trv('--tr-orange') : trv('--tr-neutre-trait')));
+    const couleurType = (p) => couleurNiveau(niveau(p), true);
 
     function legendeCarte() {
       const el = document.getElementById('carte-legende');
       el.replaceChildren();
       if (state.jour === 'type') {
-        el.append(sw(trv('--tr-vert'), 'Jamais en rouge'));
+        el.append(sw(trv('--tr-neutre-trait'), 'Jamais en rouge'));
         for (let l = 1; l < 5; l++) el.append(sw(couleurNiveau(l), NIVEAUX[l]));
       } else {
-        el.append(sw(trv('--tr-vert'), 'Fluide'), sw(trv('--tr-orange'), 'Orange'), sw(trv('--tr-rouge'), 'Rouge ou rouge foncé'));
+        el.append(sw(trv('--tr-neutre-trait'), 'Ni orange ni rouge'), sw(trv('--tr-orange'), 'Orange'), sw(trv('--tr-rouge'), 'Rouge ou rouge foncé'));
       }
       el.append(sw(cssVar('--color-border-line'), 'Pas de relevé à cette heure'));
     }
