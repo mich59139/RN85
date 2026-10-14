@@ -316,7 +316,7 @@ h3.rn-card-title { font-size: 21px; }
 <div class="rn">
   <header class="rn-head" id="haut">
     <h1 class="rn-title">Les bouchons du matin sur la RN85</h1>
-    <p class="rn-lede">En semaine, de 7 h à 9 h, la RN85 se bouche à deux endroits entre Vizille et Champagnier, chaque fois en amont d’un feu. Un bouchon apparaît entre l’Intermarché et le feu situé 1 km plus loin dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s2" class="dash-skeleton">—</span> des relevés et avant le feu de Champagnier dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s5" class="dash-skeleton">—</span>. Ces chiffres ne comptent pas les bouchons qui attendent ensuite les automobilistes sur la portion rapide qui mène à l’A480 et sur l’A480 jusqu’à l’entrée de Grenoble.</p>
+    <p class="rn-lede">En semaine, de 7 h à 9 h, la RN85 se bouche à deux endroits entre Vizille et Champagnier, chaque fois en amont d’un feu. Un bouchon apparaît entre le rond-point Muzet et le feu situé 1 km plus loin dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s2" class="dash-skeleton">—</span> des relevés et avant le feu de Champagnier dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s5" class="dash-skeleton">—</span>. Ces chiffres ne comptent pas les bouchons qui attendent ensuite les automobilistes sur la portion rapide qui mène à l’A480 et sur l’A480 jusqu’à l’entrée de Grenoble.</p>
     <dl class="rn-fiche" aria-label="Période et relevés">
       <div><dt>Période</dt><dd>du <span data-source="synthese" data-field="date_min" data-row="0" class="dash-skeleton">—</span> au <span data-source="synthese" data-field="date_max" data-row="0" class="dash-skeleton">—</span> 2026</dd></div>
       <div><dt>Relevés</dt><dd><span data-source="synthese" data-field="releves" data-row="0" class="dash-skeleton">—</span> captures Google Maps sur <span data-source="synthese" data-field="matinees" data-row="0" class="dash-skeleton">—</span> matinées</dd></div>
@@ -327,7 +327,7 @@ h3.rn-card-title { font-size: 21px; }
   <section class="rn-chiffres" id="chiffres" aria-label="Chiffres clés">
     <article class="rn-chiffre">
       <h2 class="rn-chiffre-titre">Sortie de Vizille</h2>
-      <p class="rn-chiffre-sous">File la plus longue relevée, jusqu’au feu 1 km après l’Intermarché</p>
+      <p class="rn-chiffre-sous">File la plus longue relevée, jusqu’au feu avant l’autopont</p>
       <p class="rn-chiffre-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_vizille" data-row="0">—</p>
       <p class="rn-chiffre-quand">le <span data-source="synthese" data-field="pic_vizille_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
       <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_vizille_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_vizille" data-row="0">—</span>.</p>
@@ -469,7 +469,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">Tronçon par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Bouchon moyen : longueur moyenne en rouge des seuls relevés avec bouchon. Part du tronçon : bouchon moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Ces deux dernières parts sont calculées sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
         </div>
         <div class="rn-wrap">
           <table class="rn-table" id="table-troncons" data-source="par_troncon" data-row-key="id">
@@ -477,7 +477,7 @@ h3.rn-card-title { font-size: 21px; }
               <th data-field="nom">Tronçon</th>
               <th data-field="longueur_m" class="rn-opt">Longueur</th>
               <th data-field="max_m">Pic observé</th>
-              <th data-field="moyenne_m">Rouge moyen</th>
+              <th data-field="bouchon_moyen_m">Bouchon moyen</th>
               <th data-field="part" class="rn-opt">Part du tronçon</th>
               <th data-field="pct_bouchon">Avec bouchon</th>
               <th data-field="pct_sature" class="rn-opt">Saturé</th>
@@ -549,6 +549,7 @@ h3.rn-card-title { font-size: 21px; }
         <ul>
           <li><b>Pic observé</b> : plus grande longueur en rouge relevée, avec le jour et l’heure.</li>
           <li><b>Rouge moyen</b> : moyenne de tous les relevés, relevés sans rouge compris, arrondie à 10 m près. La somme de deux tronçons arrondis peut donc différer de 10 m du total de la zone.</li>
+          <li><b>Bouchon moyen</b> : longueur moyenne en rouge des seuls relevés avec bouchon (au moins 50 m du tronçon en rouge), arrondie à 10 m près. Elle donne la longueur habituelle d’un bouchon quand il se forme. Le rouge moyen compte aussi les relevés sans bouchon : un bouchon rare y pèse presque zéro.</li>
           <li><b>Avec bouchon</b> : au moins 50 m du tronçon en rouge. <b>Saturé</b> : la moitié du tronçon ou plus en rouge.</li>
           <li><b>Longueur cumulée</b> : somme de toutes les portions rouges de la zone au même moment. Elle peut additionner plusieurs files distinctes.</li>
           <li><b>Matinée incomplète</b> : moins de 20 relevés sur 25, parce que le relevé a commencé tard, s’est arrêté tôt ou a eu des trous.</li>
@@ -749,17 +750,21 @@ dash.calc('synthese', {
 dash.calc('par_troncon', {
   inputs: ['releves', 'troncons'],
   title: 'Rouge par tronçon',
-  description: 'Pour chaque tronçon : pic observé, rouge moyen (tous les relevés), part du tronçon, part des relevés avec au moins 50 m en rouge et part des relevés avec la moitié du tronçon ou plus en rouge.',
+  description: 'Pour chaque tronçon : pic observé, bouchon moyen (longueur moyenne en rouge des seuls relevés avec au moins 50 m en rouge), part du tronçon occupée par ce bouchon moyen, rouge moyen (tous les relevés), part des relevés avec au moins 50 m en rouge et part des relevés avec la moitié du tronçon ou plus en rouge.',
   fn: (releves, troncons) => troncons.map((t) => {
     const v = releves.map((r) => r['rouge_' + t.id]);
     const n = v.length;
     const moyenne = Math.round(v.reduce((a, b) => a + b, 0) / n / 10) * 10;
+    // Bouchon moyen (choix de Michel, 14 octobre 2026) : moyenne des seuls relevés avec bouchon.
+    const avec = v.filter((x) => x >= 50);
+    const bouchon = avec.length ? Math.round(avec.reduce((a, b) => a + b, 0) / avec.length / 10) * 10 : null;
     return {
       id: t.id, ordre: t.ordre, nom: t.nom, zone: t.zone, longueur_m: t.longueur_m,
       max_m: Math.max(...v),
       moyenne_m: moyenne,
-      part: moyenne / t.longueur_m,
-      pct_bouchon: v.filter((x) => x >= 50).length / n,
+      bouchon_moyen_m: bouchon,
+      part: bouchon == null ? 0 : bouchon / t.longueur_m,
+      pct_bouchon: avec.length / n,
       pct_sature: v.filter((x) => x >= t.longueur_m / 2).length / n,
     };
   }),
@@ -946,8 +951,8 @@ dash.calc('acces_creneau', {
   // priorités 2 et 3 : écrits seulement s'il reste de la place (sur téléphone, le 3 disparaît en premier).
   const REPERES = {
     s1: { txt: 'Vizille', ou: 'bas', prio: 1, ancre: 'start' },
-    s2: { txt: 'Intermarché', ou: 'haut', prio: 3, ligne: true },
-    s3: { txt: 'Feu, 1 km après l’Intermarché', lignes: ['Feu, 1 km après', 'l’Intermarché'], ou: 'haut', prio: 1, fort: true, ligne: true },
+    s2: { txt: 'Rond-point Muzet', ou: 'haut', prio: 3, ligne: true },
+    s3: { txt: 'Feu avant l’autopont', lignes: ['Feu avant', 'l’autopont'], ou: 'haut', prio: 1, fort: true, ligne: true },
     s4: { txt: 'Basse-Jarrie', ou: 'bas', prio: 2 },
     s5: { txt: 'Autopont de Jarrie', ou: 'bas', prio: 3 },
     s6: { txt: 'Feu de Champagnier', lignes: ['Feu de', 'Champagnier'], ou: 'haut', prio: 1, fort: true, ligne: true },
@@ -1329,7 +1334,7 @@ dash.calc('acces_creneau', {
     tb.replaceChildren(...trier(d.data).map((r) => {
       const tr = document.createElement('tr'); tr.dataset.key = r.id;
       if (r.id === 's7') tr.className = 'rn-out';
-      [r.nom + (r.id === 's7' ? ' (hors zone)' : ''), metres(r.longueur_m), metres(r.max_m), metres(r.moyenne_m), pct(r.part), pct(r.pct_bouchon), pct(r.pct_sature)].forEach((c, i) => {
+      [r.nom + (r.id === 's7' ? ' (hors zone)' : ''), metres(r.longueur_m), metres(r.max_m), r.bouchon_moyen_m == null ? 'aucun' : metres(r.bouchon_moyen_m), pct(r.part), pct(r.pct_bouchon), pct(r.pct_sature)].forEach((c, i) => {
         const td = document.createElement('td'); td.textContent = c;
         if (i === 2) td.className = 'rn-pic';
         if (i === 1 || i === 4 || i === 6) td.classList.add('rn-opt');
@@ -1616,7 +1621,17 @@ dash.calc('acces_creneau', {
       const HT = 15;
       const dirs = [[0, -1], [1, -1], [-1, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [0, 1]];
       const poses = occupes.slice();
+      const traits = [];
       const ecart = (b, p) => Math.hypot(Math.max(b.x0 - p.x, 0, p.x - b.x1), Math.max(b.y0 - p.y, 0, p.y - b.y1));
+      // Point de l'étiquette le plus proche de son lieu : départ du trait de rappel.
+      const bout = (b, p) => ({ x: Math.max(b.x0, Math.min(p.x, b.x1)), y: Math.max(b.y0, Math.min(p.y, b.y1)) });
+      const coupe = (t, q) => {
+        for (let k = 1; k < 12; k++) {
+          const x = t.x1 + (t.x2 - t.x1) * k / 12, y = t.y1 + (t.y2 - t.y1) * k / 12;
+          if (x > q.x0 - 1 && x < q.x1 + 1 && y > q.y0 - 1 && y < q.y1 + 1) return true;
+        }
+        return false;
+      };
       const choix = items.map((it) => {
         const w = textWidth(svg, it.txt, it.fort) + 2;
         let best = null;
@@ -1639,10 +1654,19 @@ dash.calc('acces_creneau', {
               else if (ecart(b, o.p) < propre + 4) score += 300;
             });
             obst.forEach((q) => { if (q.x > b.x0 - 4 && q.x < b.x1 + 4 && q.y > b.y0 - 4 && q.y < b.y1 + 4) score += 10; });
+            // Un trait de rappel ne doit pas traverser une autre étiquette (ni l'inverse) : lecture confuse.
+            const e = bout(b, it.p);
+            if (Math.hypot(e.x - it.p.x, e.y - it.p.y) > 6) {
+              const t = { x1: it.p.x, y1: it.p.y, x2: e.x, y2: e.y };
+              poses.forEach((q) => { if (coupe(t, q)) score += 600; });
+            }
+            traits.forEach((t) => { if (coupe(t, b)) score += 600; });
             if (!best || score < best.score) best = { score, b };
           }
         }
         poses.push(best.b);
+        const e = bout(best.b, it.p);
+        if (Math.hypot(e.x - it.p.x, e.y - it.p.y) > 6) traits.push({ x1: it.p.x, y1: it.p.y, x2: e.x, y2: e.y });
         return { it, b: best.b };
       });
       const muted = cssVar('--color-fg-muted'), fg = cssVar('--color-fg'), panel = cssVar('--color-panel'), fs = cssVar('--cds-font-size-caption');
@@ -1706,9 +1730,9 @@ dash.calc('acces_creneau', {
       const tEch = lab.append('text').attr('x', sx + L + 6).attr('y', sy).attr('font-size', fs).attr('fill', muted).text(txtEch);
       occupes.push({ x0: sx - 2, y0: sy - 14, x1: sx + L + 10 + tEch.node().getComputedTextLength(), y1: sy + 4 });
       // Le carrefour de départ, où arrivent Le Péage et l'avenue Maurice-Thorez, n'a pas d'étiquette propre :
-      // les noms des deux accès suffisent et libèrent la place autour de l'Intermarché.
-      // Sur un écran étroit, le nom du feu est raccourci : l'Intermarché est nommé juste à côté.
-      const NOMS = { s2: { txt: 'Intermarché' }, s3: { txt: geo.W < 400 ? 'Feu, 1 km plus loin' : 'Feu, 1 km après l’Intermarché', fort: true }, s4: { txt: 'Basse-Jarrie', fort: true }, s5: { txt: 'Autopont de Jarrie' }, s6: { txt: 'Feu de Champagnier', fort: true }, s7: { txt: 'Fin du relevé' } };
+      // les noms des deux accès suffisent et libèrent la place autour du rond-point Muzet.
+      // Noms des lieux choisis par Michel le 14 octobre 2026 : rond-point Muzet, feu avant l'autopont.
+      const NOMS = { s2: { txt: 'Rond-point Muzet' }, s3: { txt: 'Feu avant l’autopont', fort: true }, s4: { txt: 'Basse-Jarrie', fort: true }, s5: { txt: 'Autopont de Jarrie' }, s6: { txt: 'Feu de Champagnier', fort: true }, s7: { txt: 'Fin du relevé' } };
       const items = troncons.filter((t) => NOMS[t.id]).map((t) => ({ p: geo.rn85.at(t.debut_m), txt: NOMS[t.id].txt, fort: !!NOMS[t.id].fort }));
       items.push({ p: geo.peage.at(0), txt: ACCES.peage, fort: false }, { p: geo.thorez.at(0), txt: ACCES.thorez, fort: false });
       items.push({ p: geo.rn85.at(geo.rn85.total), txt: 'vers Grenoble', fort: false, sansPoint: true, discret: true });
