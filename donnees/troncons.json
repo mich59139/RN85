@@ -1,0 +1,9 @@
+[
+{"id":"s1","ordre":1,"nom":"Av. Maurice-Thorez → rond-point Intermarché","zone":"Vizille → Basse-Jarrie","debut_m":0,"fin_m":247,"longueur_m":247},
+{"id":"s2","ordre":2,"nom":"Rond-point Intermarché → feu, 1 km plus loin","zone":"Vizille → Basse-Jarrie","debut_m":247,"fin_m":1300,"longueur_m":1053},
+{"id":"s3","ordre":3,"nom":"Feu, 1 km après l’Intermarché → Basse-Jarrie","zone":"Vizille → Basse-Jarrie","debut_m":1300,"fin_m":2407,"longueur_m":1107},
+{"id":"s4","ordre":4,"nom":"Basse-Jarrie → autopont de Jarrie","zone":"Basse-Jarrie → après le feu","debut_m":2407,"fin_m":4000,"longueur_m":1593},
+{"id":"s5","ordre":5,"nom":"Autopont → feu de Champagnier","zone":"Basse-Jarrie → après le feu","debut_m":4000,"fin_m":4365,"longueur_m":365},
+{"id":"s6","ordre":6,"nom":"Feu de Champagnier → fin de la zone relevée","zone":"Basse-Jarrie → après le feu","debut_m":4365,"fin_m":4914,"longueur_m":549},
+{"id":"s7","ordre":7,"nom":"Au-delà, vers Pont-de-Claix","zone":"Hors zone relevée","debut_m":4914,"fin_m":6077,"longueur_m":1163}
+]

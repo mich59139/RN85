@@ -1,0 +1,15 @@
+{
+  "name": "Bouchons RN85",
+  "short_name": "RN85",
+  "description": "Où et quand se forment les bouchons du matin sur la RN85, de Vizille vers Grenoble.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f5f1",
+  "theme_color": "#1d1c1a",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

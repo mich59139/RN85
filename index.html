@@ -1,0 +1,1757 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bouchons RN85</title>
+<meta name="description" content="Relevés du trafic du matin sur la RN85, de Vizille vers Grenoble : où et quand se forment les bouchons.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191816" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RN85">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+/* Jeu de couleurs et de mesures de la page (clair et sombre). */
+:root {
+  color-scheme: light dark;
+  --font-anthropic-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+  --font-anthropic-serif: "New York", ui-serif, "Iowan Old Style", Georgia, "Times New Roman", serif;
+  --color-bg: #f6f5f1;
+  --color-panel: #ffffff;
+  --color-fg: #1d1c1a;
+  --color-fg-muted: #6a675f;
+  --color-border-line: #e2e0da;
+  --color-bad: #c4402f;
+  --cds-chart-grid: #eceae5;
+  --cds-chart-axis: #b8b4ab;
+  --cds-chart-reference: #9f9b92;
+  --cds-surface-popover: #ffffff;
+  --cds-border: #dcd9d2;
+  --cds-shadow-popover: 0 6px 20px rgba(20, 18, 15, .14);
+  --cds-text-secondary: #6a675f;
+  --cds-gap-xs: 6px; --cds-gap-sm: 10px; --cds-gap-md: 14px; --cds-gap-lg: 20px; --cds-gap-xl: 30px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 20px;
+  --cds-radius: 10px;
+  --cds-font-size-caption: 12px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 24px;
+  --cds-font-weight-medium: 600;
+  --cds-dur-slow: 400ms; --cds-ease-out: cubic-bezier(.2, .8, .2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #191816;
+    --color-panel: #23221f;
+    --color-fg: #ecebe7;
+    --color-fg-muted: #a39f97;
+    --color-border-line: #393733;
+    --color-bad: #e5604f;
+    --cds-chart-grid: #2f2e2a;
+    --cds-chart-axis: #57544e;
+    --cds-chart-reference: #75716a;
+    --cds-surface-popover: #2c2b28;
+    --cds-border: #45423d;
+    --cds-shadow-popover: 0 6px 20px rgba(0, 0, 0, .5);
+    --cds-text-secondary: #a39f97;
+  }
+}
+/* Téléphone : marges plus serrées pour laisser la place aux graphiques. */
+@media (max-width: 600px) {
+  :root { --cds-pad-lg: 14px; --cds-gap-xl: 22px; --cds-gap-lg: 16px; --cds-font-size-title: 21px; --cds-font-size-body: 15px; }
+}
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); line-height: 1.45; }
+#dash-root {
+  max-width: 1180px; margin: 0 auto; display: grid; gap: var(--cds-gap-md);
+  padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(36px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+.rn-maj { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rn-maj.rn-vieux { color: var(--color-bad); }
+.rn-pied { margin: 0; padding-top: var(--cds-pad-md); border-top: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
+.dash-skeleton { color: transparent !important; background: var(--color-border-line); border-radius: 4px; animation: rn-pulse 1.4s ease-in-out infinite; }
+@keyframes rn-pulse { 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .dash-skeleton { animation: none; } }
+.rn-ecartees-liste { margin: var(--cds-gap-xs) 0 0; padding-left: 1.2rem; }
+</style>
+<style>
+.rn { --tr-vert: #1f9d55; --tr-orange: #f0961c; --tr-rouge: #e0362c; --tr-fonce: #8e1712; --tr-pale: #f6d58c; display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+.rn-head { display: grid; gap: var(--cds-gap-xs); max-width: 62rem; }
+.rn-title { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: calc(var(--cds-font-size-title) * 1.15); line-height: 1.15; margin: 0; text-wrap: balance; }
+.rn-scope { margin: 0; font-size: var(--cds-font-size-body); color: var(--color-fg-muted); }
+.rn-lede { margin: 0; font-size: var(--cds-font-size-body); line-height: 1.6; max-width: 68ch; }
+.rn-tabs { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs); border-bottom: 1px solid var(--color-border-line); }
+.rn-tabs button { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg-muted); background: transparent; border: 0; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: var(--cds-pad-sm) var(--cds-pad-md); cursor: pointer; }
+.rn-tabs button[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.rn-tabs button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.rn-page { display: grid; gap: var(--cds-gap-xl); }
+.rn-tiles { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.rn-tile { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-xs); align-content: start; }
+.rn-tile-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .01em; }
+.rn-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: calc(var(--cds-font-size-title) * 1.45); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.rn-when { font-size: var(--cds-font-size-body); }
+.rn-tile-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.45; }
+.rn-section { display: grid; gap: var(--cds-gap-md); }
+.rn-h2 { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.rn-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); min-width: 0; position: relative; }
+.rn-card-top { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: flex-start; justify-content: space-between; }
+.rn-card-top > div { min-width: 0; flex: 1 1 22rem; }
+.rn-card-title { margin: 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.rn-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; max-width: 75ch; }
+.rn-note b { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); }
+.rn-chart { position: relative; min-height: 120px; }
+.rn-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); overflow: hidden; }
+.rn-seg button { font: inherit; font-size: var(--cds-font-size-caption); background: transparent; color: var(--color-fg-muted); border: 0; border-right: 1px solid var(--color-border-line); padding: var(--cds-pad-xs) var(--cds-pad-sm); cursor: pointer; }
+.rn-seg button:last-child { border-right: 0; }
+.rn-seg button[aria-pressed="true"] { background: var(--color-bg); color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.rn-seg button:focus-visible { outline: 2px solid var(--color-fg); outline-offset: -2px; }
+.rn-field { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rn-field select { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); max-width: 100%; }
+.rn-field select:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+.rn-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); line-height: 1.45; white-space: nowrap; z-index: 2; }
+.rn-tip .rn-tip-h { color: var(--cds-text-secondary); }
+.rn-sw { display: inline-block; width: .75rem; height: .75rem; border-radius: 2px; margin-right: .35rem; vertical-align: -1px; }
+.rn-trait { display: inline-block; width: 1.1rem; height: 0; border-top: 2px solid currentColor; margin-right: .35rem; vertical-align: middle; }
+.rn-trait.rn-pointille { border-top-style: dashed; }
+.rn-stack { display: grid; gap: var(--cds-gap-lg); }
+.rn-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rn-legend span { display: inline-flex; align-items: center; }
+.rn-wrap { overflow-x: auto; }
+.rn-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.rn-table th { text-align: right; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: bottom; }
+.rn-table td { text-align: right; padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.rn-table th:first-child, .rn-table td:first-child { text-align: left; white-space: normal; }
+.rn-table tr.rn-out td { color: var(--color-fg-muted); }
+.rn-table td.rn-pic { font-weight: var(--cds-font-weight-medium); }
+.rn-mult { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+.rn-panel { display: grid; gap: var(--cds-gap-xs); min-width: 0; align-content: start; }
+.rn-panel-title { margin: 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); display: flex; align-items: center; }
+.rn-panel-pic { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rn-panel-pic b { color: var(--color-fg); font-weight: var(--cds-font-weight-medium); }
+.rn-method { display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); line-height: 1.6; max-width: 72ch; }
+.rn-method p, .rn-method ul { margin: 0; }
+.rn-method ul { padding-left: 1.2rem; display: grid; gap: var(--cds-gap-xs); }
+.rn-method h3 { margin: var(--cds-gap-sm) 0 0; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); }
+.rn-fail { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.rn-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.rn-map-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-sm) var(--cds-gap-md); }
+.rn-play { font: inherit; font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); color: var(--color-bg); background: var(--color-fg); border: 0; border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-md); cursor: pointer; min-width: 7.5rem; }
+.rn-play:focus-visible, #carte-temps:focus-visible { outline: 2px solid var(--color-fg); outline-offset: 2px; }
+#carte-temps { flex: 1 1 12rem; min-width: 8rem; accent-color: var(--tr-rouge); }
+.rn-clock { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; min-width: 5.5rem; text-align: right; }
+.rn-map-layout { display: grid; gap: var(--cds-gap-lg); grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); align-items: start; }
+.rn-map-col { display: grid; gap: var(--cds-gap-sm); min-width: 0; align-content: start; }
+.rn-map { position: relative; min-height: 280px; }
+.rn-map svg { display: block; }
+.rn-map .rn-bin { transition: none; }
+@media (prefers-reduced-motion: no-preference) { .rn-map .rn-bin { transition: stroke var(--cds-dur-slow) var(--cds-ease-out); } }
+.rn-map-read { display: flex; flex-wrap: wrap; gap: var(--cds-gap-xs) var(--cds-gap-lg); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+.rn-map-read b { font-weight: var(--cds-font-weight-medium); }
+.rn-muted { color: var(--color-fg-muted); }
+.rn-strip { min-height: 200px; position: relative; }
+.rn-strip rect.rn-strip-hit { cursor: pointer; }
+#et-type { min-height: 440px; }
+#et-jour-chart { min-height: 440px; }
+.rn-et-nom { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin-top: var(--cds-gap-sm); }
+</style>
+</head>
+<body>
+<div id="dash-root">
+<p class="rn-maj" id="rn-maj"></p>
+
+<div class="rn">
+  <header class="rn-head" id="haut">
+    <h1 class="rn-title">RN85 : où se forment les bouchons du matin ?</h1>
+    <p class="rn-scope">Sens Vizille → Grenoble · De 7 h à 9 h · <span data-source="synthese" data-field="matinees" data-row="0" class="dash-skeleton">—</span> matinées observées, du <span data-source="synthese" data-field="date_min" data-row="0" class="dash-skeleton">—</span> au <span data-source="synthese" data-field="date_max" data-row="0" class="dash-skeleton">—</span> 2026 · <span data-source="synthese" data-field="releves" data-row="0" class="dash-skeleton">—</span> relevés Google Maps</p>
+  </header>
+
+  <nav class="rn-tabs" role="tablist" aria-label="Parties du tableau de bord">
+    <button type="button" role="tab" id="onglet-comprendre" aria-controls="comprendre" data-tab="comprendre">A. Comprendre</button>
+    <button type="button" role="tab" id="onglet-comparer" aria-controls="comparer" data-tab="comparer">B. Comparer les matinées</button>
+    <button type="button" role="tab" id="onglet-explorer" aria-controls="explorer" data-tab="explorer">C. Explorer les données</button>
+  </nav>
+
+  <!-- ===================== A. COMPRENDRE ===================== -->
+  <section class="rn-page" id="comprendre" role="tabpanel" aria-labelledby="onglet-comprendre">
+    <p class="rn-lede">Deux files se forment chaque matin, chacune en amont d’un feu. À la sortie de Vizille, la file part de l’avenue Maurice-Thorez et s’étire jusqu’au feu situé 1 km après l’Intermarché : son pic atteint <b data-source="synthese" data-field="pic_vizille" data-row="0" class="dash-skeleton">—</b>. À l’approche du feu de Champagnier, depuis Basse-Jarrie, le pic atteint <b data-source="synthese" data-field="pic_feu" data-row="0" class="dash-skeleton">—</b>. Entre les deux, la route reste fluide : un bouchon d’au moins 50 m n’y apparaît que dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s3" class="dash-skeleton">—</span> des relevés.</p>
+
+    <div class="rn-tiles" id="chiffres">
+      <div class="rn-tile">
+        <div class="rn-tile-label">Sortie de Vizille · pic observé</div>
+        <div class="rn-big dash-skeleton" data-source="synthese" data-field="pic_vizille" data-row="0">—</div>
+        <div class="rn-when">le <span data-source="synthese" data-field="pic_vizille_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+        <div class="rn-tile-note">Pic de 800 m ou plus dans <span data-source="synthese" data-field="matinees_vizille_800" data-row="0">—</span> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span>. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_vizille" data-row="0">—</span>.</div>
+      </div>
+      <div class="rn-tile">
+        <div class="rn-tile-label">Approche du feu de Champagnier · pic observé</div>
+        <div class="rn-big dash-skeleton" data-source="synthese" data-field="pic_feu" data-row="0">—</div>
+        <div class="rn-when">le <span data-source="synthese" data-field="pic_feu_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+        <div class="rn-tile-note">Pic de 800 m ou plus dans <span data-source="synthese" data-field="matinees_feu_800" data-row="0">—</span> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span>. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_feu" data-row="0">—</span>.</div>
+      </div>
+      <div class="rn-tile">
+        <div class="rn-tile-label">Pire relevé · longueur cumulée</div>
+        <div class="rn-big dash-skeleton" data-source="synthese" data-field="max_zone" data-row="0">—</div>
+        <div class="rn-when">le <span data-source="synthese" data-field="max_jour" data-row="0">—</span> <span data-source="synthese" data-field="max_date" data-row="0">—</span> à <span data-source="synthese" data-field="max_heure" data-row="0">—</span><span class="rn-bis" data-bis="max" hidden> et le <span data-source="synthese" data-field="max_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="max_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="max_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+        <div class="rn-tile-note">Somme de files distinctes, pas une file continue : <span data-source="synthese" data-field="pire_vizille" data-row="0">—</span> à la sortie de Vizille, <span data-source="synthese" data-field="pire_feu" data-row="0">—</span> de Basse-Jarrie au feu de Champagnier, <span data-source="synthese" data-field="pire_apres" data-row="0">—</span> après ce feu et <span data-source="synthese" data-field="pire_autre" data-row="0">—</span> entre les deux.</div>
+      </div>
+    </div>
+
+    <section class="rn-section" id="ou">
+      <div class="rn-card">
+        <div>
+          <h2 class="rn-card-title" id="et-type-titre">Où et quand ça bouchonne : la matinée type</h2>
+          <p class="rn-note"><b>Comment lire :</b> de gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. De haut en bas, l’heure, de 7 h à 9 h. Chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus).</p>
+        </div>
+        <div class="rn-legend" id="et-type-legende"></div>
+        <div class="rn-chart" id="et-type" data-source="carte_releves troncons"></div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="heure">
+      <div class="rn-card">
+        <div>
+          <h2 class="rn-card-title">À quelle heure surviennent les pics</h2>
+          <p class="rn-note">Pour chaque zone, la courbe rouge donne la plus grande longueur en rouge relevée à chaque créneau de 5 minutes, toutes matinées confondues. La ligne grise en pointillés donne la moyenne au même créneau. Les trois graphiques ont la même échelle.</p>
+        </div>
+        <div class="rn-mult" id="pics" data-source="par_creneau">
+          <div class="rn-panel">
+            <h3 class="rn-panel-title">Sortie de Vizille</h3>
+            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_vizille" data-row="0">—</b> le <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+            <div class="rn-chart" id="pics-vizille" style="min-height: 230px"></div>
+          </div>
+          <div class="rn-panel">
+            <h3 class="rn-panel-title">Basse-Jarrie → feu de Champagnier</h3>
+            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_feu" data-row="0">—</b> le <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+            <div class="rn-chart" id="pics-feu" style="min-height: 230px"></div>
+          </div>
+          <div class="rn-panel">
+            <h3 class="rn-panel-title">Après le feu, jusque vers Pont-de-Claix</h3>
+            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_apres" data-row="0">—</b> le <span data-source="synthese" data-field="pic_apres_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_apres_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_apres" hidden> et le <span data-source="synthese" data-field="pic_apres_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_apres_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+            <div class="rn-chart" id="pics-apres" style="min-height: 230px"></div>
+          </div>
+        </div>
+        <div class="rn-legend" id="pics-legende"></div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="carte">
+      <div class="rn-card rn-map-card">
+        <div>
+          <h2 class="rn-card-title">La matinée en carte</h2>
+          <p class="rn-note">Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme ci-dessus. Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p>
+        </div>
+        <div class="rn-map-bar">
+          <label class="rn-field" for="carte-jour"><span>Matinée</span><select id="carte-jour"></select></label>
+          <button type="button" class="rn-play" id="carte-play" aria-label="Lancer l’animation">▶ Lecture</button>
+          <input type="range" id="carte-temps" min="0" max="24" step="1" value="8" aria-label="Heure du relevé">
+          <div class="rn-clock" id="carte-heure" aria-live="polite">—</div>
+        </div>
+        <div class="rn-map-layout">
+          <div class="rn-map-col">
+            <div class="rn-map" id="carte-svg" data-source="carte_trace carte_releves troncons acces_trace acces_releves"></div>
+            <div class="rn-legend" id="carte-legende"></div>
+          </div>
+          <div class="rn-map-col">
+            <div class="rn-map-read" id="carte-lecture" data-source="releves acces_releves par_creneau acces_creneau"></div>
+            <h3 class="rn-panel-title" id="carte-bande-titre"></h3>
+            <div class="rn-strip" id="carte-bande" data-source="releves par_creneau"></div>
+            <p class="rn-note" id="carte-bande-note"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="synthese-troncons">
+      <div class="rn-card">
+        <div>
+          <h2 class="rn-card-title">Tronçon par tronçon</h2>
+          <p class="rn-note">Pic observé : plus grande longueur en rouge relevée sur le tronçon. Relevés avec bouchon : au moins 50 m du tronçon en rouge. Moyennes arrondies à 10 m près. Le détail complet se trouve dans l’onglet C.</p>
+        </div>
+        <div class="rn-wrap">
+          <table class="rn-table" id="table-synthese" data-source="par_troncon" data-row-key="id">
+            <thead><tr>
+              <th data-field="nom">Tronçon</th>
+              <th data-field="max_m">Pic observé</th>
+              <th data-field="moyenne_m">Rouge moyen</th>
+              <th data-field="pct_bouchon">Relevés avec bouchon</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ===================== B. COMPARER ===================== -->
+  <section class="rn-page" id="comparer" role="tabpanel" aria-labelledby="onglet-comparer" hidden>
+    <section class="rn-section" id="pics-matinees">
+      <div class="rn-card">
+        <div>
+          <h2 class="rn-card-title">Le pic de chaque matinée</h2>
+          <p class="rn-note">Un graphique par zone, à la même échelle. Chaque barre donne la plus grande longueur en rouge relevée dans la matinée. Le trait horizontal sur la barre marque la moyenne de cette matinée. Une barre pâle signale une matinée incomplète (moins de 20 relevés sur 25), dont le vrai pic a pu échapper au relevé.</p>
+        </div>
+        <div class="rn-legend" id="barres-legende"></div>
+        <div class="rn-stack" id="barres" data-source="par_jour">
+          <div class="rn-panel">
+            <h3 class="rn-panel-title">Sortie de Vizille</h3>
+            <div class="rn-chart" id="barres-vizille" style="min-height: 240px"></div>
+          </div>
+          <div class="rn-panel">
+            <h3 class="rn-panel-title">Basse-Jarrie → feu de Champagnier</h3>
+            <div class="rn-chart" id="barres-feu" style="min-height: 240px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="et-matinee">
+      <div class="rn-card">
+        <div class="rn-card-top">
+          <div>
+            <h2 class="rn-card-title" id="et-jour-titre">Une matinée, minute par minute</h2>
+            <p class="rn-note">Même lecture que le diagramme de l’onglet A, pour une seule matinée : chaque case montre la couleur relevée sur Google Maps à ce moment-là. Une case hachurée signale l’absence de relevé.</p>
+          </div>
+          <label class="rn-field" for="et-jour"><span>Matinée</span><select id="et-jour"></select></label>
+        </div>
+        <div class="rn-legend" id="et-jour-legende"></div>
+        <div class="rn-chart" id="et-jour-chart" data-source="carte_releves troncons"></div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="grille-matinees">
+      <div class="rn-card">
+        <div class="rn-card-top">
+          <div>
+            <h2 class="rn-card-title">Longueur en rouge à chaque relevé</h2>
+            <p class="rn-note">Une ligne par matinée, une case par relevé. Plus la case est foncée, plus le rouge est long. L’échelle est la même pour toutes les matinées. Une case vide signale un relevé manquant, jamais une absence de bouchon.</p>
+          </div>
+          <div class="rn-seg" role="group" aria-label="Zone" id="zone">
+            <button type="button" data-v="ensemble">Zone relevée</button>
+            <button type="button" data-v="vizille">Sortie de Vizille</button>
+            <button type="button" data-v="feu">Jarrie → feu</button>
+          </div>
+        </div>
+        <div class="rn-chart" id="grille" data-source="releves"></div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ===================== C. EXPLORER ===================== -->
+  <section class="rn-page" id="explorer" role="tabpanel" aria-labelledby="onglet-explorer" hidden>
+    <section class="rn-section" id="troncons-detail">
+      <div class="rn-card">
+        <div>
+          <h2 class="rn-card-title">Tableau complet par tronçon</h2>
+          <p class="rn-note">Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés.</p>
+        </div>
+        <div class="rn-wrap">
+          <table class="rn-table" id="table-troncons" data-source="par_troncon" data-row-key="id">
+            <thead><tr>
+              <th data-field="nom">Tronçon</th>
+              <th data-field="longueur_m">Longueur</th>
+              <th data-field="max_m">Pic observé</th>
+              <th data-field="moyenne_m">Rouge moyen</th>
+              <th data-field="part">Part du tronçon</th>
+              <th data-field="pct_bouchon">Avec bouchon</th>
+              <th data-field="pct_sature">Saturé</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="acces">
+      <h2 class="rn-h2">Les accès à la RN85 dans Vizille</h2>
+      <p class="rn-lede">Depuis Le Péage, la D1091 reste fluide jusqu’à l’entrée de Vizille. Le rouge n’apparaît que sur la fin du parcours, juste avant le carrefour avec la RN85 : c’est la file de la sortie de Vizille qui remonte. Même chose sur l’avenue Maurice-Thorez, où seule l’approche du carrefour se bloque. Ces relevés existent depuis le <span data-source="acces_synthese" data-field="date_min" data-row="0">—</span> : <span data-source="acces_synthese" data-field="releves" data-row="0">—</span> relevés sur <span data-source="acces_synthese" data-field="matinees" data-row="0">—</span> matinées.</p>
+      <div class="rn-tiles">
+        <div class="rn-tile">
+          <div class="rn-tile-label">D1091 depuis Le Péage · pic observé</div>
+          <div class="rn-big dash-skeleton" data-source="acces_synthese" data-field="pic_peage" data-row="0">—</div>
+          <div class="rn-when">le <span data-source="acces_synthese" data-field="pic_peage_jour" data-row="0">—</span> <span data-source="acces_synthese" data-field="pic_peage_date" data-row="0">—</span> à <span data-source="acces_synthese" data-field="pic_peage_heure" data-row="0">—</span></div>
+          <div class="rn-tile-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_peage" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_peage" data-row="0">—</span>.</div>
+        </div>
+        <div class="rn-tile">
+          <div class="rn-tile-label">Avenue Maurice-Thorez · pic observé</div>
+          <div class="rn-big dash-skeleton" data-source="acces_synthese" data-field="pic_thorez" data-row="0">—</div>
+          <div class="rn-when">le <span data-source="acces_synthese" data-field="pic_thorez_jour" data-row="0">—</span> <span data-source="acces_synthese" data-field="pic_thorez_date" data-row="0">—</span> à <span data-source="acces_synthese" data-field="pic_thorez_heure" data-row="0">—</span></div>
+          <div class="rn-tile-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_thorez" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_thorez" data-row="0">—</span>.</div>
+        </div>
+      </div>
+      <div class="rn-card">
+        <div class="rn-card-top">
+          <div>
+            <h3 class="rn-card-title">Les deux accès, minute par minute</h3>
+            <p class="rn-note">Même lecture que le diagramme principal : de gauche à droite, la route jusqu’au carrefour avec la RN85 ; de haut en bas, l’heure. Les deux accès sont dessinés à la même échelle.</p>
+          </div>
+          <label class="rn-field" for="acces-jour"><span>Matinée</span><select id="acces-jour"></select></label>
+        </div>
+        <div class="rn-legend" id="acces-legende"></div>
+        <div class="rn-et-nom">D1091 depuis Le Péage de Vizille</div>
+        <div class="rn-chart" id="et-peage" data-source="acces_releves acces_trace"></div>
+        <div class="rn-et-nom">Avenue Maurice-Thorez</div>
+        <div class="rn-chart" id="et-thorez" data-source="acces_releves acces_trace"></div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="matinees-detail">
+      <div class="rn-card">
+        <div>
+          <h2 class="rn-card-title">Résumé de chaque matinée</h2>
+          <p class="rn-note">Pour chaque matinée : le pic et son heure dans chaque zone, puis la moyenne. Quand le pic revient plusieurs fois dans la matinée, l’heure indiquée est la première. Le pire relevé additionne toute la longueur en rouge de la zone relevée au même moment.</p>
+        </div>
+        <div class="rn-wrap">
+          <table class="rn-table" id="table-jours" data-source="par_jour" data-row-key="date">
+            <thead><tr>
+              <th data-field="date">Matinée</th>
+              <th data-field="releves">Relevés</th>
+              <th data-field="vizille_pic">Vizille, pic</th>
+              <th data-field="vizille_pic_heure">à</th>
+              <th data-field="vizille">Vizille, moyenne</th>
+              <th data-field="feu_pic">Jarrie → feu, pic</th>
+              <th data-field="feu_pic_heure">à</th>
+              <th data-field="feu">Jarrie → feu, moyenne</th>
+              <th data-field="pire_m">Pire relevé cumulé</th>
+              <th data-field="pire_heure">à</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="methode">
+      <h2 class="rn-h2">Méthode et limites</h2>
+      <div class="rn-method">
+        <h3>Ce qui est mesuré</h3>
+        <p>Chaque capture Google Maps (couche trafic, cadrage fixe, toutes les 5 minutes de 7 h à 9 h en semaine) est lue le long de l’axe de la RN85, du carrefour de l’avenue Maurice-Thorez à Vizille jusqu’après le feu de Champagnier, puis au-delà vers Pont-de-Claix. Une portion compte comme rouge quand la chaussée y est rouge ou rouge foncé. Les morceaux de moins de 50 m sont écartés, pour ne pas confondre une étiquette de la carte avec un bouchon. Les temps de parcours ne sont pas utilisés.</p>
+        <h3>Définitions</h3>
+        <ul>
+          <li><b>Pic observé</b> : plus grande longueur en rouge relevée, avec le jour et l’heure.</li>
+          <li><b>Rouge moyen</b> : moyenne de tous les relevés, relevés sans rouge compris, arrondie à 10 m près. La somme de deux tronçons arrondis peut donc différer de 10 m du total de la zone.</li>
+          <li><b>Avec bouchon</b> : au moins 50 m du tronçon en rouge. <b>Saturé</b> : la moitié du tronçon ou plus en rouge.</li>
+          <li><b>Longueur cumulée</b> : somme de toutes les portions rouges de la zone au même moment. Elle peut additionner plusieurs files distinctes.</li>
+          <li><b>Matinée incomplète</b> : moins de 20 relevés sur 25, parce que le relevé a commencé tard, s’est arrêté tôt ou a eu des trous.</li>
+        </ul>
+        <h3>Choix de la moyenne</h3>
+        <p>Toutes les moyennes de la page donnent le même poids à chaque relevé (méthode A). Comme certaines matinées sont incomplètes, le tableau ci-dessous compare avec deux autres façons de calculer. Les pics, eux, ne dépendent pas de ce choix.</p>
+        <div class="rn-wrap">
+          <table class="rn-table" id="table-methodes" data-source="methodes" data-row-key="indicateur">
+            <thead><tr>
+              <th data-field="indicateur">Rouge moyen</th>
+              <th data-field="tous_releves">A. Tous les relevés (retenue)</th>
+              <th data-field="moyenne_matinees">B. Moyenne des matinées</th>
+              <th data-field="matinees_completes">C. Matinées complètes seulement</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <h3>Relevés écartés</h3>
+        <p id="rn-ecartees">Le 12 octobre, les captures de 7 h 45 et de 8 h 00 sont des copies de la capture précédente : la carte Google n’avait pas été rafraîchie. Elles sont écartées des calculs, comme la capture large de 7 h 45 pour les accès. Les fichiers d’origine sont conservés. Aucun autre doublon n’a été trouvé.</p>
+        <h3>Limites</h3>
+        <ul>
+          <li>Les résultats valent pour les matinées observées. Ils ne mesurent pas tous les jours de circulation.</li>
+          <li>Google Maps indique un état de la circulation, pas un nombre de véhicules.</li>
+          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et juste avant l’autopont de Jarrie. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
+          <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres clés et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
+          <li>La zone « après le feu » dépasse la zone relevée, en direction de Pont-de-Claix.</li>
+          <li>Tôt le matin, Google n’affiche parfois aucune couleur sur l’avenue Maurice-Thorez. Ces relevés sont comptés comme manquants pour l’avenue, jamais comme fluides.</li>
+          <li>Les longueurs suivent de très près la colonne « Longueur en rouge » du tableau Historique RN85, en un peu plus bas, car elles ne comptent que l’axe de la route.</li>
+        </ul>
+      </div>
+    </section>
+  </section>
+</div>
+<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes de 7 h à 9 h en semaine, sens Vizille → Grenoble, analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet C.</footer>
+</div>
+<script src="d3.v7.min.js"></script>
+<script>
+// Moteur de la page autonome : charge les fichiers de données, fait les calculs
+// déclarés plus bas (dash.calc) et prévient les graphiques quand tout est prêt.
+(function () {
+  'use strict';
+  const BASE = 'donnees/';
+  const SOURCES = ['releves', 'carte_releves', 'acces_releves', 'troncons', 'carte_trace', 'acces_trace'];
+  const DEFAUTS = { zone: 'ensemble', jour: 'pire', jour_acces: 'type' };
+  const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+  const etat = {};
+  const calcs = {};
+  const rappels = [];
+  let params = Object.assign({}, DEFAUTS);
+  try {
+    const p = JSON.parse(localStorage.getItem('rn85-reglages') || 'null');
+    if (p && typeof p === 'object') params = Object.assign(params, p);
+  } catch (e) { /* réglages non mémorisés : sans importance */ }
+  SOURCES.forEach((id) => { etat[id] = { status: 'loading', data: null }; });
+
+  const prevenir = () => rappels.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
+
+  function calculer() {
+    // Les calculs ne dépendent que des fichiers chargés : un seul passage suffit.
+    for (const [id, spec] of Object.entries(calcs)) {
+      const entrees = spec.inputs.map((i) => etat[i] || { status: 'loading' });
+      if (entrees.some((d) => d.status === 'error')) etat[id] = { status: 'error', data: null };
+      else if (entrees.every((d) => d.status === 'ok')) {
+        try { etat[id] = { status: 'ok', data: spec.fn(...entrees.map((d) => d.data)) }; }
+        catch (e) { console.error(id, e); etat[id] = { status: 'error', data: null }; }
+      } else etat[id] = { status: 'loading', data: null };
+    }
+  }
+
+  window.dash = {
+    colors: ['#e0362c', '#8e1712', '#f0961c', '#6a675f'],
+    calc(id, spec) { calcs[id] = spec; etat[id] = { status: 'loading', data: null }; },
+    data(id) { return etat[id] || { status: 'loading', data: null }; },
+    onData(cb) { rappels.push(cb); },
+    params() { return params; },
+    setParams(p) {
+      params = Object.assign({}, params, p);
+      try { localStorage.setItem('rn85-reglages', JSON.stringify(params)); } catch (e) { /* sans importance */ }
+      prevenir();
+    },
+    setLink(id) { try { history.replaceState(null, '', '#' + id); } catch (e) { /* sans importance */ } },
+  };
+
+  function lireJSON(nom) {
+    return fetch(BASE + nom + '.json', { cache: 'no-cache' }).then((r) => {
+      if (!r.ok) throw new Error(nom + ' : ' + r.status);
+      return r.json();
+    });
+  }
+
+  function dateLongue(d) {
+    const j = d.getDate();
+    return JOURS[d.getDay()] + ' ' + j + (j === 1 ? 'er' : '') + ' ' + MOIS[d.getMonth()] + ' ' + d.getFullYear();
+  }
+
+  function afficherInfos(infos) {
+    const el = document.getElementById('rn-maj');
+    if (el && infos && infos.maj) {
+      const d = new Date(infos.maj);
+      if (!isNaN(d)) {
+        const texte = 'Mis à jour le ' + dateLongue(d) + ' à ' + d.getHours() + ' h ' + String(d.getMinutes()).padStart(2, '0');
+        const jours = (Date.now() - d.getTime()) / 864e5;
+        // Plus de 4 jours sans mise à jour : quelque chose a sans doute bloqué sur le Mac.
+        if (jours > 4) { el.textContent = texte + '. Les relevés des derniers jours manquent peut-être.'; el.classList.add('rn-vieux'); }
+        else el.textContent = texte + '.';
+      }
+    }
+    const p = document.getElementById('rn-ecartees');
+    if (p && infos && Array.isArray(infos.ecartees)) {
+      const RAISONS = {
+        copie: 'copie de la capture précédente, la carte Google n’avait pas été rafraîchie',
+        illisible: 'capture illisible, carte incomplète ou mal chargée',
+        format: 'capture d’un format inattendu',
+        sans_couleur_thorez: 'aucune couleur sur l’avenue Maurice-Thorez, relevé manquant pour cette avenue seulement',
+        sans_couleur_peage: 'aucune couleur sur la route du Péage, relevé manquant pour cette route seulement',
+      };
+      const bloc = document.createElement('div');
+      const intro = document.createElement('p');
+      if (!infos.ecartees.length) intro.textContent = 'Aucune capture n’a été écartée.';
+      else {
+        intro.textContent = 'Ces captures sont écartées des calculs, en tout ou en partie. Les fichiers d’origine sont conservés.';
+        const ul = document.createElement('ul');
+        ul.className = 'rn-ecartees-liste';
+        infos.ecartees.forEach((e) => {
+          const li = document.createElement('li');
+          const d = new Date(e.date + 'T12:00:00');
+          const h = e.heure.split(':');
+          li.textContent = d.getDate() + (d.getDate() === 1 ? 'er' : '') + ' ' + MOIS[d.getMonth()] + ' à ' + Number(h[0]) + ' h ' + h[1]
+            + (e.capture === 'large' ? ' (capture des accès)' : '') + ' : ' + (RAISONS[e.raison] || e.raison) + '.';
+          ul.appendChild(li);
+        });
+        bloc.append(intro, ul);
+      }
+      if (!bloc.childNodes.length) bloc.appendChild(intro);
+      p.replaceWith(bloc);
+    }
+  }
+
+  function charger() {
+    lireJSON('infos').then(afficherInfos).catch(() => { /* page utilisable sans ces informations */ });
+    Promise.all(SOURCES.map((id) => lireJSON(id)
+      .then((d) => { etat[id] = { status: 'ok', data: d }; })
+      .catch((e) => { console.error(e); etat[id] = { status: 'error', data: null }; })))
+      .then(() => { calculer(); prevenir(); });
+  }
+
+  // Redessiner après un changement de taille (rotation du téléphone) ou de thème clair / sombre.
+  let minuterie = null;
+  const redessiner = () => { clearTimeout(minuterie); minuterie = setTimeout(prevenir, 200); };
+  window.addEventListener('resize', redessiner);
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redessiner); } catch (e) { /* anciens navigateurs */ }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', charger);
+  else setTimeout(charger, 0);
+})();
+</script>
+
+<script>
+dash.calc('synthese', {
+  inputs: ['releves'],
+  title: 'Synthèse : pics et moyennes',
+  description: 'Pics et moyennes de la longueur en rouge : sortie de Vizille (tronçons 1 et 2), Basse-Jarrie → feu de Champagnier (tronçons 4 et 5), après ce feu (tronçons 6 et 7), zone relevée (tronçons 1 à 6). Quand le même pic est atteint une autre matinée, la date de cette autre matinée et le nombre de matinées concernées sont aussi donnés.',
+  fn: (releves) => {
+    const vizille = (r) => r.rouge_s1 + r.rouge_s2;
+    const feu = (r) => r.rouge_s4 + r.rouge_s5;
+    const apres = (r) => r.rouge_s6 + r.rouge_s7;
+    const zone = (r) => r.rouge_s1 + r.rouge_s2 + r.rouge_s3 + r.rouge_s4 + r.rouge_s5 + r.rouge_s6;
+    const moyenne = (f) => Math.round(releves.reduce((s, r) => s + f(r), 0) / releves.length / 10) * 10;
+    const pic = (f) => releves.reduce((a, r) => (f(r) > f(a) ? r : a), releves[0]);
+    const dates = Array.from(new Set(releves.map((r) => r.date))).sort();
+    const picsDuJour = (f) => dates.map((d) => Math.max(...releves.filter((r) => r.date === d).map(f)));
+    const pv = pic(vizille), pf = pic(feu), pa = pic(apres), pz = pic(zone);
+    // Même pic atteint une autre matinée : première occurrence sur une autre date, et nombre de matinées concernées.
+    const egal = (prefixe, f, top) => {
+      const m = f(top);
+      const r = releves.find((x) => f(x) === m && x.date !== top.date);
+      return {
+        [prefixe + '_bis_jour']: r ? r.jour : null, [prefixe + '_bis_date']: r ? r.date : null, [prefixe + '_bis_heure']: r ? r.heure : null,
+        [prefixe + '_nb']: new Set(releves.filter((x) => f(x) === m).map((x) => x.date)).size,
+      };
+    };
+    return [{
+      releves: releves.length, matinees: dates.length, date_min: dates[0], date_max: dates[dates.length - 1],
+      moy_zone: moyenne(zone), moy_vizille: moyenne(vizille), moy_feu: moyenne(feu),
+      pic_vizille: vizille(pv), pic_vizille_jour: pv.jour, pic_vizille_date: pv.date, pic_vizille_heure: pv.heure,
+      ...egal('pic_vizille', vizille, pv),
+      pic_feu: feu(pf), pic_feu_jour: pf.jour, pic_feu_date: pf.date, pic_feu_heure: pf.heure,
+      ...egal('pic_feu', feu, pf),
+      pic_apres: apres(pa), pic_apres_jour: pa.jour, pic_apres_date: pa.date, pic_apres_heure: pa.heure,
+      ...egal('pic_apres', apres, pa),
+      matinees_vizille_800: picsDuJour(vizille).filter((v) => v >= 800).length,
+      matinees_feu_800: picsDuJour(feu).filter((v) => v >= 800).length,
+      max_zone: zone(pz), max_jour: pz.jour, max_date: pz.date, max_heure: pz.heure, max_creneau: pz.creneau,
+      ...egal('max', zone, pz),
+      pire_vizille: vizille(pz), pire_feu: feu(pz), pire_apres: pz.rouge_s6, pire_autre: pz.rouge_s3,
+    }];
+  },
+});
+
+dash.calc('par_troncon', {
+  inputs: ['releves', 'troncons'],
+  title: 'Rouge par tronçon',
+  description: 'Pour chaque tronçon : pic observé, rouge moyen (tous les relevés), part du tronçon, part des relevés avec au moins 50 m en rouge et part des relevés avec la moitié du tronçon ou plus en rouge.',
+  fn: (releves, troncons) => troncons.map((t) => {
+    const v = releves.map((r) => r['rouge_' + t.id]);
+    const n = v.length;
+    const moyenne = Math.round(v.reduce((a, b) => a + b, 0) / n / 10) * 10;
+    return {
+      id: t.id, ordre: t.ordre, nom: t.nom, zone: t.zone, longueur_m: t.longueur_m,
+      max_m: Math.max(...v),
+      moyenne_m: moyenne,
+      part: moyenne / t.longueur_m,
+      pct_bouchon: v.filter((x) => x >= 50).length / n,
+      pct_sature: v.filter((x) => x >= t.longueur_m / 2).length / n,
+    };
+  }),
+});
+
+dash.calc('par_creneau', {
+  inputs: ['releves'],
+  title: 'Pics et moyennes par créneau',
+  description: 'À chaque créneau de 5 minutes, toutes matinées confondues : longueur en rouge maximale (avec le jour) et moyenne, pour la sortie de Vizille, Basse-Jarrie → feu et après le feu.',
+  fn: (releves) => {
+    const zones = {
+      vizille: (r) => r.rouge_s1 + r.rouge_s2,
+      feu: (r) => r.rouge_s4 + r.rouge_s5,
+      apres: (r) => r.rouge_s6 + r.rouge_s7,
+      deux: (r) => r.rouge_s1 + r.rouge_s2 + r.rouge_s4 + r.rouge_s5,
+    };
+    const groupes = {};
+    for (const r of releves) (groupes[r.creneau] = groupes[r.creneau] || []).push(r);
+    return Object.keys(groupes).sort().map((c) => {
+      const rs = groupes[c];
+      const ligne = { creneau: c, releves: rs.length };
+      for (const [k, f] of Object.entries(zones)) {
+        const m = rs.reduce((a, r) => (f(r) > f(a) ? r : a), rs[0]);
+        ligne[k] = Math.round(rs.reduce((s, r) => s + f(r), 0) / rs.length / 10) * 10;
+        ligne[k + '_max'] = f(m);
+        ligne[k + '_max_date'] = m.date;
+        ligne[k + '_max_jour'] = m.jour;
+      }
+      return ligne;
+    });
+  },
+});
+
+dash.calc('par_jour', {
+  inputs: ['releves'],
+  title: 'Pics et moyennes de chaque matinée',
+  description: 'Pour chaque matinée : nombre de relevés, matinée complète ou non (20 relevés ou plus), pic et heure du pic puis moyenne pour la sortie de Vizille, Basse-Jarrie → feu et après le feu, pire relevé cumulé sur la zone relevée.',
+  fn: (releves) => {
+    const zones = {
+      vizille: (r) => r.rouge_s1 + r.rouge_s2,
+      feu: (r) => r.rouge_s4 + r.rouge_s5,
+      apres: (r) => r.rouge_s6 + r.rouge_s7,
+    };
+    const zone = (r) => r.rouge_s1 + r.rouge_s2 + r.rouge_s3 + r.rouge_s4 + r.rouge_s5 + r.rouge_s6;
+    const groupes = {};
+    for (const r of releves) (groupes[r.date] = groupes[r.date] || []).push(r);
+    return Object.keys(groupes).sort().map((d) => {
+      const rs = groupes[d];
+      const ligne = { date: d, jour: rs[0].jour, releves: rs.length, complete: rs.length >= 20 };
+      for (const [k, f] of Object.entries(zones)) {
+        const m = rs.reduce((a, r) => (f(r) > f(a) ? r : a), rs[0]);
+        ligne[k + '_pic'] = f(m);
+        ligne[k + '_pic_heure'] = m.heure;
+        ligne[k] = Math.round(rs.reduce((s, r) => s + f(r), 0) / rs.length / 10) * 10;
+      }
+      const pire = rs.reduce((a, r) => (zone(r) > zone(a) ? r : a), rs[0]);
+      ligne.pire_m = zone(pire);
+      ligne.pire_heure = pire.heure;
+      return ligne;
+    });
+  },
+});
+
+dash.calc('methodes', {
+  inputs: ['releves'],
+  title: 'Comparaison des façons de calculer la moyenne',
+  description: 'Rouge moyen calculé de trois façons : A sur tous les relevés (retenue), B en faisant la moyenne des moyennes de chaque matinée, C sur les seules matinées complètes (20 relevés ou plus).',
+  fn: (releves) => {
+    const zones = [
+      ['Sortie de Vizille', (r) => r.rouge_s1 + r.rouge_s2],
+      ['Basse-Jarrie → feu', (r) => r.rouge_s4 + r.rouge_s5],
+      ['Zone relevée', (r) => r.rouge_s1 + r.rouge_s2 + r.rouge_s3 + r.rouge_s4 + r.rouge_s5 + r.rouge_s6],
+    ];
+    const arr = (x) => Math.round(x / 10) * 10;
+    const moy = (rs, f) => rs.reduce((s, r) => s + f(r), 0) / rs.length;
+    const groupes = {};
+    for (const r of releves) (groupes[r.date] = groupes[r.date] || []).push(r);
+    const jours = Object.values(groupes);
+    const completes = jours.filter((rs) => rs.length >= 20).flat();
+    return zones.map(([nom, f], i) => ({
+      indicateur: nom, ordre: i + 1,
+      tous_releves: arr(moy(releves, f)),
+      moyenne_matinees: arr(jours.reduce((s, rs) => s + moy(rs, f), 0) / jours.length),
+      matinees_completes: arr(moy(completes, f)),
+    }));
+  },
+});
+
+dash.calc('matinee_type', {
+  inputs: ['carte_releves'],
+  title: 'Matinée type, rouge par portion de 100 m',
+  description: 'Pour chaque créneau de 5 minutes et chaque portion de 100 m de la RN85, nombre de matinées relevées et part de ces matinées où la portion était en rouge.',
+  fn: (carte_releves) => {
+    const groupes = {};
+    for (const r of carte_releves) (groupes[r.creneau] = groupes[r.creneau] || []).push(r);
+    return Object.keys(groupes).sort().map((c) => {
+      const rs = groupes[c];
+      const n = rs[0].rouge.length;
+      const part = [];
+      for (let i = 0; i < n; i++) part.push(rs.filter((r) => r.rouge[i] === '1').length / rs.length);
+      return { creneau: c, matinees: rs.length, part };
+    });
+  },
+});
+
+dash.calc('acces_type', {
+  inputs: ['acces_releves'],
+  title: 'Matinée type des accès',
+  description: 'Pour chaque créneau et chaque portion de 100 m des deux accès, nombre de matinées relevées et part de ces matinées où la portion était en rouge. Un accès sans couleur sur la carte compte comme relevé manquant, pas comme fluide.',
+  fn: (acces_releves) => {
+    const groupes = {};
+    for (const r of acces_releves) (groupes[r.creneau] = groupes[r.creneau] || []).push(r);
+    const parts = (rs, cle) => {
+      const ok = rs.filter((r) => r[cle]);
+      if (!ok.length) return { n: 0, part: null };
+      const n = ok[0][cle].length, out = [];
+      for (let i = 0; i < n; i++) out.push(ok.filter((r) => r[cle][i] === '1').length / ok.length);
+      return { n: ok.length, part: out };
+    };
+    return Object.keys(groupes).sort().map((c) => {
+      const t = parts(groupes[c], 'bins_thorez'), p = parts(groupes[c], 'bins_peage');
+      return { creneau: c, matinees: groupes[c].length, matinees_thorez: t.n, matinees_peage: p.n, thorez: t.part, peage: p.part };
+    });
+  },
+});
+
+dash.calc('acces_synthese', {
+  inputs: ['acces_releves'],
+  title: 'Synthèse des accès',
+  description: 'Depuis Le Péage et sur l’avenue Maurice-Thorez : pic observé (jour et heure), rouge moyen par relevé et part des relevés avec au moins 50 m de rouge, calculés sur les relevés où l’accès a une couleur sur la carte.',
+  fn: (acces_releves) => {
+    const valides = (k) => acces_releves.filter((r) => r['rouge_' + k] != null);
+    const moy = (k) => { const v = valides(k); return v.length ? Math.round(v.reduce((s, r) => s + r['rouge_' + k], 0) / v.length / 10) * 10 : null; };
+    const part = (k) => { const v = valides(k); return v.length ? v.filter((r) => r['rouge_' + k] >= 50).length / v.length : null; };
+    const pic = (k) => valides(k).reduce((a, r) => (a == null || r['rouge_' + k] > a['rouge_' + k] ? r : a), null);
+    const dates = Array.from(new Set(acces_releves.map((r) => r.date))).sort();
+    const pp = pic('peage') || {}, pt = pic('thorez') || {};
+    return [{
+      releves: acces_releves.length, matinees: dates.length, date_min: dates[0],
+      releves_peage: valides('peage').length, releves_thorez: valides('thorez').length,
+      moy_peage: moy('peage'), moy_thorez: moy('thorez'), pct_peage: part('peage'), pct_thorez: part('thorez'),
+      pic_peage: pp.rouge_peage, pic_peage_jour: pp.jour, pic_peage_date: pp.date, pic_peage_heure: pp.heure,
+      pic_thorez: pt.rouge_thorez, pic_thorez_jour: pt.jour, pic_thorez_date: pt.date, pic_thorez_heure: pt.heure,
+    }];
+  },
+});
+
+dash.calc('acces_creneau', {
+  inputs: ['acces_releves'],
+  title: 'Pics et moyennes des accès par créneau',
+  description: 'À chaque créneau de 5 minutes : longueur en rouge maximale et moyenne, depuis Le Péage et sur l’avenue Maurice-Thorez.',
+  fn: (acces_releves) => {
+    const groupes = {};
+    for (const r of acces_releves) (groupes[r.creneau] = groupes[r.creneau] || []).push(r);
+    return Object.keys(groupes).sort().map((c) => {
+      const rs = groupes[c];
+      const val = (k) => rs.map((r) => r['rouge_' + k]).filter((v) => v != null);
+      const moy = (k) => { const v = val(k); return v.length ? Math.round(v.reduce((s, x) => s + x, 0) / v.length / 10) * 10 : null; };
+      const max = (k) => { const v = val(k); return v.length ? Math.max(...v) : null; };
+      return { creneau: c, releves: rs.length, peage: moy('peage'), peage_max: max('peage'), thorez: moy('thorez'), thorez_max: max('thorez') };
+    });
+  },
+});
+</script>
+
+<script>
+(function () {
+  // ================= Outils =================
+  const loc = d3.formatLocale({ decimal: ',', thousands: ' ', grouping: [3], currency: ['', ' €'] });
+  const fInt = loc.format(',');
+  const fKm = loc.format(',.1f');
+  const metres = (v) => (v == null || isNaN(v) ? '—' : fInt(Math.round(v)) + ' m');
+  const pct = (v) => (v == null || isNaN(v) ? '—' : Math.round(v * 100) + ' %');
+  const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  const MOISC = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const JC = { lundi: 'lun.', mardi: 'mar.', mercredi: 'mer.', jeudi: 'jeu.', vendredi: 'ven.', samedi: 'sam.', dimanche: 'dim.' };
+  const dateLong = (d) => { if (!d) return '—'; const p = d.split('-').map(Number); return p[2] + (p[2] === 1 ? 'er' : '') + ' ' + MOIS[p[1] - 1]; };
+  const dateCourte = (d, jour) => { const p = d.split('-').map(Number); return (jour ? JC[jour] + ' ' : '') + p[2] + ' ' + MOISC[p[1] - 1]; };
+  const heure = (h) => { if (!h) return '—'; const p = h.split(':'); return Number(p[0]) + ' h ' + p[1]; };
+  const heureAxe = (h) => { const p = h.split(':'); return Number(p[0]) + ' h' + (p[1] === '00' ? '' : ' ' + p[1]); };
+  const CRENEAUX = d3.range(0, 125, 5).map((m) => String(7 + Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
+  const REPERES = {
+    s1: { txt: 'Sortie de Vizille', fort: true },
+    s2: { txt: 'Intermarché', fort: false },
+    s3: { txt: 'Feu, 1 km après l’Intermarché', fort: true },
+    s4: { txt: 'Basse-Jarrie', fort: true },
+    s5: { txt: 'Autopont de Jarrie', fort: false },
+    s6: { txt: 'Feu de Champagnier', fort: true },
+    s7: { txt: 'Fin du relevé', fort: false },
+  };
+  const ZONES = [
+    { key: 'vizille', nom: 'Sortie de Vizille' },
+    { key: 'feu', nom: 'Basse-Jarrie → feu de Champagnier' },
+    { key: 'apres', nom: 'Après le feu, jusque vers Pont-de-Claix' },
+  ];
+  const NIVEAUX = ['Jamais', 'Rare', 'Parfois', 'Souvent', 'Presque toujours'];
+  const niveau = (p) => (p <= 0 ? 0 : p < 0.25 ? 1 : p < 0.5 ? 2 : p < 0.75 ? 3 : 4);
+
+  const root = document.getElementById('dash-root');
+  const rn = document.querySelector('.rn');
+  const cssVar = (n) => getComputedStyle(root).getPropertyValue(n).trim();
+  const trv = (n) => getComputedStyle(rn).getPropertyValue(n).trim();
+  const couleurNiveau = (lvl) => [trv('--tr-vert'), trv('--tr-pale'), trv('--tr-orange'), trv('--tr-rouge'), trv('--tr-fonce')][lvl];
+  const estVisible = (el) => !!el && el.offsetParent !== null && el.clientWidth > 0;
+  let uid = 0;
+
+  const fail = (el) => { el.replaceChildren(); el.classList.remove('dash-skeleton'); const d = document.createElement('div'); d.className = 'rn-fail'; d.textContent = 'Failed to load'; el.appendChild(d); };
+  const attente = (el) => { el.replaceChildren(); el.classList.add('dash-skeleton'); };
+  const pret = (el) => { el.classList.remove('dash-skeleton'); };
+  const etat = (ids) => { const ds = ids.map((id) => dash.data(id)); if (ds.some((d) => d.status === 'error')) return 'error'; if (ds.some((d) => d.status !== 'ok')) return 'loading'; return 'ok'; };
+
+  function tipIn(card) {
+    let t = card.querySelector(':scope > .rn-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'rn-tip'; t.hidden = true; card.appendChild(t); }
+    return t;
+  }
+  function placeTip(tip, card, x, y) {
+    const cw = card.clientWidth;
+    tip.hidden = false;
+    const w = tip.offsetWidth;
+    let left = x + 14;
+    if (left + w > cw - 4) left = Math.max(4, x - w - 14);
+    tip.style.left = left + 'px';
+    tip.style.top = Math.max(4, y - 10) + 'px';
+  }
+  function tipLines(tip, head, lines) {
+    tip.replaceChildren();
+    const h = document.createElement('div'); h.className = 'rn-tip-h'; h.textContent = head; tip.appendChild(h);
+    for (const l of lines) {
+      const d = document.createElement('div');
+      if (l.color) { const s = document.createElement('span'); s.className = 'rn-sw'; s.style.background = l.color; d.appendChild(s); }
+      d.appendChild(document.createTextNode(l.text));
+      tip.appendChild(d);
+    }
+  }
+  const relXY = (evt, card) => { const r = card.getBoundingClientRect(); return [evt.clientX - r.left, evt.clientY - r.top]; };
+  function textWidth(svg, s, gras) {
+    const t = svg.append('text').attr('font-size', cssVar('--cds-font-size-caption')).attr('font-weight', gras ? 600 : null).text(s);
+    const w = t.node().getComputedTextLength(); t.remove(); return w;
+  }
+  function hachures(svg) {
+    const id = 'rn-hach-' + (++uid);
+    const p = svg.append('defs').append('pattern').attr('id', id).attr('patternUnits', 'userSpaceOnUse').attr('width', 5).attr('height', 5).attr('patternTransform', 'rotate(45)');
+    p.append('rect').attr('width', 5).attr('height', 5).attr('fill', cssVar('--color-panel'));
+    p.append('line').attr('x1', 1).attr('y1', 0).attr('x2', 1).attr('y2', 5).attr('stroke', cssVar('--color-border-line')).attr('stroke-width', 1.5);
+    return 'url(#' + id + ')';
+  }
+  const axeTexte = (sel) => { sel.attr('font-size', null).attr('font-family', null); sel.selectAll('text').attr('fill', cssVar('--color-fg-muted')).attr('font-size', cssVar('--cds-font-size-caption')); };
+
+  // ================= Textes marqués =================
+  function formatChamp(f, v) {
+    if (v == null) return '—';
+    if (f === 'jour' || f.endsWith('_jour')) return String(v);
+    if (f.endsWith('_date') || f === 'date_min' || f === 'date_max') return dateLong(v);
+    if (f.endsWith('_heure')) return heure(v);
+    if (f.startsWith('pct')) return pct(v);
+    if (f === 'releves' || f === 'matinees' || f.startsWith('matinees_')) return fInt(v);
+    return metres(v);
+  }
+  function remplir(source) {
+    const d = dash.data(source);
+    if (d.status !== 'ok' || !d.data || !d.data.length) return;
+    const row = d.data[0];
+    document.querySelectorAll('[data-source="' + source + '"][data-field][data-row="0"]').forEach((el) => {
+      el.textContent = formatChamp(el.dataset.field, row[el.dataset.field]);
+      el.classList.remove('dash-skeleton');
+    });
+  }
+  function remplirTextes() {
+    remplir('synthese');
+    remplir('acces_synthese');
+    const s = pire();
+    if (s) {
+      // Même pic atteint une autre matinée : la phrase « et le … » n'apparaît que dans ce cas.
+      document.querySelectorAll('[data-bis]').forEach((el) => {
+        const k = el.dataset.bis;
+        el.hidden = !s[k + '_bis_date'];
+        const plus = el.querySelector('.rn-bis-plus');
+        if (plus) plus.textContent = s[k + '_nb'] > 2 ? ' (' + s[k + '_nb'] + ' matinées en tout)' : '';
+      });
+    }
+    const p = dash.data('par_troncon');
+    if (p.status === 'ok') {
+      const r = p.data.find((x) => x.id === 's3');
+      document.querySelectorAll('[data-source="par_troncon"][data-field="pct_bouchon"][data-where="id=s3"]').forEach((el) => { el.textContent = r ? pct(r.pct_bouchon) : '—'; el.classList.remove('dash-skeleton'); });
+    }
+  }
+  const pire = () => { const s = dash.data('synthese'); return s.status === 'ok' && s.data.length ? s.data[0] : null; };
+
+  // ================= Légendes =================
+  function sw(bg, txt) {
+    const s = document.createElement('span');
+    const i = document.createElement('i'); i.className = 'rn-sw'; i.style.background = bg;
+    s.append(i, document.createTextNode(txt)); return s;
+  }
+  function trait(couleur, pointille, txt) {
+    const s = document.createElement('span');
+    const i = document.createElement('i'); i.className = 'rn-trait' + (pointille ? ' rn-pointille' : ''); i.style.color = couleur;
+    s.append(i, document.createTextNode(txt)); return s;
+  }
+  const hachureCSS = () => 'repeating-linear-gradient(45deg, ' + cssVar('--color-border-line') + ' 0 1.5px, transparent 1.5px 5px)';
+  const vertPale = () => 'color-mix(in srgb, ' + trv('--tr-vert') + ' 22%, transparent)';
+  function legende(el, mode) {
+    el.replaceChildren();
+    if (mode === 'type') {
+      el.append(sw(vertPale(), 'Jamais en rouge'));
+      for (let l = 1; l < 5; l++) el.append(sw(couleurNiveau(l), NIVEAUX[l]));
+    } else {
+      el.append(sw(vertPale(), 'Fluide'), sw(trv('--tr-orange'), 'Orange'), sw(trv('--tr-rouge'), 'Rouge ou rouge foncé'));
+    }
+    el.append(sw(hachureCSS(), 'Pas de relevé'));
+  }
+  function cellType(part, n) {
+    const lvl = niveau(part);
+    const k = Math.round(part * n);
+    return {
+      fill: couleurNiveau(lvl), op: lvl === 0 ? 0.22 : 1,
+      texte: (k === 0 ? 'Jamais en rouge sur ' + n + ' matinées' : 'En rouge ' + k + ' matinée' + (k > 1 ? 's' : '') + ' sur ' + n) + (lvl > 0 ? ' · ' + NIVEAUX[lvl].toLowerCase() : ''),
+    };
+  }
+  function cellJour(code) {
+    if (code === '1') return { fill: trv('--tr-rouge'), op: 1, texte: 'Rouge ou rouge foncé' };
+    if (code === '2') return { fill: trv('--tr-orange'), op: 1, texte: 'Orange' };
+    return { fill: trv('--tr-vert'), op: 0.22, texte: 'Fluide' };
+  }
+
+  // ================= Diagramme lieu × heure =================
+  const trier = (tr) => tr.slice().sort((a, b) => a.ordre - b.ordre);
+  const horsZone = (tr) => { const s = tr.find((x) => x.id === 's7'); return s ? s.debut_m : null; };
+  const segDe = (tr) => (d) => { const s = tr.find((x) => d >= x.debut_m && d < x.fin_m); return s ? s.nom : null; };
+  function reperesRN(tr, fin) {
+    const out = tr.map((x) => ({ d: x.debut_m, txt: (REPERES[x.id] || { txt: x.nom }).txt, fort: !!(REPERES[x.id] || {}).fort, ligne: true }));
+    const h = horsZone(tr);
+    if (h != null) out.push({ d: (h + fin) / 2, txt: 'vers Pont-de-Claix', fort: false, ligne: false });
+    return out;
+  }
+
+  function drawET(el, o) {
+    el.replaceChildren();
+    const W = Math.max(300, el.clientWidth);
+    const fs = cssVar('--cds-font-size-caption');
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', o.aria);
+    const ml = Math.ceil(textWidth(svg, '8 h 45')) + 10, mr = 10;
+    const plotW = W - ml - mr;
+    const x = (d) => ml + plotW * d / o.echelle;
+    const LH = 15;
+    function placer(liste, depart) {
+      const fins = [];
+      liste.sort((a, b) => a.d - b.d).forEach((r) => {
+        const w = textWidth(svg, r.txt, r.fort);
+        const cx = x(r.d);
+        let x0 = r.d === 0 ? cx : cx - w / 2;
+        if (x0 + w > W - 2) x0 = W - 2 - w;
+        if (x0 < 0) x0 = 0;
+        let rang = 0;
+        while (fins[rang] != null && fins[rang] + 10 > x0) rang++;
+        fins[rang] = x0 + w;
+        r.x0 = x0; r.rang = depart + rang;
+      });
+      return depart + Math.max(1, fins.length);
+    }
+    const forts = o.reperes.filter((r) => r.fort), faibles = o.reperes.filter((r) => !r.fort);
+    let rangs = forts.length ? placer(forts, 0) : 0;
+    rangs = faibles.length ? placer(faibles, rangs) : rangs;
+    const mt = rangs * LH + 8;
+    const ch = o.ch || 16;
+    const H = mt + ch * CRENEAUX.length + 4;
+    svg.attr('viewBox', `0 0 ${W} ${H}`);
+    const hach = hachures(svg);
+    const pas = W < 520 ? 30 : 15;
+    CRENEAUX.forEach((c, k) => {
+      const mn = Number(c.slice(3));
+      if (mn % pas === 0) svg.append('text').attr('x', ml - 6).attr('y', mt + k * ch + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', cssVar('--color-fg-muted')).text(heureAxe(c));
+    });
+    const g = svg.append('g');
+    const cw = plotW * 100 / o.echelle;
+    for (let k = 0; k < CRENEAUX.length; k++) {
+      for (let i = 0; i < o.nb; i++) {
+        const v = o.cell(CRENEAUX[k], i);
+        const hors = o.horsDe != null && i * 100 >= o.horsDe;
+        g.append('rect').attr('x', x(i * 100) + 0.5).attr('y', mt + k * ch + 0.5).attr('width', Math.max(1, cw - 1)).attr('height', ch - 1)
+          .attr('fill', v ? v.fill : hach).attr('fill-opacity', v ? v.op : 1).attr('opacity', hors ? 0.45 : 1);
+      }
+    }
+    o.reperes.forEach((r) => {
+      if (r.ligne) {
+        const xx = x(r.d);
+        g.append('line').attr('x1', xx).attr('x2', xx).attr('y1', (r.rang + 1) * LH - 2).attr('y2', H - 4)
+          .attr('stroke', r.fort ? cssVar('--color-fg-muted') : cssVar('--cds-chart-reference')).attr('stroke-width', r.fort ? 1.2 : 1).attr('stroke-dasharray', '3 3').attr('pointer-events', 'none');
+      }
+      svg.append('text').attr('x', r.x0).attr('y', 11 + r.rang * LH).attr('font-size', fs).attr('font-weight', r.fort ? 600 : null)
+        .attr('fill', r.fort ? cssVar('--color-fg') : cssVar('--color-fg-muted')).text(r.txt);
+    });
+    const card = el.closest('.rn-card'), tip = tipIn(card);
+    const hi = svg.append('rect').attr('fill', 'none').attr('stroke', cssVar('--color-fg')).attr('stroke-width', 1.5).attr('visibility', 'hidden').attr('pointer-events', 'none');
+    svg.append('rect').attr('x', ml).attr('y', mt).attr('width', plotW).attr('height', ch * CRENEAUX.length).attr('fill', 'transparent')
+      .on('mousemove', (evt) => {
+        const [px, py] = d3.pointer(evt);
+        const i = Math.floor((px - ml) / cw), k = Math.floor((py - mt) / ch);
+        if (i < 0 || i >= o.nb || k < 0 || k >= CRENEAUX.length) { tip.hidden = true; hi.attr('visibility', 'hidden'); return; }
+        const v = o.cell(CRENEAUX[k], i);
+        const lignes = [{ text: v ? v.texte : 'Pas de relevé à cette heure' }];
+        const ou = o.ou ? o.ou(i * 100) : null;
+        if (ou) lignes.push({ text: ou });
+        const fin = Math.min((i + 1) * 100, o.longueur || (i + 1) * 100);
+        tipLines(tip, heure(CRENEAUX[k]) + ' · de ' + fKm(i / 10) + ' à ' + fKm(fin / 1000) + ' km', lignes);
+        hi.attr('x', x(i * 100)).attr('y', mt + k * ch).attr('width', cw).attr('height', ch).attr('visibility', 'visible');
+        const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
+      })
+      .on('mouseleave', () => { tip.hidden = true; hi.attr('visibility', 'hidden'); });
+    el.style.minHeight = H + 'px';
+  }
+
+  function drawETType() {
+    const el = document.getElementById('et-type');
+    if (!estVisible(el)) return;
+    const st = etat(['carte_releves', 'troncons', 'matinee_type']);
+    if (st === 'error') { fail(el); return; }
+    if (st !== 'ok') { attente(el); return; }
+    pret(el);
+    legende(document.getElementById('et-type-legende'), 'type');
+    const c = dash.data('carte_releves').data, tr = trier(dash.data('troncons').data);
+    const parC = new Map(dash.data('matinee_type').data.map((r) => [r.creneau, r]));
+    const nb = c[0].rouge.length, fin = nb * 100;
+    drawET(el, {
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), ou: segDe(tr), ch: 16,
+      aria: 'Diagramme de la matinée type sur la RN85 : distance depuis Vizille en largeur, heure de 7 h à 9 h en hauteur, couleur selon la fréquence du rouge',
+      cell: (cr, i) => { const r = parC.get(cr); return r ? cellType(r.part[i], r.matinees) : null; },
+    });
+  }
+
+  // ================= Sélecteurs de matinée =================
+  const signatures = {};
+  function optionsMatinees(sel, avecType, source) {
+    const pj = dash.data('par_jour');
+    let lignes = [];
+    if (source === 'acces') {
+      const a = dash.data('acces_releves');
+      if (a.status === 'ok') {
+        const vus = new Map(); a.data.forEach((r) => vus.set(r.date, r.jour));
+        lignes = Array.from(vus.entries()).sort().map(([date, jour]) => ({ date, jour, complete: true }));
+      }
+    } else if (pj.status === 'ok') {
+      lignes = pj.data.map((r) => ({ date: r.date, jour: r.jour, complete: r.complete }));
+    }
+    const p = pire();
+    const opts = (avecType ? [['type', 'Matinée type (toutes)']] : []).concat(lignes.map((l) => [l.date, dateCourte(l.date, l.jour) + (p && l.date === p.max_date && source !== 'acces' ? ' · pire relevé' : '') + (l.complete ? '' : ' · incomplète')]));
+    const sig = opts.map((o) => o.join('=')).join('|');
+    if (signatures[sel.id] !== sig) { sel.replaceChildren(...opts.map(([v, t]) => new Option(t, v))); signatures[sel.id] = sig; }
+    return opts.map((o) => o[0]);
+  }
+  const jourB = () => { const j = dash.params().jour || 'pire'; const p = pire(); return j === 'pire' ? (p ? p.max_date : null) : j; };
+  document.getElementById('et-jour').addEventListener('change', (e) => dash.setParams({ jour: e.target.value }));
+  document.getElementById('acces-jour').addEventListener('change', (e) => dash.setParams({ jour_acces: e.target.value }));
+
+  function drawETJour() {
+    const el = document.getElementById('et-jour-chart');
+    const sel = document.getElementById('et-jour');
+    const valeurs = optionsMatinees(sel, false, 'rn');
+    const j = jourB();
+    if (j && valeurs.includes(j)) sel.value = j;
+    if (!estVisible(el)) return;
+    const st = etat(['carte_releves', 'troncons', 'synthese']);
+    if (st === 'error') { fail(el); return; }
+    if (st !== 'ok' || !j) { attente(el); return; }
+    pret(el);
+    legende(document.getElementById('et-jour-legende'), 'jour');
+    const c = dash.data('carte_releves').data, tr = trier(dash.data('troncons').data);
+    const parC = new Map(c.filter((r) => r.date === j).map((r) => [r.creneau, r]));
+    const nb = c[0].rouge.length, fin = nb * 100;
+    drawET(el, {
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), ou: segDe(tr), ch: 16,
+      aria: 'Diagramme d’une matinée sur la RN85 : distance depuis Vizille en largeur, heure en hauteur, couleur relevée sur Google Maps',
+      cell: (cr, i) => { const r = parC.get(cr); return r ? cellJour(r.rouge[i] === '1' ? '1' : (r.hors_vert[i] === '1' ? '2' : '0')) : null; },
+    });
+  }
+
+  // ================= Pics par créneau (petits graphiques) =================
+  function drawPics() {
+    const els = ZONES.map((z) => document.getElementById('pics-' + z.key));
+    if (!estVisible(els[0])) return;
+    const d = dash.data('par_creneau');
+    if (d.status === 'error') { els.forEach(fail); return; }
+    if (d.status !== 'ok') { els.forEach(attente); return; }
+    // Couleurs parlantes : le rouge des bouchons pour le pic, le gris pour la moyenne.
+    const couleur = trv('--tr-rouge');
+    document.getElementById('pics-legende').replaceChildren(
+      trait(couleur, false, 'Pic : plus grande longueur en rouge relevée à ce créneau, toutes matinées confondues'),
+      trait(cssVar('--color-fg-muted'), true, 'Moyenne au même créneau'));
+    const rows = d.data.filter((r) => CRENEAUX.includes(r.creneau));
+    const ymax = d3.max(rows, (r) => d3.max(ZONES, (z) => r[z.key + '_max'])) || 1;
+    ZONES.forEach((z, zi) => {
+      const el = els[zi];
+      pret(el); el.replaceChildren();
+      const W = Math.max(260, el.clientWidth), H = 230, mt = 10, mb = 24;
+      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Pic et moyenne de la longueur en rouge à chaque créneau : ' + z.nom);
+      const y = d3.scaleLinear([0, ymax], [H - mb, mt]).nice(4);
+      const ticks = y.ticks(4);
+      const ml = Math.ceil(d3.max(ticks, (t) => textWidth(svg, metres(t)))) + 10, mr = 10;
+      const x = d3.scalePoint(CRENEAUX, [ml, W - mr]);
+      svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - mr).attr('y1', (t) => y(t)).attr('y2', (t) => y(t)).attr('stroke', cssVar('--cds-chart-grid'));
+      ticks.forEach((t) => svg.append('text').attr('x', ml - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(metres(t)));
+      ['07:00', '07:30', '08:00', '08:30', '09:00'].forEach((c, n, all) => {
+        svg.append('text').attr('x', x(c)).attr('y', H - 6).attr('text-anchor', n === 0 ? 'start' : (n === all.length - 1 ? 'end' : 'middle')).attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(heureAxe(c));
+      });
+      svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', cssVar('--cds-chart-axis'));
+      svg.append('path').datum(rows).attr('d', d3.area().x((r) => x(r.creneau)).y0(y(0)).y1((r) => y(r[z.key + '_max']))).style('fill', couleur).attr('fill-opacity', 0.12);
+      svg.append('path').datum(rows).attr('fill', 'none').style('stroke', couleur).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round').attr('d', d3.line().x((r) => x(r.creneau)).y((r) => y(r[z.key + '_max'])));
+      svg.append('path').datum(rows).attr('fill', 'none').attr('stroke', cssVar('--color-fg-muted')).attr('stroke-width', 1.5).attr('stroke-dasharray', '4 3').attr('d', d3.line().x((r) => x(r.creneau)).y((r) => y(r[z.key])));
+      const sommet = rows.reduce((a, r) => (r[z.key + '_max'] > a[z.key + '_max'] ? r : a), rows[0]);
+      svg.append('circle').attr('cx', x(sommet.creneau)).attr('cy', y(sommet[z.key + '_max'])).attr('r', 4).style('fill', couleur).attr('stroke', cssVar('--color-panel')).attr('stroke-width', 1.5);
+      const card = el.closest('.rn-card'), tip = tipIn(card);
+      const regle = svg.append('line').attr('y1', mt).attr('y2', H - mb).attr('stroke', cssVar('--cds-chart-reference')).attr('visibility', 'hidden');
+      const pts = svg.append('g');
+      svg.append('rect').attr('x', ml).attr('y', mt).attr('width', W - mr - ml).attr('height', H - mb - mt).attr('fill', 'transparent')
+        .on('mousemove', (evt) => {
+          const [px] = d3.pointer(evt);
+          const r = rows.reduce((a, b) => (Math.abs(x(b.creneau) - px) < Math.abs(x(a.creneau) - px) ? b : a), rows[0]);
+          const xx = x(r.creneau);
+          regle.attr('x1', xx).attr('x2', xx).attr('visibility', 'visible');
+          pts.selectAll('circle').data([r[z.key + '_max'], r[z.key]]).join('circle').attr('cx', xx).attr('cy', (v) => y(v)).attr('r', 3.5)
+            .attr('fill', (v, n) => (n === 0 ? null : cssVar('--color-fg-muted'))).style('fill', (v, n) => (n === 0 ? couleur : null));
+          tipLines(tip, heure(r.creneau) + ' · ' + fInt(r.releves) + ' relevés', [
+            { color: couleur, text: 'Pic : ' + metres(r[z.key + '_max']) + ' (' + dateCourte(r[z.key + '_max_date'], r[z.key + '_max_jour']) + ')' },
+            { text: 'Moyenne : ' + metres(r[z.key]) },
+          ]);
+          const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
+        })
+        .on('mouseleave', () => { tip.hidden = true; regle.attr('visibility', 'hidden'); pts.selectAll('circle').remove(); });
+    });
+  }
+
+  // ================= Tableaux =================
+  function drawTableSynthese() {
+    const tb = document.querySelector('#table-synthese tbody');
+    const d = dash.data('par_troncon');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    tb.replaceChildren(...trier(d.data).map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.id;
+      if (r.id === 's7') tr.className = 'rn-out';
+      [r.nom + (r.id === 's7' ? ' (hors zone)' : ''), metres(r.max_m), metres(r.moyenne_m), pct(r.pct_bouchon)].forEach((c, i) => {
+        const td = document.createElement('td'); td.textContent = c; if (i === 1) td.className = 'rn-pic'; tr.appendChild(td);
+      });
+      return tr;
+    }));
+  }
+  function drawTableTroncons() {
+    const tb = document.querySelector('#table-troncons tbody');
+    const d = dash.data('par_troncon');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    const rouge = trv('--tr-rouge');
+    tb.replaceChildren(...trier(d.data).map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.id;
+      if (r.id === 's7') tr.className = 'rn-out';
+      [r.nom + (r.id === 's7' ? ' (hors zone)' : ''), metres(r.longueur_m), metres(r.max_m), metres(r.moyenne_m), pct(r.part), pct(r.pct_bouchon), pct(r.pct_sature)].forEach((c, i) => {
+        const td = document.createElement('td'); td.textContent = c;
+        if (i === 2) td.className = 'rn-pic';
+        if (i === 4) { const w = Math.min(100, Math.round(r.part * 100)); td.style.backgroundImage = `linear-gradient(to right, color-mix(in srgb, ${rouge} 22%, transparent) ${w}%, transparent ${w}%)`; }
+        tr.appendChild(td);
+      });
+      return tr;
+    }));
+  }
+  function drawTableJours() {
+    const tb = document.querySelector('#table-jours tbody');
+    const d = dash.data('par_jour');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    tb.replaceChildren(...d.data.map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.date;
+      if (!r.complete) tr.className = 'rn-out';
+      [dateCourte(r.date, r.jour) + (r.complete ? '' : ' · incomplète'), fInt(r.releves), metres(r.vizille_pic), heure(r.vizille_pic_heure), metres(r.vizille), metres(r.feu_pic), heure(r.feu_pic_heure), metres(r.feu), metres(r.pire_m), heure(r.pire_heure)].forEach((c, i) => {
+        const td = document.createElement('td'); td.textContent = c; if (i === 2 || i === 5 || i === 8) td.className = 'rn-pic'; tr.appendChild(td);
+      });
+      return tr;
+    }));
+  }
+  function drawTableMethodes() {
+    const tb = document.querySelector('#table-methodes tbody');
+    const d = dash.data('methodes');
+    if (d.status !== 'ok') { tb.replaceChildren(); return; }
+    tb.replaceChildren(...d.data.slice().sort((a, b) => a.ordre - b.ordre).map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.indicateur;
+      [r.indicateur, metres(r.tous_releves), metres(r.moyenne_matinees), metres(r.matinees_completes)].forEach((c) => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+      return tr;
+    }));
+  }
+
+  // ================= Pic de chaque matinée (barres) =================
+  function drawBarres() {
+    // Un graphique par zone, à la même échelle : les barres sont toutes dans le rouge des bouchons.
+    const zones = [{ key: 'vizille', nom: 'Sortie de Vizille' }, { key: 'feu', nom: 'Basse-Jarrie → feu de Champagnier' }];
+    const els = zones.map((z) => document.getElementById('barres-' + z.key));
+    if (!estVisible(els[0])) return;
+    const d = dash.data('par_jour');
+    if (d.status === 'error') { els.forEach(fail); return; }
+    if (d.status !== 'ok') { els.forEach(attente); return; }
+    const rouge = trv('--tr-rouge');
+    const PALE = 0.38;
+    document.getElementById('barres-legende').replaceChildren(
+      sw(rouge, 'Pic de la matinée'),
+      trait(cssVar('--color-fg'), false, 'Moyenne de la matinée'),
+      sw('color-mix(in srgb, ' + rouge + ' ' + Math.round(PALE * 100) + '%, transparent)', 'Matinée incomplète'));
+    const rows = d.data;
+    const ymax = d3.max(rows, (r) => Math.max(r.vizille_pic, r.feu_pic)) || 1;
+    zones.forEach((z, zi) => {
+      const el = els[zi];
+      pret(el); el.replaceChildren();
+      const W = Math.max(320, el.clientWidth), etroit = W < 600, H = 240, mt = 18, mb = 50;
+      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Pic de chaque matinée : ' + z.nom);
+      const y = d3.scaleLinear([0, ymax], [H - mb, mt]).nice(4);
+      const ticks = y.ticks(4);
+      const ml = Math.ceil(d3.max(ticks, (t) => textWidth(svg, metres(t)))) + 10, mr = 6;
+      const x = d3.scaleBand(rows.map((r) => r.date), [ml, W - mr]).paddingInner(0.3).paddingOuter(0.1);
+      svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - mr).attr('y1', (t) => y(t)).attr('y2', (t) => y(t)).attr('stroke', cssVar('--cds-chart-grid'));
+      ticks.forEach((t) => svg.append('text').attr('x', ml - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(metres(t)));
+      const card = el.closest('.rn-card'), tip = tipIn(card);
+      const picZone = d3.max(rows, (r) => r[z.key + '_pic']);
+      rows.forEach((r) => {
+        const g = svg.append('g').attr('transform', `translate(${x(r.date)},0)`);
+        const bw = Math.min(40, x.bandwidth()), bx = (x.bandwidth() - bw) / 2, cx = x.bandwidth() / 2;
+        const v = r[z.key + '_pic'];
+        g.append('rect').attr('x', bx).attr('y', y(v)).attr('width', bw).attr('height', Math.max(0, y(0) - y(v))).attr('rx', 3).attr('fill', rouge).attr('fill-opacity', r.complete ? 1 : PALE);
+        g.append('line').attr('x1', bx - 3).attr('x2', bx + bw + 3).attr('y1', y(r[z.key])).attr('y2', y(r[z.key])).attr('stroke', cssVar('--color-fg')).attr('stroke-width', 2);
+        // Le plus haut pic de la zone est écrit au-dessus de sa barre (chaque matinée qui l'atteint).
+        if (v === picZone) g.append('text').attr('x', cx).attr('y', y(v) - 5).attr('text-anchor', 'middle').attr('font-size', cssVar('--cds-font-size-caption')).attr('font-weight', 600).attr('fill', cssVar('--color-fg')).text(metres(v));
+        const p = r.date.split('-').map(Number);
+        g.append('text').attr('x', cx).attr('y', H - mb + 16).attr('text-anchor', 'middle').attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(JC[r.jour] || '');
+        g.append('text').attr('x', cx).attr('y', H - mb + 30).attr('text-anchor', 'middle').attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg')).text(etroit ? p[2] + '/' + p[1] : p[2] + ' ' + MOISC[p[1] - 1]);
+        if (!r.complete) g.append('text').attr('x', cx).attr('y', H - mb + 44).attr('text-anchor', 'middle').attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(etroit ? '*' : 'incomplète');
+        g.append('rect').attr('x', 0).attr('y', 0).attr('width', x.bandwidth()).attr('height', H).attr('fill', 'transparent')
+          .on('mousemove', (evt) => {
+            tipLines(tip, z.nom + ' · ' + dateCourte(r.date, r.jour), [
+              { color: rouge, text: 'Pic : ' + metres(v) + ' à ' + heure(r[z.key + '_pic_heure']) },
+              { text: 'Moyenne : ' + metres(r[z.key]) },
+              { text: fInt(r.releves) + ' relevés' + (r.complete ? '' : ', matinée incomplète') },
+            ]);
+            const [ex, ey] = relXY(evt, card); placeTip(tip, card, ex, ey);
+          })
+          .on('mouseleave', () => { tip.hidden = true; });
+      });
+      svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', cssVar('--cds-chart-axis'));
+    });
+  }
+
+  // ================= Grille matinées × créneaux =================
+  const segZone = document.getElementById('zone');
+  segZone.addEventListener('click', (e) => { const b = e.target.closest('button[data-v]'); if (b) dash.setParams({ zone: b.dataset.v }); });
+  function drawGrille() {
+    segZone.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.v === (dash.params().zone || 'ensemble'))));
+    const el = document.getElementById('grille');
+    if (!estVisible(el)) return;
+    const d = dash.data('releves');
+    if (d.status === 'error') { fail(el); return; }
+    if (d.status !== 'ok') { attente(el); return; }
+    pret(el); el.replaceChildren();
+    const zone = dash.params().zone || 'ensemble';
+    const val = {
+      ensemble: (r) => r.rouge_s1 + r.rouge_s2 + r.rouge_s3 + r.rouge_s4 + r.rouge_s5 + r.rouge_s6,
+      vizille: (r) => r.rouge_s1 + r.rouge_s2,
+      feu: (r) => r.rouge_s4 + r.rouge_s5,
+    }[zone] || ((r) => 0);
+    const rel = d.data;
+    const jours = Array.from(new Set(rel.map((r) => r.date))).sort();
+    const jourDe = {}; rel.forEach((r) => { jourDe[r.date] = r.jour; });
+    const idx = new Map(rel.map((r) => [r.date + ' ' + r.creneau, r]));
+    const vmax = d3.max(rel, val) || 1;
+    const W = Math.max(300, el.clientWidth);
+    const rouge = trv('--tr-rouge');
+    const svg0 = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', 'Longueur en rouge à chaque relevé, une ligne par matinée');
+    const ml = Math.ceil(d3.max(jours, (j) => textWidth(svg0, dateCourte(j, jourDe[j])))) + 10;
+    const mt = 8, legH = 34, mb = 22 + legH, mr = 6;
+    const cw = (W - ml - mr) / CRENEAUX.length;
+    const ch = Math.max(16, Math.min(26, cw * 1.1));
+    const H = mt + ch * jours.length + mb;
+    const svg = svg0.attr('viewBox', `0 0 ${W} ${H}`);
+    const card = el.closest('.rn-card'), tip = tipIn(card);
+    const g = svg.append('g');
+    jours.forEach((j, i) => {
+      svg.append('text').attr('x', ml - 8).attr('y', mt + i * ch + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(dateCourte(j, jourDe[j]));
+      CRENEAUX.forEach((c, k) => {
+        const r = idx.get(j + ' ' + c);
+        const cell = g.append('rect').attr('x', ml + k * cw + 1).attr('y', mt + i * ch + 1).attr('width', Math.max(1, cw - 2)).attr('height', ch - 2).attr('rx', 2);
+        if (!r) { cell.attr('fill', 'none').attr('stroke', cssVar('--color-border-line')).attr('stroke-dasharray', '2 2'); return; }
+        const v = val(r);
+        if (v === 0) cell.attr('fill', cssVar('--color-border-line')).attr('opacity', 0.45);
+        else cell.attr('fill', rouge).attr('fill-opacity', 0.12 + 0.88 * v / vmax);
+        cell.on('mousemove', (evt) => {
+          tipLines(tip, dateCourte(j, jourDe[j]) + ' à ' + heure(r.heure), [{ text: metres(v) + ' en rouge' }]);
+          const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
+        }).on('mouseleave', () => { tip.hidden = true; });
+      });
+    });
+    const yAx = mt + ch * jours.length + 4;
+    ['07:00', '07:30', '08:00', '08:30', '09:00'].forEach((c) => {
+      const k = CRENEAUX.indexOf(c);
+      svg.append('text').attr('x', ml + k * cw + cw / 2).attr('y', yAx + 12).attr('text-anchor', k === 0 ? 'start' : (k === CRENEAUX.length - 1 ? 'end' : 'middle')).attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(heureAxe(c));
+    });
+    const ly = yAx + 26;
+    let lx = ml;
+    [0, 0.25, 0.5, 0.75, 1].forEach((s) => {
+      const v = Math.round(vmax * s / 10) * 10;
+      const r = svg.append('rect').attr('x', lx).attr('y', ly).attr('width', 14).attr('height', 12).attr('rx', 2);
+      if (v === 0) r.attr('fill', cssVar('--color-border-line')).attr('opacity', 0.45); else r.attr('fill', rouge).attr('fill-opacity', 0.12 + 0.88 * s);
+      const t = svg.append('text').attr('x', lx + 18).attr('y', ly + 10).attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(metres(v));
+      lx += 18 + t.node().getComputedTextLength() + 12;
+    });
+    el.style.minHeight = H + 'px';
+  }
+
+  // ================= Accès =================
+  function drawAcces() {
+    const sel = document.getElementById('acces-jour');
+    const valeurs = optionsMatinees(sel, true, 'acces');
+    const j = dash.params().jour_acces || 'type';
+    sel.value = valeurs.includes(j) ? j : 'type';
+    const jj = sel.value;
+    const els = { peage: document.getElementById('et-peage'), thorez: document.getElementById('et-thorez') };
+    if (!estVisible(els.peage)) return;
+    const st = etat(['acces_releves', 'acces_trace', 'acces_type']);
+    if (st === 'error') { fail(els.peage); fail(els.thorez); return; }
+    if (st !== 'ok') { attente(els.peage); attente(els.thorez); return; }
+    legende(document.getElementById('acces-legende'), jj === 'type' ? 'type' : 'jour');
+    const a = dash.data('acces_releves').data, tr = dash.data('acces_trace').data, ty = dash.data('acces_type').data;
+    const longueur = (k) => d3.max(tr.filter((p) => p.acces === k), (p) => p.dist_m) || 0;
+    const echelle = Math.ceil(Math.max(longueur('peage'), longueur('thorez')) / 100) * 100;
+    [['peage', 'Le Péage de Vizille'], ['thorez', 'Début du relevé']].forEach(([k, depart]) => {
+      const el = els[k];
+      pret(el);
+      const nb = a[0]['bins_' + k].length;
+      const parC = new Map();
+      if (jj === 'type') ty.forEach((r) => parC.set(r.creneau, r));
+      else a.filter((r) => r.date === jj).forEach((r) => parC.set(r.creneau, r));
+      drawET(el, {
+        nb, echelle, longueur: longueur(k), horsDe: null, ch: 12,
+        reperes: [{ d: 0, txt: depart, fort: false, ligne: true }, { d: longueur(k), txt: 'Carrefour avec la RN85', fort: true, ligne: true }],
+        aria: 'Diagramme de l’accès ' + (k === 'peage' ? 'depuis Le Péage' : 'par l’avenue Maurice-Thorez') + ' : distance en largeur, heure en hauteur',
+        cell: (cr, i) => {
+          const r = parC.get(cr);
+          if (!r) return null;
+          // Accès sans couleur sur la carte : case hachurée (relevé manquant), jamais comptée comme fluide.
+          if (jj === 'type') return r[k] ? cellType(r[k][i], r['matinees_' + k]) : null;
+          return r['bins_' + k] ? cellJour(r['bins_' + k][i]) : null;
+        },
+      });
+    });
+  }
+
+  // ================= Carte animée =================
+  const carte = (function () {
+    const ACCES = { thorez: 'Av. Maurice-Thorez', peage: 'Le Péage de Vizille' };
+    const card = document.querySelector('.rn-map-card');
+    const sel = document.getElementById('carte-jour');
+    const play = document.getElementById('carte-play');
+    const range = document.getElementById('carte-temps');
+    const clock = document.getElementById('carte-heure');
+    const state = { jour: null, k: 8, timer: null, touche: false };
+    let geo = null, lastW = 0, lastSig = '';
+
+    const stop = () => { if (state.timer) { clearInterval(state.timer); state.timer = null; } play.textContent = '▶ Lecture'; play.setAttribute('aria-label', 'Lancer l’animation'); };
+    const start = () => {
+      if (state.k >= CRENEAUX.length - 1) state.k = 0;
+      play.textContent = '❚❚ Pause'; play.setAttribute('aria-label', 'Mettre en pause');
+      state.timer = setInterval(() => {
+        if (state.k >= CRENEAUX.length - 1) { stop(); return; }
+        state.k += 1; frame();
+      }, 650);
+      frame();
+    };
+    play.addEventListener('click', () => { state.touche = true; if (state.timer) stop(); else start(); });
+    range.addEventListener('input', () => { state.touche = true; stop(); state.k = Number(range.value); frame(); });
+    sel.addEventListener('change', () => { state.touche = true; stop(); state.jour = sel.value; drawAll(); });
+
+    function buildGeo(lignes, W) {
+      const tous = Object.values(lignes).flat();
+      const lat0 = d3.mean(tous, (p) => p.lat), c = Math.cos(lat0 * Math.PI / 180);
+      const xs = d3.extent(tous, (p) => p.lon * c), ys = d3.extent(tous, (p) => -p.lat);
+      // Plan plus compact qu'avant, toujours à l'échelle (même facteur en largeur et en hauteur).
+      const padX = Math.min(56, W * 0.1), padT = 30, padB = 34;
+      const Hmax = Math.max(280, Math.min(520, W * 1.05));
+      const k = Math.min((W - 2 * padX) / (xs[1] - xs[0]), (Hmax - padT - padB) / (ys[1] - ys[0]));
+      const H = Math.round((ys[1] - ys[0]) * k + padT + padB);
+      const ox = (W - (xs[1] - xs[0]) * k) / 2;
+      // 1 km vaut 1/111,32 degré de latitude : nombre de pixels pour 1 km, pour la barre d'échelle.
+      const out = { W, H, pxKm: k / 111.32 };
+      for (const [nom, pts] of Object.entries(lignes)) {
+        const P = pts.slice().sort((a, b) => a.i - b.i).map((p) => ({ x: ox + (p.lon * c - xs[0]) * k, y: padT + (-p.lat - ys[0]) * k, d: p.dist_m }));
+        const total = P[P.length - 1].d;
+        const at = (d) => {
+          d = Math.max(0, Math.min(total, d));
+          let i = 1; while (i < P.length - 1 && P[i].d < d) i++;
+          const a = P[i - 1], b = P[i], t = b.d === a.d ? 0 : (d - a.d) / (b.d - a.d);
+          return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+        };
+        out[nom] = { P, total, at, piece: (d1, d2) => [at(d1), ...P.filter((p) => p.d > d1 && p.d < d2), at(d2)] };
+      }
+      return out;
+    }
+    const couleurCode = (code) => (code === '1' ? trv('--tr-rouge') : (code === '2' ? trv('--tr-orange') : trv('--tr-vert')));
+    const couleurType = (p) => couleurNiveau(niveau(p));
+
+    function legendeCarte() {
+      const el = document.getElementById('carte-legende');
+      el.replaceChildren();
+      if (state.jour === 'type') {
+        el.append(sw(trv('--tr-vert'), 'Jamais en rouge'));
+        for (let l = 1; l < 5; l++) el.append(sw(couleurNiveau(l), NIVEAUX[l]));
+      } else {
+        el.append(sw(trv('--tr-vert'), 'Fluide'), sw(trv('--tr-orange'), 'Orange'), sw(trv('--tr-rouge'), 'Rouge ou rouge foncé'));
+      }
+      el.append(sw(cssVar('--color-border-line'), 'Pas de relevé à cette heure'));
+    }
+
+    // Étiquettes du plan : chacune est posée à côté de son propre point, à l'endroit qui ne recouvre
+    // ni une autre étiquette, ni un autre point, ni une route. Les plus importantes sont placées d'abord.
+    function poserEtiquettes(svg, lab, items, routes, occupes) {
+      const obst = [];
+      routes.forEach((g) => { for (let d = 0; d <= g.total; d += 20) obst.push(g.at(d)); });
+      const HT = 15;
+      const dirs = [[0, -1], [1, -1], [-1, -1], [1, 0], [-1, 0], [1, 1], [-1, 1], [0, 1]];
+      const poses = occupes.slice();
+      const ecart = (b, p) => Math.hypot(Math.max(b.x0 - p.x, 0, p.x - b.x1), Math.max(b.y0 - p.y, 0, p.y - b.y1));
+      const choix = items.map((it) => {
+        const w = textWidth(svg, it.txt, it.fort) + 2;
+        let best = null;
+        for (const r of [8, 16, 26, 38, 52]) {
+          for (const [dx, dy] of dirs) {
+            const ax = it.p.x + dx * r, ay = it.p.y + dy * r * 0.75;
+            let x0 = dx > 0 ? ax : (dx < 0 ? ax - w : ax - w / 2);
+            let y0 = dy > 0 ? ay : (dy < 0 ? ay - HT : ay - HT / 2);
+            // L'étiquette reste dans le cadre du plan : elle est décalée vers l'intérieur au besoin.
+            x0 = Math.max(2, Math.min(x0, geo.W - 2 - w));
+            y0 = Math.max(2, Math.min(y0, geo.H - 2 - HT));
+            const b = { x0, y0, x1: x0 + w, y1: y0 + HT };
+            const propre = ecart(b, it.p);
+            let score = propre * 3;
+            poses.forEach((q) => { if (b.x0 < q.x1 + 4 && b.x1 > q.x0 - 4 && b.y0 < q.y1 + 2 && b.y1 > q.y0 - 2) score += 2000; });
+            items.forEach((o) => {
+              if (o === it) return;
+              if (o.p.x > b.x0 - 7 && o.p.x < b.x1 + 7 && o.p.y > b.y0 - 7 && o.p.y < b.y1 + 7) score += 800;
+              // Une étiquette plus proche d'un autre point que du sien prêterait à confusion.
+              else if (ecart(b, o.p) < propre + 4) score += 300;
+            });
+            obst.forEach((q) => { if (q.x > b.x0 - 4 && q.x < b.x1 + 4 && q.y > b.y0 - 4 && q.y < b.y1 + 4) score += 10; });
+            if (!best || score < best.score) best = { score, b };
+          }
+        }
+        poses.push(best.b);
+        return { it, b: best.b };
+      });
+      const muted = cssVar('--color-fg-muted'), fg = cssVar('--color-fg'), panel = cssVar('--color-panel'), fs = cssVar('--cds-font-size-caption');
+      choix.forEach(({ it, b }) => {
+        const ex = Math.max(b.x0, Math.min(it.p.x, b.x1)), ey = Math.max(b.y0, Math.min(it.p.y, b.y1));
+        if (Math.hypot(ex - it.p.x, ey - it.p.y) > 6) lab.append('line').attr('x1', it.p.x).attr('y1', it.p.y).attr('x2', ex).attr('y2', ey).attr('stroke', muted).attr('stroke-width', 1);
+      });
+      choix.forEach(({ it }) => { if (!it.sansPoint) lab.append('circle').attr('cx', it.p.x).attr('cy', it.p.y).attr('r', 3.5).attr('fill', panel).attr('stroke', fg).attr('stroke-width', 1.5); });
+      choix.forEach(({ it, b }) => lab.append('text').attr('x', b.x0 + 1).attr('y', b.y1 - 4).attr('font-size', fs).attr('font-weight', it.fort ? 600 : null)
+        .attr('fill', it.discret ? muted : fg).attr('stroke', panel).attr('stroke-width', 3).attr('stroke-linejoin', 'round').attr('paint-order', 'stroke').text(it.txt));
+    }
+
+    function remplirSelect() {
+      const valeurs = optionsMatinees(sel, true, 'rn');
+      const p = pire();
+      if (!state.touche && p) { state.jour = p.max_date; const k = CRENEAUX.indexOf(p.max_creneau); if (k >= 0) state.k = k; }
+      if (!state.jour || !valeurs.includes(state.jour)) state.jour = valeurs.includes('type') ? (p && valeurs.includes(p.max_date) ? p.max_date : 'type') : null;
+      if (state.jour) sel.value = state.jour;
+    }
+
+    function drawAll() {
+      const el = document.getElementById('carte-svg');
+      if (!estVisible(el)) return;
+      const st = etat(['carte_trace', 'carte_releves', 'troncons', 'acces_trace', 'acces_releves', 'synthese']);
+      if (st === 'error') { fail(el); return; }
+      if (st !== 'ok') { attente(el); return; }
+      pret(el);
+      remplirSelect();
+      const D = {}; ['carte_trace', 'carte_releves', 'troncons', 'acces_trace', 'acces_releves'].forEach((id) => { D[id] = dash.data(id).data; });
+      const W = Math.max(320, el.clientWidth);
+      geo = buildGeo({ rn85: D.carte_trace, thorez: D.acces_trace.filter((p) => p.acces === 'thorez'), peage: D.acces_trace.filter((p) => p.acces === 'peage') }, W);
+      el.replaceChildren();
+      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${geo.W} ${geo.H}`).attr('role', 'img').attr('aria-label', 'Plan schématique de la RN85 entre Vizille et Champagnier et de ses accès depuis Le Péage et l’avenue Maurice-Thorez, colorés selon le trafic');
+      const troncons = trier(D.troncons);
+      const finZone = horsZone(troncons) != null ? horsZone(troncons) : geo.rn85.total;
+      const line = d3.line().x((p) => p.x).y((p) => p.y);
+      const route = (g, d1, d2, w, op) => svg.append('path').attr('d', line(g.piece(d1, d2))).attr('fill', 'none').attr('stroke', cssVar('--color-border-line')).attr('stroke-width', w).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round').attr('opacity', op);
+      route(geo.rn85, 0, finZone, 17, 1);
+      route(geo.rn85, finZone, geo.rn85.total, 13, 0.6);
+      route(geo.thorez, 0, geo.thorez.total, 13, 1);
+      route(geo.peage, 0, geo.peage.total, 13, 1);
+      const binsDe = (nom, g, n, hors) => d3.range(n).map((i) => ({ ligne: nom, i, d1: i * 100, d2: Math.min((i + 1) * 100, g.total), hors: hors != null ? i * 100 >= hors : false })).filter((b) => b.d2 > b.d1);
+      const bins = [
+        ...binsDe('rn85', geo.rn85, D.carte_releves[0].rouge.length, finZone),
+        ...binsDe('thorez', geo.thorez, D.acces_releves[0].bins_thorez.length, null),
+        ...binsDe('peage', geo.peage, D.acces_releves[0].bins_peage.length, null),
+      ];
+      svg.append('g').selectAll('path').data(bins).join('path')
+        .attr('class', 'rn-bin')
+        .attr('d', (b) => line(geo[b.ligne].piece(b.d1, b.d2)))
+        .attr('fill', 'none').attr('stroke-width', (b) => (b.hors ? 7 : (b.ligne === 'rn85' ? 10 : 8))).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round')
+        .attr('opacity', (b) => (b.hors ? 0.55 : 1));
+      const lab = svg.append('g');
+      const fs = cssVar('--cds-font-size-caption'), muted = cssVar('--color-fg-muted');
+      const occupes = [];
+      // Barre d'échelle en bas à gauche : le plan est à l'échelle, la barre permet de le vérifier.
+      let L = geo.pxKm, txtEch = '1 km';
+      if (L > geo.W * 0.3) { L = geo.pxKm / 2; txtEch = '500 m'; }
+      const sx = 10, sy = geo.H - 10;
+      lab.append('path').attr('d', `M${sx},${sy - 5}V${sy}H${sx + L}V${sy - 5}`).attr('fill', 'none').attr('stroke', muted).attr('stroke-width', 1.5);
+      const tEch = lab.append('text').attr('x', sx + L + 6).attr('y', sy).attr('font-size', fs).attr('fill', muted).text(txtEch);
+      occupes.push({ x0: sx - 2, y0: sy - 14, x1: sx + L + 10 + tEch.node().getComputedTextLength(), y1: sy + 4 });
+      // Le carrefour de départ, où arrivent Le Péage et l'avenue Maurice-Thorez, n'a pas d'étiquette propre :
+      // les noms des deux accès suffisent et libèrent la place autour de l'Intermarché.
+      // Sur un écran étroit, le nom du feu est raccourci : l'Intermarché est nommé juste à côté.
+      const NOMS = { s2: { txt: 'Intermarché' }, s3: { txt: geo.W < 400 ? 'Feu, 1 km plus loin' : 'Feu, 1 km après l’Intermarché', fort: true }, s4: { txt: 'Basse-Jarrie', fort: true }, s5: { txt: 'Autopont de Jarrie' }, s6: { txt: 'Feu de Champagnier', fort: true }, s7: { txt: 'Fin du relevé' } };
+      const items = troncons.filter((t) => NOMS[t.id]).map((t) => ({ p: geo.rn85.at(t.debut_m), txt: NOMS[t.id].txt, fort: !!NOMS[t.id].fort }));
+      items.push({ p: geo.peage.at(0), txt: ACCES.peage, fort: false }, { p: geo.thorez.at(0), txt: ACCES.thorez, fort: false });
+      items.push({ p: geo.rn85.at(geo.rn85.total), txt: 'vers Grenoble', fort: false, sansPoint: true, discret: true });
+      items.sort((a, b) => (b.fort ? 1 : 0) - (a.fort ? 1 : 0));
+      poserEtiquettes(svg, lab, items, [geo.rn85, geo.thorez, geo.peage], occupes);
+      svg.append('text').attr('class', 'rn-map-msg').attr('x', geo.W / 2).attr('y', geo.H - 10).attr('text-anchor', 'middle').attr('font-size', fs).attr('fill', muted).text('');
+      el.style.minHeight = geo.H * (el.clientWidth / geo.W) + 'px';
+      legendeCarte();
+      drawStrip();
+      frame();
+    }
+
+    function valeurs(c) {
+      if (state.jour === 'type') {
+        const p = dash.data('par_creneau'), a = dash.data('acces_creneau');
+        const r = p.status === 'ok' ? p.data.find((x) => x.creneau === c) : null;
+        const q = a.status === 'ok' ? a.data.find((x) => x.creneau === c) : null;
+        if (!r) return null;
+        return { type: true, vizille: r.vizille, vizille_max: r.vizille_max, feu: r.feu, feu_max: r.feu_max, peage: q ? q.peage : null, peage_max: q ? q.peage_max : null, thorez: q ? q.thorez : null, thorez_max: q ? q.thorez_max : null, releves: r.releves, deux_max: r.deux_max, deux_max_date: r.deux_max_date, deux_max_jour: r.deux_max_jour };
+      }
+      const d = dash.data('releves'), a = dash.data('acces_releves');
+      const r = d.status === 'ok' ? d.data.find((x) => x.date === state.jour && x.creneau === c) : null;
+      const q = a.status === 'ok' ? a.data.find((x) => x.date === state.jour && x.creneau === c) : null;
+      if (!r && !q) return null;
+      return { type: false, vizille: r ? r.rouge_s1 + r.rouge_s2 : null, feu: r ? r.rouge_s4 + r.rouge_s5 : null, peage: q ? q.rouge_peage : null, thorez: q ? q.rouge_thorez : null, heure: (r || q).heure };
+    }
+
+    function frame() {
+      if (!geo) return;
+      const c = CRENEAUX[state.k];
+      range.value = state.k;
+      clock.textContent = heure(c);
+      const svg = d3.select('#carte-svg svg');
+      const vide = cssVar('--color-border-line');
+      let aucun = true;
+      if (state.jour === 'type') {
+        const t = dash.data('matinee_type'), a = dash.data('acces_type');
+        const rowR = t.status === 'ok' ? t.data.find((x) => x.creneau === c) : null;
+        const rowA = a.status === 'ok' ? a.data.find((x) => x.creneau === c) : null;
+        aucun = !rowR && !rowA;
+        svg.selectAll('.rn-bin').attr('stroke', (b) => {
+          if (b.ligne === 'rn85') return rowR ? couleurType(rowR.part[b.i]) : vide;
+          return rowA && rowA[b.ligne] ? couleurType(rowA[b.ligne][b.i]) : vide;
+        });
+      } else {
+        const cr = dash.data('carte_releves'), ar = dash.data('acces_releves');
+        const rowR = cr.status === 'ok' ? cr.data.find((x) => x.date === state.jour && x.creneau === c) : null;
+        const rowA = ar.status === 'ok' ? ar.data.find((x) => x.date === state.jour && x.creneau === c) : null;
+        aucun = !rowR && !rowA;
+        svg.selectAll('.rn-bin').attr('stroke', (b) => {
+          if (b.ligne === 'rn85') return rowR ? couleurCode(rowR.rouge[b.i] === '1' ? '1' : (rowR.hors_vert[b.i] === '1' ? '2' : '0')) : vide;
+          return rowA && rowA['bins_' + b.ligne] ? couleurCode(rowA['bins_' + b.ligne][b.i]) : vide;
+        });
+      }
+      svg.select('.rn-map-msg').text(aucun ? 'Pas de relevé à cette heure' : '');
+      const lec = document.getElementById('carte-lecture');
+      const v = valeurs(c);
+      lec.replaceChildren();
+      const add = (txt, val, cls) => { const s = document.createElement('span'); if (cls) s.className = cls; s.append(document.createTextNode(txt)); if (val != null) { const b = document.createElement('b'); b.textContent = val; s.append(b); } lec.appendChild(s); };
+      if (v && v.type) {
+        add('Sortie de Vizille : pic ', metres(v.vizille_max)); add('Jarrie → feu : pic ', metres(v.feu_max));
+        add('Le Péage : pic ', v.peage_max == null ? 'pas de donnée' : metres(v.peage_max)); add('Av. Maurice-Thorez : pic ', v.thorez_max == null ? 'pas de donnée' : metres(v.thorez_max));
+        add('Pic : plus grande longueur relevée à cette heure, toutes matinées confondues. Moyenne à cette heure : Vizille ' + metres(v.vizille) + ', feu ' + metres(v.feu) + '.', null, 'rn-muted');
+      } else if (v) {
+        add('Sortie de Vizille : ', metres(v.vizille)); add('Jarrie → feu : ', metres(v.feu));
+        add('Le Péage : ', v.peage == null ? 'pas de donnée' : metres(v.peage)); add('Av. Maurice-Thorez : ', v.thorez == null ? 'pas de donnée' : metres(v.thorez));
+        add('relevé de ' + heure(v.heure), null, 'rn-muted');
+      } else add('Pas de relevé à cette heure', null, 'rn-muted');
+      if (bande) bande.maj(state.k);
+    }
+
+    // Graphique de la matinée, à côté du plan : une barre par relevé, la barre du relevé affiché est
+    // surlignée et sa valeur écrite au-dessus.
+    let bande = null;
+    function drawStrip() {
+      const el = document.getElementById('carte-bande');
+      el.replaceChildren();
+      bande = null;
+      const type = state.jour === 'type';
+      const titre = document.getElementById('carte-bande-titre');
+      if (titre) titre.textContent = type ? 'Pic de la longueur en rouge à chaque heure' : 'Longueur en rouge à chaque relevé';
+      const note = document.getElementById('carte-bande-note');
+      if (note) note.textContent = type
+        ? 'Sortie de Vizille et approche du feu de Champagnier réunies, plus grande longueur relevée à chaque heure sur toutes les matinées. Cliquer sur une barre affiche cette heure sur le plan.'
+        : 'Sortie de Vizille et approche du feu de Champagnier réunies. Une case vide en pointillés signale l’absence de relevé. Cliquer sur une barre affiche cette heure sur le plan.';
+      const lignes = CRENEAUX.map((c) => valeurs(c));
+      const vals = lignes.map((v) => (!v ? null : (v.type ? v.deux_max : (v.vizille != null ? v.vizille + v.feu : null))));
+      const W = Math.max(280, el.clientWidth);
+      const H = Math.round(Math.max(200, Math.min(300, W * 0.62)));
+      const mt = 24, mb = 22, mr = 4;
+      const fs = cssVar('--cds-font-size-caption'), muted = cssVar('--color-fg-muted'), rouge = trv('--tr-rouge');
+      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
+        .attr('aria-label', type ? 'Pic de la longueur en rouge, sortie de Vizille et approche du feu réunies, à chaque heure ; cliquer sur une barre pour l’afficher sur le plan' : 'Longueur en rouge, sortie de Vizille et approche du feu réunies, à chaque relevé ; cliquer sur une barre pour l’afficher sur le plan');
+      const y = d3.scaleLinear([0, d3.max(vals) || 1], [H - mb, mt]).nice(4);
+      const ticks = y.ticks(4);
+      const ml = Math.ceil(d3.max(ticks, (t) => textWidth(svg, metres(t)))) + 8;
+      const cw = (W - ml - mr) / CRENEAUX.length;
+      const cur = svg.append('rect').attr('class', 'rn-strip-cur').attr('y', mt - 20).attr('width', cw).attr('height', H - mb - mt + 20).attr('rx', 3).attr('fill', cssVar('--cds-chart-grid'));
+      svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', ml).attr('x2', W - mr).attr('y1', (t) => y(t)).attr('y2', (t) => y(t)).attr('stroke', cssVar('--cds-chart-grid'));
+      ticks.forEach((t) => svg.append('text').attr('x', ml - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', muted).text(metres(t)));
+      // Relevé manquant : case vide en pointillés, à ne pas confondre avec 0 m (trait rouge au ras de l'axe).
+      svg.append('g').selectAll('rect').data(vals).join('rect')
+        .attr('x', (v, i) => ml + i * cw + cw * 0.15).attr('width', cw * 0.7)
+        .attr('y', (v) => (v == null ? mt : y(v))).attr('height', (v) => (v == null ? H - mb - mt : Math.max(1, y(0) - y(v))))
+        .attr('rx', 2).attr('fill', (v) => (v == null ? 'none' : rouge))
+        .attr('stroke', (v) => (v == null ? cssVar('--color-border-line') : null)).attr('stroke-dasharray', (v) => (v == null ? '2 2' : null));
+      svg.append('line').attr('x1', ml).attr('x2', W - mr).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', cssVar('--cds-chart-axis'));
+      const pas = cw * 3 >= 46 ? 15 : 30;
+      CRENEAUX.forEach((c, i) => {
+        if (Number(c.slice(3)) % pas) return;
+        svg.append('text').attr('x', ml + i * cw + cw / 2).attr('y', H - 6).attr('text-anchor', i === 0 ? 'start' : (i === CRENEAUX.length - 1 ? 'end' : 'middle'))
+          .attr('font-size', fs).attr('fill', muted).text(heureAxe(c));
+      });
+      const val = svg.append('text').attr('font-size', fs).attr('font-weight', 600).attr('fill', cssVar('--color-fg'));
+      const card = el.closest('.rn-card'), tip = tipIn(card);
+      svg.append('g').selectAll('rect').data(CRENEAUX).join('rect').attr('class', 'rn-strip-hit')
+        .attr('x', (c, i) => ml + i * cw).attr('width', cw).attr('y', 0).attr('height', H).attr('fill', 'transparent')
+        // « pointerdown » plutôt que « click » : un seul toucher suffit sur téléphone.
+        .on('pointerdown', (e, c) => { state.touche = true; stop(); state.k = CRENEAUX.indexOf(c); frame(); })
+        .on('mousemove', (evt, c) => {
+          const i = CRENEAUX.indexOf(c), v = lignes[i];
+          let texte;
+          if (vals[i] == null) texte = [{ text: 'Pas de relevé à cette heure' }];
+          else if (v.type) texte = [{ color: rouge, text: 'Pic : ' + metres(vals[i]) + (v.deux_max_date ? ' (' + dateCourte(v.deux_max_date, v.deux_max_jour) + ')' : '') }, { text: 'Toutes matinées confondues' }];
+          else texte = [{ color: rouge, text: 'En tout : ' + metres(vals[i]) }, { text: 'Sortie de Vizille : ' + metres(v.vizille) }, { text: 'Jarrie → feu : ' + metres(v.feu) }];
+          tipLines(tip, heure(c), texte);
+          const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
+        })
+        .on('mouseleave', () => { tip.hidden = true; });
+      bande = {
+        maj(k) {
+          const x = ml + k * cw, tx = x + cw / 2, v = vals[k];
+          cur.attr('x', x);
+          val.attr('x', tx).attr('y', v == null ? mt - 6 : y(v) - 6)
+            .attr('text-anchor', tx < ml + 30 ? 'start' : (tx > W - 30 ? 'end' : 'middle'))
+            .text(v == null ? '' : metres(v));
+        },
+      };
+      bande.maj(state.k);
+      el.style.minHeight = H * (el.clientWidth / W) + 'px';
+    }
+
+    function maj() {
+      const el = document.getElementById('carte-svg');
+      if (!estVisible(el)) return;
+      const sig = ['carte_trace', 'carte_releves', 'troncons', 'matinee_type', 'releves', 'par_creneau', 'acces_trace', 'acces_releves', 'acces_type', 'acces_creneau', 'synthese'].map((id) => dash.data(id).status).join(',');
+      if (el.clientWidth !== lastW || sig !== lastSig || !geo) { lastW = el.clientWidth; lastSig = sig; drawAll(); }
+      else frame();
+    }
+    return { maj, stop };
+  })();
+
+  // ================= Onglets et dessin =================
+  const PAGES = ['comprendre', 'comparer', 'explorer'];
+  let page = 'comprendre';
+  const onglets = Array.from(document.querySelectorAll('.rn-tabs [data-tab]'));
+  function montrer(p) {
+    if (!PAGES.includes(p)) p = 'comprendre';
+    if (p !== 'comprendre') carte.stop();
+    page = p;
+    PAGES.forEach((id) => { document.getElementById(id).hidden = id !== p; });
+    onglets.forEach((b) => { const on = b.dataset.tab === p; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
+    dessiner();
+  }
+  onglets.forEach((b) => b.addEventListener('click', () => { montrer(b.dataset.tab); dash.setLink(b.dataset.tab); }));
+  document.querySelector('.rn-tabs').addEventListener('keydown', (e) => {
+    const i = onglets.findIndex((b) => b.dataset.tab === page);
+    let j = null;
+    if (e.key === 'ArrowRight') j = (i + 1) % onglets.length;
+    if (e.key === 'ArrowLeft') j = (i - 1 + onglets.length) % onglets.length;
+    if (j != null) { e.preventDefault(); montrer(onglets[j].dataset.tab); dash.setLink(onglets[j].dataset.tab); onglets[j].focus(); }
+  });
+
+  function dessiner() {
+    remplirTextes();
+    drawTableSynthese(); drawTableTroncons(); drawTableJours(); drawTableMethodes();
+    if (page === 'comprendre') { drawETType(); drawPics(); carte.maj(); }
+    if (page === 'comparer') { drawBarres(); drawETJour(); drawGrille(); }
+    if (page === 'explorer') { drawAcces(); }
+  }
+
+  const lien = location.hash.slice(1);
+  const cible = lien ? document.getElementById(lien) : null;
+  let defile = false;
+  if (cible) { const pg = cible.closest('.rn-page'); montrer(pg ? pg.id : (PAGES.includes(lien) ? lien : 'comprendre')); }
+  else montrer('comprendre');
+
+  dash.onData(() => {
+    dessiner();
+    if (cible && !defile && dash.data('synthese').status === 'ok') { defile = true; cible.scrollIntoView(); }
+  });
+})();
+</script>
+</body>
+</html>
