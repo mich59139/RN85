@@ -573,7 +573,7 @@ h3.rn-card-title { font-size: 21px; }
         <ul>
           <li>Les résultats valent pour les matinées observées. Ils ne mesurent pas tous les jours de circulation.</li>
           <li>Google Maps indique un état de la circulation, pas un nombre de véhicules.</li>
-          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et juste avant l’autopont de Jarrie. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
+          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et environ 400 m avant le feu de Champagnier. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
           <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres clés et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
           <li>La zone « après le feu » dépasse la zone relevée, en direction de Pont-de-Claix.</li>
           <li>La zone relevée s’arrête peu après le feu de Champagnier. Les bouchons de la portion rapide qui mène à l’A480 et de l’A480 jusqu’à l’entrée de Grenoble n’y figurent pas.</li>
@@ -954,7 +954,6 @@ dash.calc('acces_creneau', {
     s2: { txt: 'Rond-point Muzet', ou: 'haut', prio: 3, ligne: true },
     s3: { txt: 'Feu avant l’autopont', lignes: ['Feu avant', 'l’autopont'], ou: 'haut', prio: 1, fort: true, ligne: true },
     s4: { txt: 'Basse-Jarrie', ou: 'bas', prio: 2 },
-    s5: { txt: 'Autopont de Jarrie', ou: 'bas', prio: 3 },
     s6: { txt: 'Feu de Champagnier', lignes: ['Feu de', 'Champagnier'], ou: 'haut', prio: 1, fort: true, ligne: true },
     s7: { txt: 'Fin du relevé', ou: 'bas', prio: 3 },
   };
@@ -1732,7 +1731,7 @@ dash.calc('acces_creneau', {
       // Le carrefour de départ, où arrivent Le Péage et l'avenue Maurice-Thorez, n'a pas d'étiquette propre :
       // les noms des deux accès suffisent et libèrent la place autour du rond-point Muzet.
       // Noms des lieux choisis par Michel le 14 octobre 2026 : rond-point Muzet, feu avant l'autopont.
-      const NOMS = { s2: { txt: 'Rond-point Muzet' }, s3: { txt: 'Feu avant l’autopont', fort: true }, s4: { txt: 'Basse-Jarrie', fort: true }, s5: { txt: 'Autopont de Jarrie' }, s6: { txt: 'Feu de Champagnier', fort: true }, s7: { txt: 'Fin du relevé' } };
+      const NOMS = { s2: { txt: 'Rond-point Muzet' }, s3: { txt: 'Feu avant l’autopont', fort: true }, s4: { txt: 'Basse-Jarrie', fort: true }, s6: { txt: 'Feu de Champagnier', fort: true }, s7: { txt: 'Fin du relevé' } };
       const items = troncons.filter((t) => NOMS[t.id]).map((t) => ({ p: geo.rn85.at(t.debut_m), txt: NOMS[t.id].txt, fort: !!NOMS[t.id].fort }));
       items.push({ p: geo.peage.at(0), txt: ACCES.peage, fort: false }, { p: geo.thorez.at(0), txt: ACCES.thorez, fort: false });
       items.push({ p: geo.rn85.at(geo.rn85.total), txt: 'vers Grenoble', fort: false, sansPoint: true, discret: true });
