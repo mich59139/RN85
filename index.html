@@ -6,8 +6,8 @@
 <title>Bouchons RN85</title>
 <meta name="description" content="Relevés du trafic du matin sur la RN85, de Vizille vers Grenoble : où et quand se forment les bouchons.">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#eceff1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#131619" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121518" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icone-192.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -15,250 +15,279 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="RN85">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="preload" href="polices/barlow-semi-condensed-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="polices/source-serif-4-600.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-/* Police des titres et des chiffres : Barlow Semi Condensed, inspirée de la signalisation routière (licence OFL, fichiers dans « polices »). */
-@font-face { font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 600; font-display: swap; src: url("polices/barlow-semi-condensed-600.woff2") format("woff2"); }
-@font-face { font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 700; font-display: swap; src: url("polices/barlow-semi-condensed-700.woff2") format("woff2"); }
-/* Jeu de couleurs : gris de chaussée, blanc des panneaux, encre bitume (clair et sombre). */
+/* Police des titres : Source Serif 4, à empattements (licence OFL, fichier dans « polices »). */
+@font-face { font-family: "Source Serif 4"; font-style: normal; font-weight: 600; font-display: swap; src: url("polices/source-serif-4-600.woff2") format("woff2"); }
+/* Jeu de couleurs sobre : page blanche, encre, filets gris (clair et sombre). */
 :root {
   color-scheme: light dark;
   --font-anthropic-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
-  --font-anthropic-serif: "New York", ui-serif, Georgia, serif;
-  --color-bg: #eceff1;
+  --color-bg: #ffffff;
   --color-panel: #ffffff;
-  --color-fg: #1c2024;
-  --color-fg-muted: #5c656d;
-  --color-border-line: #d7dce0;
-  --color-bad: #c4302b;
-  --cds-chart-grid: #e7eaed;
-  --cds-chart-axis: #a8b0b7;
-  --cds-chart-reference: #8b949c;
+  --color-fg: #1b1f23;
+  --color-fg-muted: #5a636b;
+  --color-border-line: #dde2e6;
+  --color-bad: #5a636b;
+  --cds-chart-grid: #e9edf0;
+  --cds-chart-axis: #a3abb3;
+  --cds-chart-reference: #8a939b;
   --cds-surface-popover: #ffffff;
-  --cds-border: #d3d9de;
-  --cds-shadow-popover: 0 8px 24px rgba(20, 26, 32, .16);
-  --cds-text-secondary: #5c656d;
-  --cds-gap-xs: 6px; --cds-gap-sm: 10px; --cds-gap-md: 14px; --cds-gap-lg: 20px; --cds-gap-xl: 30px;
-  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 20px;
-  --cds-radius: 10px;
-  --cds-font-size-caption: 12px; --cds-font-size-body: 15px; --cds-font-size-heading: 17px; --cds-font-size-title: 24px;
-  --cds-font-weight-medium: 600;
+  --cds-border: #cfd5db;
+  --cds-shadow-popover: 0 6px 20px rgba(20, 26, 32, .14);
+  --cds-text-secondary: #5a636b;
+  --cds-font-size-caption: 12px; --cds-font-size-body: 15px;
   --cds-dur-slow: 400ms; --cds-ease-out: cubic-bezier(.2, .8, .2, 1);
+  --rn-gouttiere: 16px;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #131619;
-    --color-panel: #1d2125;
-    --color-fg: #e8ecef;
-    --color-fg-muted: #9ba5ad;
-    --color-border-line: #323a41;
-    --color-bad: #ef6a5c;
-    --cds-chart-grid: #283036;
-    --cds-chart-axis: #4c565f;
-    --cds-chart-reference: #67717a;
-    --cds-surface-popover: #262c31;
+    --color-bg: #121518;
+    --color-panel: #121518;
+    --color-fg: #e7ebee;
+    --color-fg-muted: #a0a9b1;
+    --color-border-line: #2c3339;
+    --color-bad: #a0a9b1;
+    --cds-chart-grid: #232a30;
+    --cds-chart-axis: #4d5760;
+    --cds-chart-reference: #6b757e;
+    --cds-surface-popover: #22282d;
     --cds-border: #3b444c;
     --cds-shadow-popover: 0 8px 24px rgba(0, 0, 0, .5);
-    --cds-text-secondary: #9ba5ad;
+    --cds-text-secondary: #a0a9b1;
   }
 }
-@media (max-width: 600px) {
-  :root { --cds-pad-lg: 14px; --cds-gap-xl: 22px; --cds-gap-lg: 16px; }
-}
+@media (min-width: 760px) { :root { --rn-gouttiere: 32px; } }
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); line-height: 1.45; }
 #dash-root {
-  max-width: 1180px; margin: 0 auto; display: grid; gap: var(--cds-gap-lg);
-  padding: max(18px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(36px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  max-width: 1120px; margin: 0 auto; display: grid;
+  padding: env(safe-area-inset-top) max(var(--rn-gouttiere), env(safe-area-inset-right)) max(40px, env(safe-area-inset-bottom)) max(var(--rn-gouttiere), env(safe-area-inset-left));
 }
-.rn-pied { margin: 0; padding-top: var(--cds-pad-md); border-top: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; }
-.dash-skeleton { color: transparent !important; background: var(--color-border-line); border-radius: 6px; animation: rn-pulse 1.4s ease-in-out infinite; }
+.rn-pied { margin: 56px 0 0; padding: 16px max(0px, calc(100% - 72ch)) 0 0; border-top: 1px solid var(--color-border-line); font-size: 13px; color: var(--color-fg-muted); line-height: 1.55; }
+.dash-skeleton { color: transparent !important; background: var(--color-border-line); border-radius: 4px; animation: rn-pulse 1.4s ease-in-out infinite; }
 @keyframes rn-pulse { 50% { opacity: .55; } }
 @media (prefers-reduced-motion: reduce) { .dash-skeleton { animation: none; } }
-.rn-ecartees-liste { margin: var(--cds-gap-xs) 0 0; padding-left: 1.2rem; }
+.rn-ecartees-liste { margin: 6px 0 0; padding-left: 1.2rem; }
 </style>
 <style>
 /* ---------- Jetons propres à la page ---------- */
 .rn {
+  /* Couleurs du trafic : réservées aux graphiques et aux cartes. */
   --tr-vert: #1f9d55; --tr-orange: #f0961c; --tr-rouge: #e0362c; --tr-fonce: #8e1712; --tr-pale: #f6d58c;
-  --rn-display: "Barlow Semi Condensed", "Arial Narrow", var(--font-anthropic-sans);
-  --rn-bitume: #262b30;            /* fond du bloc principal : l'asphalte */
-  --rn-bitume-texte: #f3f5f6;
-  --rn-bitume-doux: #a9b2ba;
-  --rn-mini-bas: #c9cfd4;          /* barres sous le seuil, sur fond clair */
-  --rn-rayon: 14px;
-  display: grid; gap: var(--cds-gap-lg); font-family: var(--font-anthropic-sans); color: var(--color-fg);
+  /* Titres à empattements, texte et chiffres en caractères sans empattements. */
+  --rn-serif: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
+  --rn-encre-douce: #353d44;          /* introductions : un peu plus douce que le texte courant */
+  --rn-accent: #1d5fbf;               /* contour du clavier : jamais une couleur de trafic */
+  --rn-fond-doux: #f2f4f6;            /* explications dépliées */
+  /* La seule zone sur fond sombre : les trois chiffres clés. */
+  --rn-bande: #1f2429; --rn-bande-texte: #f4f6f7; --rn-bande-doux: #b6bfc7; --rn-bande-filet: rgba(255, 255, 255, .16);
+  --rn-mini-bas: #c9cfd4;
+  display: grid; font-family: var(--font-anthropic-sans); color: var(--color-fg);
 }
-@media (prefers-color-scheme: dark) { .rn { --rn-bitume: #2c3238; --rn-mini-bas: #4a535c; } }
-.rn-hero { --rn-mini-bas: #59636c; }
+@media (prefers-color-scheme: dark) {
+  .rn {
+    --rn-encre-douce: #cdd3d8; --rn-accent: #86b6ff; --rn-fond-doux: #1b2025;
+    --rn-bande: #242b31; --rn-bande-doux: #aab4bc; --rn-bande-filet: rgba(255, 255, 255, .12); --rn-mini-bas: #4a535c;
+  }
+}
 
 /* Les parties masquées (onglets non choisis, mentions facultatives) restent masquées. */
 .rn [hidden] { display: none !important; }
 
-/* ---------- En-tête ---------- */
-.rn-head { display: grid; gap: 10px; }
-.rn-marque { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.rn-cartouche {
-  font-family: var(--rn-display); font-weight: 700; font-size: 22px; line-height: 1; letter-spacing: .02em;
-  color: #fff; background: var(--tr-rouge); padding: 7px 12px 6px; border-radius: 6px;
-  box-shadow: inset 0 0 0 2px var(--tr-rouge), inset 0 0 0 3.5px #fff;
+/* ---------- En-tête : un titre, une introduction, une fiche ---------- */
+.rn-head { display: grid; gap: 14px; padding-top: 28px; }
+.rn-title {
+  margin: 0; font-family: var(--rn-serif); font-weight: 600; font-size: clamp(30px, 7.4vw, 46px);
+  line-height: 1.1; letter-spacing: -.012em; max-width: 20ch; text-wrap: balance;
 }
-.rn-title { margin: 0; font-family: var(--rn-display); font-weight: 700; font-size: clamp(28px, 7vw, 42px); line-height: 1.02; letter-spacing: -.005em; }
-.rn-sous { margin: 0; font-size: var(--cds-font-size-body); color: var(--color-fg-muted); }
-.rn-lede { margin: 0; font-size: 16px; line-height: 1.5; max-width: 62ch; }
-.rn-maj { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: flex; align-items: center; gap: 6px; }
-.rn-maj:empty { display: none; }
-.rn-maj::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--tr-vert); flex: none; }
-.rn-maj.rn-vieux { color: var(--color-bad); }
-.rn-maj.rn-vieux::before { background: var(--color-bad); }
+.rn-lede { margin: 0; font-size: 17px; line-height: 1.55; color: var(--rn-encre-douce); max-width: 60ch; }
+.rn-fiche { margin: 4px 0 0; padding-top: 14px; border-top: 1px solid var(--color-border-line); display: grid; gap: 10px; font-size: 15px; line-height: 1.4; }
+.rn-fiche > div { display: grid; gap: 1px; }
+.rn-fiche dt { color: var(--color-fg-muted); font-size: 13px; }
+.rn-fiche dd { margin: 0; }
+.rn-maj.rn-vieux { font-weight: 600; }
+@media (min-width: 760px) {
+  .rn-head { padding-top: 56px; gap: 18px; }
+  .rn-title { max-width: none; }
+  .rn-lede { font-size: 19px; }
+  .rn-fiche { display: flex; flex-wrap: wrap; gap: 10px 48px; padding-top: 16px; }
+  .rn-fiche > div { gap: 2px; }
+}
 
-/* ---------- Chiffres clés ---------- */
-.rn-chiffres { display: grid; gap: var(--cds-gap-md); grid-template-columns: 1fr; }
-@media (min-width: 760px) { .rn-chiffres { grid-template-columns: 1.4fr 1fr 1fr; align-items: stretch; } }
-.rn-hero {
-  background: var(--rn-bitume); color: var(--rn-bitume-texte); border-radius: 18px;
-  padding: 18px 20px 16px; display: grid; gap: 6px; align-content: start; position: relative;
+/* ---------- Chiffres clés : même traitement pour les trois ---------- */
+.rn-chiffres {
+  margin: 28px calc(-1 * var(--rn-gouttiere)) 0; background: var(--rn-bande); color: var(--rn-bande-texte);
+  display: grid; grid-template-columns: minmax(0, 1fr);
 }
-.rn-hero-titre { margin: 0; font-family: var(--rn-display); font-weight: 600; font-size: 21px; line-height: 1.15; }
-.rn-hero-sous { margin: 0; font-size: 13px; color: var(--rn-bitume-doux); }
-.rn-hero-corps, .rn-stat-corps { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
-.rn-hero-val { margin: 2px 0 0; font-family: var(--rn-display); font-weight: 600; font-size: clamp(54px, 15vw, 76px); line-height: .92; letter-spacing: -.015em; white-space: nowrap; }
-.rn-unite { font-size: .45em; font-weight: 600; letter-spacing: 0; margin-left: .12em; }
-.rn-hero-quand { margin: 4px 0 0; font-size: var(--cds-font-size-body); }
-.rn-hero-note { margin: 0; font-size: 13px; line-height: 1.45; color: var(--rn-bitume-doux); }
-.rn-hero-note b { color: var(--rn-bitume-texte); font-weight: 600; }
-.rn-mini { flex: 1 1 120px; max-width: 230px; min-height: 58px; position: relative; }
-.rn-stat {
-  background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--rn-rayon);
-  padding: 14px 16px; display: grid; gap: 4px; align-content: start; position: relative;
+.rn-chiffre { margin: 0; padding: 20px var(--rn-gouttiere) 22px; display: grid; gap: 3px; align-content: start; }
+.rn-chiffre + .rn-chiffre { border-top: 1px solid var(--rn-bande-filet); }
+.rn-chiffre-titre { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.25; }
+.rn-chiffre-sous { margin: 0; font-size: 13.5px; line-height: 1.4; color: var(--rn-bande-doux); }
+.rn-chiffre-val { margin: 10px 0 2px; font-size: 44px; font-weight: 600; line-height: 1; letter-spacing: -.01em; white-space: nowrap; }
+.rn-unite { font-size: .5em; font-weight: 600; letter-spacing: 0; margin-left: .1em; }
+.rn-chiffre-quand { margin: 0; font-size: 15px; line-height: 1.4; }
+.rn-chiffre-note { margin: 6px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--rn-bande-doux); }
+.rn-chiffre-note b { color: var(--rn-bande-texte); font-weight: 600; }
+@media (min-width: 760px) {
+  .rn-chiffres { margin: 40px 0 0; grid-template-columns: repeat(3, minmax(0, 1fr)); border-radius: 6px; }
+  .rn-chiffre { padding: 26px 28px 28px; gap: 4px; }
+  .rn-chiffre-titre { font-size: 17px; }
+  .rn-chiffre-sous, .rn-chiffre-note { font-size: 14px; }
+  .rn-chiffre + .rn-chiffre { border-top: 0; border-left: 1px solid var(--rn-bande-filet); }
+  .rn-chiffre-val { font-size: 54px; }
 }
-.rn-stat-titre { margin: 0; font-family: var(--rn-display); font-weight: 600; font-size: 18px; line-height: 1.15; }
-.rn-stat-sous { margin: 0; font-size: 12px; color: var(--color-fg-muted); }
-.rn-stat-val { margin: 4px 0 0; font-family: var(--rn-display); font-weight: 600; font-size: 38px; line-height: 1; white-space: nowrap; }
-.rn-stat .rn-mini { min-height: 44px; max-width: 170px; }
-.rn-stat-quand { margin: 4px 0 0; font-size: 13px; }
-.rn-stat-note { margin: 0; font-size: 12px; line-height: 1.45; color: var(--color-fg-muted); }
-.rn-stat-note b { color: var(--color-fg); font-weight: 600; }
-.rn-cumul { min-height: 18px; margin-top: 8px; }
-.rn-perimetre { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.rn-stats { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 
-/* ---------- Onglets : une seule rangée, qui reste en haut de l'écran ---------- */
+/* ---------- Onglets : du texte souligné, qui reste en haut de l'écran ---------- */
 .rn-tabs {
-  position: sticky; top: 8px; z-index: 5; justify-self: start; max-width: 100%;
-  display: flex; gap: 2px; padding: 4px; overflow-x: auto; scrollbar-width: none;
-  background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px;
-  box-shadow: 0 4px 14px rgba(20, 26, 32, .08);
+  position: sticky; top: 0; z-index: 5; margin: 24px calc(-1 * var(--rn-gouttiere)) 0; padding: 0 var(--rn-gouttiere);
+  display: flex; gap: 28px; overflow-x: auto; scrollbar-width: none;
+  background: var(--color-bg); border-bottom: 1px solid var(--color-border-line);
 }
 .rn-tabs::-webkit-scrollbar { display: none; }
 .rn-tabs button {
-  flex: 0 0 auto; font-family: var(--rn-display); font-size: 17px; font-weight: 600; letter-spacing: .01em;
-  color: var(--color-fg-muted); background: transparent; border: 0; border-radius: 999px;
-  padding: 8px 18px; cursor: pointer; white-space: nowrap;
+  flex: 0 0 auto; font: inherit; font-size: 16px; font-weight: 600; color: var(--color-fg-muted);
+  background: none; border: 0; border-bottom: 3px solid transparent; margin-bottom: -1px;
+  padding: 14px 0 11px; cursor: pointer; white-space: nowrap;
 }
-.rn-tabs button[aria-selected="true"] { color: var(--color-panel); background: var(--color-fg); }
-.rn-tabs button:focus-visible { outline: 2px solid var(--tr-rouge); outline-offset: 1px; }
+.rn-tabs button:hover { color: var(--color-fg); }
+.rn-tabs button[aria-selected="true"] { color: var(--color-fg); border-bottom-color: var(--color-fg); }
+.rn-tabs button:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: -2px; border-radius: 3px; }
+@media (min-width: 760px) { .rn-tabs { margin: 36px 0 0; padding: 0; gap: 36px; } }
 
-/* ---------- Pages et cartes ---------- */
-.rn-page { display: grid; gap: var(--cds-gap-xl); }
-.rn-section { display: grid; gap: var(--cds-gap-md); scroll-margin-top: 72px; }
-.rn-h2 { margin: 0; font-family: var(--rn-display); font-size: 24px; font-weight: 600; line-height: 1.15; }
-.rn-card {
-  background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--rn-rayon);
-  padding: var(--cds-pad-lg); display: grid; gap: var(--cds-gap-sm); min-width: 0; position: relative;
+/* ---------- Parties et sections : de l'air et des filets fins, sans encadré ---------- */
+.rn-page { display: grid; }
+.rn-section { display: grid; gap: 16px; padding-top: 32px; min-width: 0; scroll-margin-top: 60px; }
+.rn-section + .rn-section { margin-top: 36px; border-top: 1px solid var(--color-border-line); }
+@media (min-width: 760px) { .rn-section { padding-top: 48px; } .rn-section + .rn-section { margin-top: 52px; } }
+.rn-card { display: grid; gap: 14px; min-width: 0; position: relative; }
+.rn-card-tete { display: grid; gap: 8px; }
+.rn-card-top { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; }
+.rn-card-top > div:not(.rn-seg) { min-width: 0; flex: 1 1 18rem; display: grid; gap: 8px; }
+.rn-card-title, .rn-h2 {
+  margin: 0; font-family: var(--rn-serif); font-weight: 600; font-size: 24px; line-height: 1.2;
+  letter-spacing: -.005em; max-width: 38ch; text-wrap: balance;
 }
-.rn-card-top { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: flex-start; justify-content: space-between; }
-.rn-card-top > div { min-width: 0; flex: 1 1 18rem; display: grid; gap: 6px; }
-.rn-card-tete { display: grid; gap: 6px; }
-.rn-card-title { margin: 0; font-family: var(--rn-display); font-size: 21px; font-weight: 600; line-height: 1.15; }
-.rn-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.5; max-width: 75ch; }
-.rn-note b { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); }
-/* « Comment lire » replié par défaut : la carte reste compacte. */
-.rn-aide { font-size: 13px; color: var(--color-fg-muted); }
-.rn-aide summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; color: var(--color-fg); font-weight: 600; font-size: 13px; padding: 2px 0; }
+h3.rn-card-title { font-size: 21px; }
+@media (min-width: 760px) { .rn-card-title, .rn-h2 { font-size: 28px; } h3.rn-card-title { font-size: 22px; } }
+.rn-chapo, .rn-section > .rn-lede { margin: 0; font-size: 16px; line-height: 1.55; color: var(--rn-encre-douce); max-width: 66ch; }
+.rn-note { margin: 0; font-size: 13px; color: var(--color-fg-muted); line-height: 1.5; max-width: 72ch; }
+.rn-note b { font-weight: 600; color: var(--color-fg); }
+
+/* « Comment lire » : replié, discret, sous le titre. */
+.rn-aide { font-size: 14px; color: var(--color-fg); max-width: 68ch; }
+.rn-aide summary {
+  cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 8px; padding: 2px 0;
+  font-weight: 600; text-decoration: underline; text-decoration-color: var(--color-border-line); text-decoration-thickness: 1px; text-underline-offset: 4px;
+}
+.rn-aide summary:hover { text-decoration-color: currentColor; }
 .rn-aide summary::-webkit-details-marker { display: none; }
-.rn-aide summary::before { content: "?"; display: inline-grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; border: 1.5px solid currentColor; font-size: 11px; line-height: 1; }
-.rn-aide[open] summary::before { content: "\2212"; }
-.rn-aide summary:focus-visible { outline: 2px solid var(--tr-rouge); outline-offset: 2px; border-radius: 4px; }
-.rn-aide p { margin: 6px 0 0; line-height: 1.55; max-width: 72ch; }
+.rn-aide summary::after {
+  content: ""; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+}
+.rn-aide[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+.rn-aide summary:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: 3px; border-radius: 2px; }
+.rn-aide p { margin: 8px 0 0; padding: 12px 14px; background: var(--rn-fond-doux); border-radius: 4px; line-height: 1.55; }
+
+/* ---------- Graphiques ---------- */
 .rn-chart { position: relative; min-height: 120px; }
-.rn-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--color-border-line); border-radius: 999px; overflow: hidden; }
-.rn-seg button { font: inherit; font-size: var(--cds-font-size-caption); background: transparent; color: var(--color-fg-muted); border: 0; border-right: 1px solid var(--color-border-line); padding: 6px 12px; cursor: pointer; }
-.rn-seg button:last-child { border-right: 0; }
-.rn-seg button[aria-pressed="true"] { background: var(--color-fg); color: var(--color-panel); font-weight: var(--cds-font-weight-medium); }
-.rn-seg button:focus-visible { outline: 2px solid var(--tr-rouge); outline-offset: -2px; }
-.rn-field { display: inline-flex; align-items: center; gap: var(--cds-gap-xs); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.rn-field select { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-bg); border: 1px solid var(--color-border-line); border-radius: 10px; padding: 6px 10px; max-width: 100%; }
-.rn-field select:focus-visible { outline: 2px solid var(--tr-rouge); outline-offset: 2px; }
-.rn-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); color: var(--color-fg); border: 1px solid var(--cds-border); border-radius: 10px; box-shadow: var(--cds-shadow-popover); padding: 6px 10px; font-size: var(--cds-font-size-caption); line-height: 1.45; white-space: nowrap; z-index: 6; }
-.rn-tip .rn-tip-h { color: var(--cds-text-secondary); }
-.rn-sw { display: inline-block; width: .75rem; height: .75rem; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
-.rn-trait { display: inline-block; width: 1.1rem; height: 0; border-top: 2px solid currentColor; margin-right: .35rem; vertical-align: middle; }
-.rn-trait.rn-pointille { border-top-style: dashed; }
-.rn-stack { display: grid; gap: var(--cds-gap-lg); }
-.rn-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.rn-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--color-fg-muted); }
 .rn-legend span { display: inline-flex; align-items: center; }
+.rn-sw { display: inline-block; width: .8rem; height: .8rem; border-radius: 2px; margin-right: .4rem; vertical-align: -1px; }
+.rn-trait { display: inline-block; width: 1.2rem; height: 0; border-top: 2px solid currentColor; margin-right: .4rem; vertical-align: middle; }
+.rn-trait.rn-pointille { border-top-style: dashed; }
+.rn-tip {
+  position: absolute; pointer-events: none; background: var(--cds-surface-popover); color: var(--color-fg);
+  border: 1px solid var(--cds-border); border-radius: 6px; box-shadow: var(--cds-shadow-popover);
+  padding: 6px 10px; font-size: 13px; line-height: 1.45; white-space: nowrap; z-index: 6;
+}
+.rn-tip .rn-tip-h { color: var(--cds-text-secondary); }
+.rn-stack { display: grid; gap: 28px; }
+.rn-mult { display: grid; gap: 28px 32px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+.rn-panel { display: grid; gap: 6px; min-width: 0; align-content: start; }
+.rn-panel-title { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+.rn-panel-pic { font-size: 13px; color: var(--color-fg-muted); }
+.rn-panel-pic b { color: var(--color-fg); font-weight: 600; }
+.rn-et-nom { font-size: 16px; font-weight: 600; margin-top: 8px; }
+#et-type, #et-jour-chart { min-height: 440px; }
+
+/* Sélecteurs : contour fin, jamais de fond sombre. */
+.rn-seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--color-border-line); border-radius: 6px; overflow: hidden; }
+.rn-seg button {
+  font: inherit; font-size: 13px; background: transparent; color: var(--color-fg-muted);
+  border: 0; border-right: 1px solid var(--color-border-line); padding: 8px 12px; cursor: pointer;
+}
+.rn-seg button:last-child { border-right: 0; }
+.rn-seg button[aria-pressed="true"] { background: var(--rn-fond-doux); color: var(--color-fg); font-weight: 600; box-shadow: inset 0 -2px 0 var(--color-fg); }
+.rn-seg button:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: -2px; }
+.rn-field { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-fg-muted); }
+.rn-field select {
+  font: inherit; font-size: 15px; color: var(--color-fg); background: var(--color-bg);
+  border: 1px solid var(--cds-border); border-radius: 6px; padding: 7px 10px; max-width: 100%;
+}
+.rn-field select:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: 2px; }
 
 /* ---------- Tableaux : colonnes secondaires masquées sur téléphone ---------- */
 .rn-wrap { overflow-x: auto; }
-.rn-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
-.rn-table th { text-align: right; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); font-size: 12px; padding: 6px 8px; border-bottom: 1px solid var(--color-border-line); vertical-align: bottom; }
-.rn-table td { text-align: right; padding: 7px 8px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
+.rn-table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+.rn-table th {
+  text-align: right; font-weight: 600; color: var(--color-fg-muted); font-size: 12.5px; line-height: 1.3;
+  padding: 8px; border-bottom: 1px solid var(--color-fg); vertical-align: bottom;
+}
+.rn-table td { text-align: right; padding: 9px 8px; border-bottom: 1px solid var(--color-border-line); white-space: nowrap; }
 .rn-table th:first-child, .rn-table td:first-child { text-align: left; white-space: normal; padding-left: 0; }
+.rn-table th:last-child, .rn-table td:last-child { padding-right: 0; }
 .rn-table tr.rn-out td { color: var(--color-fg-muted); }
 .rn-table td.rn-pic { font-weight: 600; }
-.rn-table td small { display: block; font-weight: 400; color: var(--color-fg-muted); font-size: 11px; }
+.rn-table td small { display: block; font-weight: 400; color: var(--color-fg-muted); font-size: 11.5px; }
 #table-jours td:first-child { white-space: nowrap; }
 @media (max-width: 640px) { .rn-table .rn-opt { display: none; } .rn-table th, .rn-table td { padding-left: 5px; padding-right: 5px; } }
 
-/* ---------- Petits graphiques ---------- */
-.rn-mult { display: grid; gap: var(--cds-gap-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
-.rn-panel { display: grid; gap: var(--cds-gap-xs); min-width: 0; align-content: start; }
-.rn-panel-title { margin: 0; font-family: var(--rn-display); font-size: 17px; font-weight: 600; display: flex; align-items: center; }
-.rn-panel-pic { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.rn-panel-pic b { color: var(--color-fg); font-weight: 600; }
-
-/* ---------- Méthode ---------- */
-.rn-method { display: grid; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-body); line-height: 1.6; max-width: 72ch; }
+/* ---------- Accès et méthode (onglet Explorer) ---------- */
+.rn-stats { display: grid; gap: 24px 32px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.rn-stat { padding-top: 12px; border-top: 2px solid var(--color-fg); display: grid; gap: 4px; align-content: start; }
+.rn-stat-titre { margin: 0; font-size: 16px; font-weight: 600; line-height: 1.3; }
+.rn-stat-sous { margin: 0; font-size: 13px; color: var(--color-fg-muted); }
+.rn-stat-val { margin: 6px 0 2px; font-size: 38px; font-weight: 600; line-height: 1; letter-spacing: -.015em; white-space: nowrap; }
+.rn-stat-quand { margin: 0; font-size: 14px; }
+.rn-stat-note { margin: 0; font-size: 13px; line-height: 1.45; color: var(--color-fg-muted); }
+.rn-stat-note b { color: var(--color-fg); font-weight: 600; }
+.rn-method { display: grid; gap: 10px; font-size: 15px; line-height: 1.6; max-width: 68ch; }
 .rn-method p, .rn-method ul { margin: 0; }
-.rn-method ul { padding-left: 1.2rem; display: grid; gap: var(--cds-gap-xs); }
-.rn-method h3 { margin: var(--cds-gap-sm) 0 0; font-family: var(--rn-display); font-size: 18px; font-weight: 600; }
-.rn-fail { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.rn-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.rn-method ul { padding-left: 1.2rem; display: grid; gap: 6px; }
+.rn-method h3 { margin: 14px 0 0; font-size: 17px; font-weight: 600; }
+.rn-fail { display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: inherit; color: var(--color-fg-muted); font-size: 13px; }
+.rn-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-fg-muted); }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 
 /* ---------- Carte animée ---------- */
-.rn-map-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--cds-gap-sm) var(--cds-gap-md); }
-.rn-play { font-family: var(--rn-display); font-size: 17px; font-weight: 600; color: var(--color-panel); background: var(--color-fg); border: 0; border-radius: 999px; padding: 7px 18px; cursor: pointer; min-width: 7.5rem; }
-.rn-play:focus-visible, #carte-temps:focus-visible { outline: 2px solid var(--tr-rouge); outline-offset: 2px; }
-#carte-temps { flex: 1 1 12rem; min-width: 8rem; accent-color: var(--tr-rouge); }
-.rn-clock { font-family: var(--rn-display); font-weight: 600; font-size: 28px; font-variant-numeric: tabular-nums; min-width: 5.5rem; text-align: right; }
-.rn-map-layout { display: grid; gap: var(--cds-gap-lg); grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); align-items: start; }
-.rn-map-col { display: grid; gap: var(--cds-gap-sm); min-width: 0; align-content: start; }
+.rn-map-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.rn-play {
+  font: inherit; font-size: 15px; font-weight: 600; color: var(--color-fg); background: var(--color-bg);
+  border: 1px solid var(--color-fg); border-radius: 6px; padding: 7px 16px; cursor: pointer; min-width: 7.5rem;
+}
+.rn-play:hover { background: var(--rn-fond-doux); }
+.rn-play:focus-visible, #carte-temps:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: 2px; }
+#carte-temps { flex: 1 1 12rem; min-width: 8rem; accent-color: var(--color-fg); }
+.rn-clock { font-weight: 600; font-size: 26px; font-variant-numeric: tabular-nums; min-width: 5.5rem; text-align: right; letter-spacing: -.01em; }
+.rn-map-layout { display: grid; gap: 24px 36px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 21rem), 1fr)); align-items: start; }
+.rn-map-col { display: grid; gap: 10px; min-width: 0; align-content: start; }
 .rn-map { position: relative; min-height: 280px; }
 .rn-map svg { display: block; }
 .rn-map .rn-bin { transition: none; }
 @media (prefers-reduced-motion: no-preference) { .rn-map .rn-bin { transition: stroke var(--cds-dur-slow) var(--cds-ease-out); } }
-.rn-map-read { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; }
+.rn-map-read { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 15px; font-variant-numeric: tabular-nums; }
 .rn-map-read b { font-weight: 600; }
 .rn-muted { color: var(--color-fg-muted); }
 .rn-strip { min-height: 200px; position: relative; }
 .rn-strip rect.rn-strip-hit { cursor: pointer; }
-#et-type { min-height: 440px; }
-#et-jour-chart { min-height: 440px; }
-.rn-et-nom { font-family: var(--rn-display); font-size: 17px; font-weight: 600; margin-top: var(--cds-gap-sm); }
 
 /* ---------- Téléphone ---------- */
 @media (max-width: 600px) {
-  .rn { gap: var(--cds-gap-md); }
-  .rn-hero { padding: 16px 16px 14px; }
-  .rn-card { padding: 14px; }
-  .rn-card-title { font-size: 19px; }
-  .rn-tabs { top: 6px; }
-  .rn-tabs button { padding: 8px 16px; font-size: 16px; }
-  .rn-clock { font-size: 24px; }
+  .rn-clock { font-size: 22px; }
 }
 </style>
 </head>
@@ -267,46 +296,38 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 
 <div class="rn">
   <header class="rn-head" id="haut">
-    <div class="rn-marque">
-      <span class="rn-cartouche" aria-hidden="true">N 85</span>
-      <h1 class="rn-title">Les bouchons du matin</h1>
-    </div>
-    <p class="rn-sous">De Vizille vers Grenoble, en semaine de 7 h à 9 h</p>
-    <p class="rn-lede">Deux files se forment chaque matin, chacune en amont d’un feu. Entre les deux, la route reste fluide : un bouchon n’y apparaît que dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s3" class="dash-skeleton">—</span> des relevés.</p>
-    <p class="rn-maj" id="rn-maj"></p>
+    <h1 class="rn-title">Les bouchons du matin sur la RN85</h1>
+    <p class="rn-lede">De Vizille vers Grenoble, en semaine de 7 h à 9 h, deux files se forment chaque matin, chacune en amont d’un feu. Entre les deux, la route reste fluide : un bouchon n’y apparaît que dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s3" class="dash-skeleton">—</span> des relevés.</p>
+    <dl class="rn-fiche" aria-label="Période et relevés">
+      <div><dt>Période</dt><dd>du <span data-source="synthese" data-field="date_min" data-row="0" class="dash-skeleton">—</span> au <span data-source="synthese" data-field="date_max" data-row="0" class="dash-skeleton">—</span> 2026</dd></div>
+      <div><dt>Relevés</dt><dd><span data-source="synthese" data-field="releves" data-row="0" class="dash-skeleton">—</span> captures Google Maps sur <span data-source="synthese" data-field="matinees" data-row="0" class="dash-skeleton">—</span> matinées</dd></div>
+      <div><dt>Mise à jour</dt><dd class="rn-maj" id="rn-maj">—</dd></div>
+    </dl>
   </header>
 
   <section class="rn-chiffres" id="chiffres" aria-label="Chiffres clés">
-    <article class="rn-hero">
-      <h2 class="rn-hero-titre">Sortie de Vizille</h2>
-      <p class="rn-hero-sous">File la plus longue relevée, jusqu’au feu 1 km après l’Intermarché</p>
-      <div class="rn-hero-corps">
-        <p class="rn-hero-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_vizille" data-row="0">—</p>
-        <div class="rn-mini" id="mini-vizille" data-source="par_jour"></div>
-      </div>
-      <p class="rn-hero-quand">le <span data-source="synthese" data-field="pic_vizille_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
-      <p class="rn-hero-note"><b data-source="synthese" data-field="matinees_vizille_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_vizille" data-row="0">—</span>.</p>
+    <article class="rn-chiffre">
+      <h2 class="rn-chiffre-titre">Sortie de Vizille</h2>
+      <p class="rn-chiffre-sous">File la plus longue relevée, jusqu’au feu 1 km après l’Intermarché</p>
+      <p class="rn-chiffre-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_vizille" data-row="0">—</p>
+      <p class="rn-chiffre-quand">le <span data-source="synthese" data-field="pic_vizille_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
+      <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_vizille_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_vizille" data-row="0">—</span>.</p>
     </article>
-    <article class="rn-stat">
-      <h2 class="rn-stat-titre">Approche du feu de Champagnier</h2>
-      <p class="rn-stat-sous">File la plus longue relevée, depuis Basse-Jarrie</p>
-      <div class="rn-stat-corps">
-        <p class="rn-stat-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_feu" data-row="0">—</p>
-        <div class="rn-mini" id="mini-feu" data-source="par_jour"></div>
-      </div>
-      <p class="rn-stat-quand">le <span data-source="synthese" data-field="pic_feu_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
-      <p class="rn-stat-note"><b data-source="synthese" data-field="matinees_feu_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne : <span data-source="synthese" data-field="moy_feu" data-row="0">—</span>.</p>
+    <article class="rn-chiffre">
+      <h2 class="rn-chiffre-titre">Approche du feu de Champagnier</h2>
+      <p class="rn-chiffre-sous">File la plus longue relevée, depuis Basse-Jarrie</p>
+      <p class="rn-chiffre-val dash-skeleton" data-unite="m" data-source="synthese" data-field="pic_feu" data-row="0">—</p>
+      <p class="rn-chiffre-quand">le <span data-source="synthese" data-field="pic_feu_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
+      <p class="rn-chiffre-note"><b data-source="synthese" data-field="matinees_feu_800" data-row="0">—</b> matinées sur <span data-source="synthese" data-field="matinees" data-row="0">—</span> à 800 m ou plus. Moyenne de tous les relevés : <span data-source="synthese" data-field="moy_feu" data-row="0">—</span>.</p>
     </article>
-    <article class="rn-stat">
-      <h2 class="rn-stat-titre">Pire moment</h2>
-      <p class="rn-stat-sous">Toutes les files additionnées, au même instant</p>
-      <p class="rn-stat-val dash-skeleton" data-unite="m" data-source="synthese" data-field="max_zone" data-row="0">—</p>
-      <div class="rn-cumul" id="cumul" data-source="synthese"></div>
-      <p class="rn-stat-quand">le <span data-source="synthese" data-field="max_jour" data-row="0">—</span> <span data-source="synthese" data-field="max_date" data-row="0">—</span> à <span data-source="synthese" data-field="max_heure" data-row="0">—</span><span class="rn-bis" data-bis="max" hidden> et le <span data-source="synthese" data-field="max_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="max_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="max_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
-      <p class="rn-stat-note">Des files distinctes, pas une file continue : <span data-source="synthese" data-field="pire_vizille" data-row="0">—</span> à la sortie de Vizille, <span data-source="synthese" data-field="pire_autre" data-row="0">—</span> plus loin, <span data-source="synthese" data-field="pire_feu" data-row="0">—</span> avant le feu de Champagnier et <span data-source="synthese" data-field="pire_apres" data-row="0">—</span> après ce feu.</p>
+    <article class="rn-chiffre">
+      <h2 class="rn-chiffre-titre">Pire moment</h2>
+      <p class="rn-chiffre-sous">Toutes les files additionnées, au même instant</p>
+      <p class="rn-chiffre-val dash-skeleton" data-unite="m" data-source="synthese" data-field="max_zone" data-row="0">—</p>
+      <p class="rn-chiffre-quand">le <span data-source="synthese" data-field="max_jour" data-row="0">—</span> <span data-source="synthese" data-field="max_date" data-row="0">—</span> à <span data-source="synthese" data-field="max_heure" data-row="0">—</span><span class="rn-bis" data-bis="max" hidden> et le <span data-source="synthese" data-field="max_bis_jour" data-row="0">—</span> <span data-source="synthese" data-field="max_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="max_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></p>
+      <p class="rn-chiffre-note">Des files distinctes, pas une file continue : <span data-source="synthese" data-field="pire_vizille" data-row="0">—</span> à la sortie de Vizille, <span data-source="synthese" data-field="pire_autre" data-row="0">—</span> plus loin, <span data-source="synthese" data-field="pire_feu" data-row="0">—</span> avant le feu de Champagnier et <span data-source="synthese" data-field="pire_apres" data-row="0">—</span> après ce feu.</p>
     </article>
   </section>
-  <p class="rn-perimetre"><span data-source="synthese" data-field="matinees" data-row="0" class="dash-skeleton">—</span> matinées relevées du <span data-source="synthese" data-field="date_min" data-row="0" class="dash-skeleton">—</span> au <span data-source="synthese" data-field="date_max" data-row="0" class="dash-skeleton">—</span> 2026, soit <span data-source="synthese" data-field="releves" data-row="0" class="dash-skeleton">—</span> relevés Google Maps.</p>
 
   <nav class="rn-tabs" role="tablist" aria-label="Parties de la page">
     <button type="button" role="tab" id="onglet-comprendre" aria-controls="comprendre" data-tab="comprendre">Comprendre</button>
@@ -316,17 +337,6 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 
   <!-- ===================== COMPRENDRE ===================== -->
   <section class="rn-page" id="comprendre" role="tabpanel" aria-labelledby="onglet-comprendre">
-    <section class="rn-section" id="ou">
-      <div class="rn-card">
-        <div class="rn-card-tete">
-          <h2 class="rn-card-title" id="et-type-titre">Où et quand ça bouchonne : la matinée type</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. De haut en bas, l’heure, de 7 h à 9 h. Chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus).</p></details>
-        </div>
-        <div class="rn-legend" id="et-type-legende"></div>
-        <div class="rn-chart" id="et-type" data-source="carte_releves troncons"></div>
-      </div>
-    </section>
-
     <section class="rn-section" id="heure">
       <div class="rn-card">
         <div class="rn-card-tete">
@@ -337,17 +347,17 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <div class="rn-mult" id="pics" data-source="par_creneau">
           <div class="rn-panel">
             <h3 class="rn-panel-title">Sortie de Vizille</h3>
-            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_vizille" data-row="0">—</b> le <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_vizille" data-row="0">—</b> le <span data-source="synthese" data-field="pic_vizille_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_vizille" hidden> et le <span data-source="synthese" data-field="pic_vizille_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_vizille_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
             <div class="rn-chart" id="pics-vizille" style="min-height: 230px"></div>
           </div>
           <div class="rn-panel">
             <h3 class="rn-panel-title">Basse-Jarrie → feu de Champagnier</h3>
-            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_feu" data-row="0">—</b> le <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_feu" data-row="0">—</b> le <span data-source="synthese" data-field="pic_feu_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_feu" hidden> et le <span data-source="synthese" data-field="pic_feu_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_feu_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
             <div class="rn-chart" id="pics-feu" style="min-height: 230px"></div>
           </div>
           <div class="rn-panel">
             <h3 class="rn-panel-title">Après le feu, jusque vers Pont-de-Claix</h3>
-            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_apres" data-row="0">—</b> le <span data-source="synthese" data-field="pic_apres_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_apres_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_apres" hidden> et le <span data-source="synthese" data-field="pic_apres_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_apres_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
+            <div class="rn-panel-pic">Pic : <b data-source="synthese" data-field="pic_apres" data-row="0">—</b> le <span data-source="synthese" data-field="pic_apres_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_apres_heure" data-row="0">—</span><span class="rn-bis" data-bis="pic_apres" hidden> et le <span data-source="synthese" data-field="pic_apres_bis_date" data-row="0">—</span> à <span data-source="synthese" data-field="pic_apres_bis_heure" data-row="0">—</span><span class="rn-bis-plus"></span></span></div>
             <div class="rn-chart" id="pics-apres" style="min-height: 230px"></div>
           </div>
         </div>
@@ -358,7 +368,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <div class="rn-card rn-map-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">La matinée en carte</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme ci-dessus. Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre sur le pire relevé. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « matinée type » de l’onglet Explorer. Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
         </div>
         <div class="rn-map-bar">
           <label class="rn-field" for="carte-jour"><span>Matinée</span><select id="carte-jour"></select></label>
@@ -385,7 +395,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">Tronçon par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée sur le tronçon. Relevés avec bouchon : au moins 50 m du tronçon en rouge. Moyennes arrondies à 10 m près. Le détail complet se trouve dans l’onglet Explorer.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée sur le tronçon. Relevés avec bouchon : au moins 50 m du tronçon en rouge. Moyennes arrondies à 10 m près. Le détail complet se trouve dans l’onglet Explorer.</p></details>
         </div>
         <div class="rn-wrap">
           <table class="rn-table" id="table-synthese" data-source="par_troncon" data-row-key="id">
@@ -429,7 +439,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <div class="rn-card-top">
           <div>
             <h2 class="rn-card-title" id="et-jour-titre">Une matinée, minute par minute</h2>
-            <details class="rn-aide"><summary>Comment lire</summary><p>Même lecture que le diagramme de l’onglet Comprendre, pour une seule matinée : chaque case montre la couleur relevée sur Google Maps à ce moment-là. Une case hachurée signale l’absence de relevé.</p></details>
+            <details class="rn-aide"><summary>Comment lire</summary><p>Même lecture que le diagramme « matinée type » de l’onglet Explorer, pour une seule matinée : chaque case montre la couleur relevée sur Google Maps à ce moment-là. Une case hachurée signale l’absence de relevé.</p></details>
           </div>
           <label class="rn-field" for="et-jour"><span>Matinée</span><select id="et-jour"></select></label>
         </div>
@@ -458,11 +468,23 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 
   <!-- ===================== EXPLORER ===================== -->
   <section class="rn-page" id="explorer" role="tabpanel" aria-labelledby="onglet-explorer" hidden>
+    <section class="rn-section" id="ou">
+      <div class="rn-card">
+        <div class="rn-card-tete">
+          <h2 class="rn-card-title" id="et-type-titre">Où et quand ça bouchonne : la matinée type</h2>
+          <p class="rn-chapo">Chaque case représente une portion de 100 m à une heure donnée : plus elle est foncée, plus cette portion a été souvent en rouge.</p>
+          <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille en direction de Grenoble, par portions de 100 m. Au-dessus du diagramme figurent les feux, en dessous les distances et les lieux traversés. De haut en bas, l’heure, de 7 h à 9 h. Chaque case indique combien de fois la portion était en rouge à cette heure-là, sur toutes les matinées relevées : rare (moins d’une matinée sur 4), parfois (1 sur 4 à 1 sur 2), souvent (1 sur 2 à 3 sur 4), presque toujours (3 sur 4 ou plus). Au-delà de la fin du relevé, vers Pont-de-Claix, les cases sont plus pâles.</p></details>
+        </div>
+        <div class="rn-legend" id="et-type-legende"></div>
+        <div class="rn-chart" id="et-type" data-source="carte_releves troncons"></div>
+      </div>
+    </section>
+
     <section class="rn-section" id="troncons-detail">
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">Tableau complet par tronçon</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pic observé : plus grande longueur en rouge relevée. Rouge moyen : moyenne de tous les relevés, relevés sans rouge compris. Part du tronçon : rouge moyen rapporté à la longueur du tronçon. Avec bouchon : au moins 50 m en rouge. Saturé : la moitié du tronçon ou plus en rouge. Pourcentages calculés sur l’ensemble des relevés. Sur téléphone, les colonnes secondaires sont masquées.</p></details>
         </div>
         <div class="rn-wrap">
           <table class="rn-table" id="table-troncons" data-source="par_troncon" data-row-key="id">
@@ -483,28 +505,28 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 
     <section class="rn-section" id="acces">
       <h2 class="rn-h2">Les accès à la RN85 dans Vizille</h2>
-      <p class="rn-lede">Depuis Le Péage, la D1091 reste fluide jusqu’à l’entrée de Vizille. Le rouge n’apparaît que sur la fin du parcours, juste avant le carrefour avec la RN85 : c’est la file de la sortie de Vizille qui remonte. Même chose sur l’avenue Maurice-Thorez, où seule l’approche du carrefour se bloque. Ces relevés existent depuis le <span data-source="acces_synthese" data-field="date_min" data-row="0">—</span> : <span data-source="acces_synthese" data-field="releves" data-row="0">—</span> relevés sur <span data-source="acces_synthese" data-field="matinees" data-row="0">—</span> matinées.</p>
+      <p class="rn-lede">Depuis Le Péage, la D1091 reste fluide jusqu’à l’entrée de Vizille. Le rouge n’apparaît que sur la fin du parcours, juste avant le carrefour avec la RN85 : c’est la file de la sortie de Vizille qui remonte. Même chose sur l’avenue Maurice-Thorez, où seule l’approche du carrefour se bloque. Ces relevés existent depuis le <span data-source="acces_synthese" data-field="date_min" data-row="0">—</span> : <span data-source="acces_synthese" data-field="releves" data-row="0">—</span> relevés sur <span data-source="acces_synthese" data-field="matinees" data-row="0">—</span> matinées.</p>
       <div class="rn-stats">
         <article class="rn-stat">
           <h3 class="rn-stat-titre">D1091 depuis Le Péage</h3>
           <p class="rn-stat-sous">File la plus longue relevée</p>
           <p class="rn-stat-val dash-skeleton" data-unite="m" data-source="acces_synthese" data-field="pic_peage" data-row="0">—</p>
           <p class="rn-stat-quand">le <span data-source="acces_synthese" data-field="pic_peage_jour" data-row="0">—</span> <span data-source="acces_synthese" data-field="pic_peage_date" data-row="0">—</span> à <span data-source="acces_synthese" data-field="pic_peage_heure" data-row="0">—</span></p>
-          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_peage" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_peage" data-row="0">—</span>.</p>
+          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_peage" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_peage" data-row="0">—</span>.</p>
         </article>
         <article class="rn-stat">
           <h3 class="rn-stat-titre">Avenue Maurice-Thorez</h3>
           <p class="rn-stat-sous">File la plus longue relevée</p>
           <p class="rn-stat-val dash-skeleton" data-unite="m" data-source="acces_synthese" data-field="pic_thorez" data-row="0">—</p>
           <p class="rn-stat-quand">le <span data-source="acces_synthese" data-field="pic_thorez_jour" data-row="0">—</span> <span data-source="acces_synthese" data-field="pic_thorez_date" data-row="0">—</span> à <span data-source="acces_synthese" data-field="pic_thorez_heure" data-row="0">—</span></p>
-          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_thorez" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_thorez" data-row="0">—</span>.</p>
+          <p class="rn-stat-note">Bouchon d’au moins 50 m dans <span data-source="acces_synthese" data-field="pct_thorez" data-row="0">—</span> des relevés. Moyenne : <span data-source="acces_synthese" data-field="moy_thorez" data-row="0">—</span>.</p>
         </article>
       </div>
       <div class="rn-card">
         <div class="rn-card-top">
           <div>
             <h3 class="rn-card-title">Les deux accès, minute par minute</h3>
-            <details class="rn-aide"><summary>Comment lire</summary><p>Même lecture que le diagramme principal : de gauche à droite, la route jusqu’au carrefour avec la RN85 ; de haut en bas, l’heure. Les deux accès sont dessinés à la même échelle.</p></details>
+            <details class="rn-aide"><summary>Comment lire</summary><p>Même lecture que le diagramme principal : de gauche à droite, la route jusqu’au carrefour avec la RN85 ; de haut en bas, l’heure. Les deux accès sont dessinés à la même échelle.</p></details>
           </div>
           <label class="rn-field" for="acces-jour"><span>Matinée</span><select id="acces-jour"></select></label>
         </div>
@@ -520,7 +542,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <div class="rn-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">Résumé de chaque matinée</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pour chaque matinée : le pic de chaque zone avec son heure, puis la moyenne. Quand le pic revient plusieurs fois dans la matinée, l’heure indiquée est la première. Le pire relevé additionne toute la longueur en rouge de la zone relevée au même moment. Sur téléphone, les moyennes et le nombre de relevés sont masqués.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Pour chaque matinée : le pic de chaque zone avec son heure, puis la moyenne. Quand le pic revient plusieurs fois dans la matinée, l’heure indiquée est la première. Le pire relevé additionne toute la longueur en rouge de la zone relevée au même moment. Sur téléphone, les moyennes et le nombre de relevés sont masqués.</p></details>
         </div>
         <div class="rn-wrap">
           <table class="rn-table" id="table-jours" data-source="par_jour" data-row-key="date">
@@ -546,11 +568,11 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <p>Chaque capture Google Maps (couche trafic, cadrage fixe, toutes les 5 minutes de 7 h à 9 h en semaine) est lue le long de l’axe de la RN85, du carrefour de l’avenue Maurice-Thorez à Vizille jusqu’après le feu de Champagnier, puis au-delà vers Pont-de-Claix. Une portion compte comme rouge quand la chaussée y est rouge ou rouge foncé. Les morceaux de moins de 50 m sont écartés, pour ne pas confondre une étiquette de la carte avec un bouchon. Les temps de parcours ne sont pas utilisés.</p>
         <h3>Définitions</h3>
         <ul>
-          <li><b>Pic observé</b> : plus grande longueur en rouge relevée, avec le jour et l’heure.</li>
-          <li><b>Rouge moyen</b> : moyenne de tous les relevés, relevés sans rouge compris, arrondie à 10 m près. La somme de deux tronçons arrondis peut donc différer de 10 m du total de la zone.</li>
-          <li><b>Avec bouchon</b> : au moins 50 m du tronçon en rouge. <b>Saturé</b> : la moitié du tronçon ou plus en rouge.</li>
-          <li><b>Longueur cumulée</b> : somme de toutes les portions rouges de la zone au même moment. Elle peut additionner plusieurs files distinctes.</li>
-          <li><b>Matinée incomplète</b> : moins de 20 relevés sur 25, parce que le relevé a commencé tard, s’est arrêté tôt ou a eu des trous.</li>
+          <li><b>Pic observé</b> : plus grande longueur en rouge relevée, avec le jour et l’heure.</li>
+          <li><b>Rouge moyen</b> : moyenne de tous les relevés, relevés sans rouge compris, arrondie à 10 m près. La somme de deux tronçons arrondis peut donc différer de 10 m du total de la zone.</li>
+          <li><b>Avec bouchon</b> : au moins 50 m du tronçon en rouge. <b>Saturé</b> : la moitié du tronçon ou plus en rouge.</li>
+          <li><b>Longueur cumulée</b> : somme de toutes les portions rouges de la zone au même moment. Elle peut additionner plusieurs files distinctes.</li>
+          <li><b>Matinée incomplète</b> : moins de 20 relevés sur 25, parce que le relevé a commencé tard, s’est arrêté tôt ou a eu des trous.</li>
         </ul>
         <h3>Choix de la moyenne</h3>
         <p>Toutes les moyennes de la page donnent le même poids à chaque relevé (méthode A). Comme certaines matinées sont incomplètes, le tableau ci-dessous compare avec deux autres façons de calculer. Les pics, eux, ne dépendent pas de ce choix.</p>
@@ -566,16 +588,16 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
           </table>
         </div>
         <h3>Relevés écartés</h3>
-        <p id="rn-ecartees">Le 12 octobre, les captures de 7 h 45 et de 8 h 00 sont des copies de la capture précédente : la carte Google n’avait pas été rafraîchie. Elles sont écartées des calculs, comme la capture large de 7 h 45 pour les accès. Les fichiers d’origine sont conservés. Aucun autre doublon n’a été trouvé.</p>
+        <p id="rn-ecartees">Le 12 octobre, les captures de 7 h 45 et de 8 h 00 sont des copies de la capture précédente : la carte Google n’avait pas été rafraîchie. Elles sont écartées des calculs, comme la capture large de 7 h 45 pour les accès. Les fichiers d’origine sont conservés. Aucun autre doublon n’a été trouvé.</p>
         <h3>Limites</h3>
         <ul>
           <li>Les résultats valent pour les matinées observées. Ils ne mesurent pas tous les jours de circulation.</li>
           <li>Google Maps indique un état de la circulation, pas un nombre de véhicules.</li>
-          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et juste avant l’autopont de Jarrie. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
-          <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres clés et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
-          <li>La zone « après le feu » dépasse la zone relevée, en direction de Pont-de-Claix.</li>
+          <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et juste avant l’autopont de Jarrie. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
+          <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres clés et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
+          <li>La zone « après le feu » dépasse la zone relevée, en direction de Pont-de-Claix.</li>
           <li>Tôt le matin, Google n’affiche parfois aucune couleur sur l’avenue Maurice-Thorez. Ces relevés sont comptés comme manquants pour l’avenue, jamais comme fluides.</li>
-          <li>Les longueurs suivent de très près la colonne « Longueur en rouge » du tableau Historique RN85, en un peu plus bas, car elles ne comptent que l’axe de la route.</li>
+          <li>Les longueurs suivent de très près la colonne « Longueur en rouge » du tableau Historique RN85, en un peu plus bas, car elles ne comptent que l’axe de la route.</li>
         </ul>
       </div>
     </section>
@@ -593,7 +615,6 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
   const SOURCES = ['releves', 'carte_releves', 'acces_releves', 'troncons', 'carte_trace', 'acces_trace'];
   const DEFAUTS = { zone: 'ensemble', jour: 'pire', jour_acces: 'type' };
   const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
-  const JOURS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
   const etat = {};
   const calcs = {};
   const rappels = [];
@@ -639,21 +660,18 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
     });
   }
 
-  function dateLongue(d) {
-    const j = d.getDate();
-    return JOURS[d.getDay()] + ' ' + j + (j === 1 ? 'er' : '') + ' ' + MOIS[d.getMonth()] + ' ' + d.getFullYear();
-  }
-
   function afficherInfos(infos) {
     const el = document.getElementById('rn-maj');
     if (el && infos && infos.maj) {
       const d = new Date(infos.maj);
       if (!isNaN(d)) {
-        const texte = 'Mis à jour le ' + dateLongue(d) + ' à ' + d.getHours() + ' h ' + String(d.getMinutes()).padStart(2, '0');
+        // Fiche du haut de page : « 14 octobre à 11 h 10 ».
+        const j = d.getDate();
+        const texte = j + (j === 1 ? 'er' : '') + ' ' + MOIS[d.getMonth()] + ' à ' + d.getHours() + ' h ' + String(d.getMinutes()).padStart(2, '0');
         const jours = (Date.now() - d.getTime()) / 864e5;
         // Plus de 4 jours sans mise à jour : quelque chose a sans doute bloqué sur le Mac.
-        if (jours > 4) { el.textContent = texte + '. Les relevés des derniers jours manquent peut-être.'; el.classList.add('rn-vieux'); }
-        else el.textContent = texte + '.';
+        if (jours > 4) { el.textContent = texte + ' : les relevés des derniers jours manquent peut-être'; el.classList.add('rn-vieux'); }
+        else el.textContent = texte;
       }
     }
     const p = document.getElementById('rn-ecartees');
@@ -943,14 +961,17 @@ dash.calc('acces_creneau', {
   const heure = (h) => { if (!h) return '—'; const p = h.split(':'); return Number(p[0]) + ' h ' + p[1]; };
   const heureAxe = (h) => { const p = h.split(':'); return Number(p[0]) + ' h' + (p[1] === '00' ? '' : ' ' + p[1]); };
   const CRENEAUX = d3.range(0, 125, 5).map((m) => String(7 + Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
+  // Repères le long de la RN85. Au-dessus du diagramme : les feux (traits pointillés) et le rond-point.
+  // En dessous, sous l'échelle des kilomètres : les lieux traversés. Priorité 1 : toujours écrit ;
+  // priorités 2 et 3 : écrits seulement s'il reste de la place (sur téléphone, le 3 disparaît en premier).
   const REPERES = {
-    s1: { txt: 'Sortie de Vizille', fort: true },
-    s2: { txt: 'Intermarché', fort: false },
-    s3: { txt: 'Feu, 1 km après l’Intermarché', fort: true },
-    s4: { txt: 'Basse-Jarrie', fort: true },
-    s5: { txt: 'Autopont de Jarrie', fort: false },
-    s6: { txt: 'Feu de Champagnier', fort: true },
-    s7: { txt: 'Fin du relevé', fort: false },
+    s1: { txt: 'Vizille', ou: 'bas', prio: 1, ancre: 'start' },
+    s2: { txt: 'Intermarché', ou: 'haut', prio: 3, ligne: true },
+    s3: { txt: 'Feu, 1 km après l’Intermarché', lignes: ['Feu, 1 km après', 'l’Intermarché'], ou: 'haut', prio: 1, fort: true, ligne: true },
+    s4: { txt: 'Basse-Jarrie', ou: 'bas', prio: 2 },
+    s5: { txt: 'Autopont de Jarrie', ou: 'bas', prio: 3 },
+    s6: { txt: 'Feu de Champagnier', lignes: ['Feu de', 'Champagnier'], ou: 'haut', prio: 1, fort: true, ligne: true },
+    s7: { txt: 'Fin du relevé', ou: 'bas', prio: 3 },
   };
   const ZONES = [
     { key: 'vizille', nom: 'Sortie de Vizille' },
@@ -1030,8 +1051,8 @@ dash.calc('acces_creneau', {
       if (el.dataset.unite === 'm' && /\sm$/.test(t)) {
         // Chiffre clé : l'unité est écrite plus petite que le nombre.
         const u = document.createElement('span'); u.className = 'rn-unite'; u.textContent = 'm';
-        // Espace fine entre les milliers, plus visible en grand que l'espace insécable étroite.
-        el.replaceChildren(document.createTextNode(t.slice(0, -2).replace(/\u202f/g, '\u2009')), u);
+        // Espace insécable entre les milliers : bien visible en grand (« 1 100 m »).
+        el.replaceChildren(document.createTextNode(t.slice(0, -2).replace(/\u202f/g, '\u00a0')), u);
       } else el.textContent = t;
       el.classList.remove('dash-skeleton');
     });
@@ -1098,51 +1119,58 @@ dash.calc('acces_creneau', {
   const trier = (tr) => tr.slice().sort((a, b) => a.ordre - b.ordre);
   const horsZone = (tr) => { const s = tr.find((x) => x.id === 's7'); return s ? s.debut_m : null; };
   const segDe = (tr) => (d) => { const s = tr.find((x) => d >= x.debut_m && d < x.fin_m); return s ? s.nom : null; };
-  function reperesRN(tr, fin, court) {
-    // Sur un écran étroit, le nom du feu est raccourci : l'Intermarché est nommé juste avant.
-    const nom = (x) => (court && x.id === 's3' ? 'Feu, 1 km plus loin' : (REPERES[x.id] || { txt: x.nom }).txt);
-    const out = tr.map((x) => ({ d: x.debut_m, txt: nom(x), fort: !!(REPERES[x.id] || {}).fort, ligne: true }));
-    const h = horsZone(tr);
-    if (h != null) out.push({ d: (h + fin) / 2, txt: 'vers Pont-de-Claix', fort: false, ligne: false });
+  function reperesRN(tr, fin) {
+    const out = [];
+    tr.forEach((x) => { if (REPERES[x.id]) out.push(Object.assign({ d: x.debut_m }, REPERES[x.id])); });
+    if (horsZone(tr) != null) out.push({ d: fin, txt: 'vers Pont-de-Claix', ou: 'bas', prio: 2, ancre: 'end' });
     return out;
   }
 
   function drawET(el, o) {
     el.replaceChildren();
     const W = Math.max(300, el.clientWidth);
+    const etroit = W < 560;
     const fs = cssVar('--cds-font-size-caption');
+    const fg = cssVar('--color-fg'), muted = cssVar('--color-fg-muted'), fond = cssVar('--color-panel');
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', o.aria);
     const ml = Math.ceil(textWidth(svg, '8 h 45')) + 10, mr = 10;
     const plotW = W - ml - mr;
     const x = (d) => ml + plotW * d / o.echelle;
-    const LH = 15;
-    function placer(liste, depart) {
-      const fins = [];
-      liste.sort((a, b) => a.d - b.d).forEach((r) => {
-        const w = textWidth(svg, r.txt, r.fort);
+    const LH = 14;
+    // Range les noms sur une ou deux rangées sans chevauchement. Un repère secondaire sans place est omis ;
+    // sur un écran étroit, un nom long passe sur deux lignes quand une version courte est prévue.
+    function placer(liste, maxRangs) {
+      const rangs = [], places = [];
+      liste.slice().sort((a, b) => (a.prio || 1) - (b.prio || 1) || a.d - b.d).forEach((r) => {
+        const lignes = etroit && r.lignes ? r.lignes : [r.txt];
+        const w = Math.max(...lignes.map((t) => textWidth(svg, t, r.fort)));
         const cx = x(r.d);
-        let x0 = r.d === 0 ? cx : cx - w / 2;
-        if (x0 + w > W - 2) x0 = W - 2 - w;
-        if (x0 < 0) x0 = 0;
-        let rang = 0;
-        while (fins[rang] != null && fins[rang] + 10 > x0) rang++;
-        fins[rang] = x0 + w;
-        r.x0 = x0; r.rang = depart + rang;
+        const ancre = r.ancre || (r.d === 0 ? 'start' : 'middle');
+        let x0 = ancre === 'start' ? cx : (ancre === 'end' ? cx - w : cx - w / 2);
+        x0 = Math.max(0, Math.min(W - w, x0));
+        let k = 0;
+        while (k < rangs.length && rangs[k].some(([a, b]) => x0 < b + 12 && x0 + w + 12 > a)) k++;
+        if (k >= maxRangs && (r.prio || 1) > 1) return;
+        (rangs[k] = rangs[k] || []).push([x0, x0 + w]);
+        places.push(Object.assign({}, r, { x0, w, rang: k, lignes }));
       });
-      return depart + Math.max(1, fins.length);
+      const hauteurs = rangs.map((_, k) => LH * Math.max(1, ...places.filter((p) => p.rang === k).map((p) => p.lignes.length)));
+      const haut = (k) => hauteurs.slice(0, k).reduce((a, b) => a + b, 0);
+      return { places, total: haut(hauteurs.length), haut };
     }
-    const forts = o.reperes.filter((r) => r.fort), faibles = o.reperes.filter((r) => !r.fort);
-    let rangs = forts.length ? placer(forts, 0) : 0;
-    rangs = faibles.length ? placer(faibles, rangs) : rangs;
-    const mt = rangs * LH + 8;
+    const dessus = placer(o.reperes.filter((r) => r.ou !== 'bas'), etroit ? 1 : 2);
+    const dessous = placer(o.reperes.filter((r) => r.ou === 'bas'), etroit ? 1 : 2);
+    const mt = dessus.total ? dessus.total + 8 : 6;
     const ch = o.ch || 16;
-    const H = mt + ch * CRENEAUX.length + 4;
+    const yb = mt + ch * CRENEAUX.length;          // bas du diagramme
+    const kmH = o.km ? 18 : 0;                     // rangée de l'échelle des kilomètres
+    const H = yb + kmH + (dessous.total ? dessous.total + 8 : 4);
     svg.attr('viewBox', `0 0 ${W} ${H}`);
     const hach = hachures(svg);
     const pas = W < 520 ? 30 : 15;
     CRENEAUX.forEach((c, k) => {
       const mn = Number(c.slice(3));
-      if (mn % pas === 0) svg.append('text').attr('x', ml - 6).attr('y', mt + k * ch + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', cssVar('--color-fg-muted')).text(heureAxe(c));
+      if (mn % pas === 0) svg.append('text').attr('x', ml - 6).attr('y', mt + k * ch + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', muted).text(heureAxe(c));
     });
     const g = svg.append('g');
     const cw = plotW * 100 / o.echelle;
@@ -1154,19 +1182,33 @@ dash.calc('acces_creneau', {
           .attr('fill', v ? v.fill : hach).attr('fill-opacity', v ? v.op : 1).attr('opacity', hors ? 0.45 : 1);
       }
     }
-    o.reperes.forEach((r) => {
-      if (r.ligne) {
-        const xx = x(r.d);
-        g.append('line').attr('x1', xx).attr('x2', xx).attr('y1', (r.rang + 1) * LH - 2).attr('y2', H - 4)
-          .attr('stroke', r.fort ? cssVar('--color-fg-muted') : cssVar('--cds-chart-reference')).attr('stroke-width', r.fort ? 1.2 : 1).attr('stroke-dasharray', '3 3').attr('pointer-events', 'none');
+    // Échelle des kilomètres, sous le diagramme.
+    if (o.km) {
+      for (let d = 1000; d < o.echelle; d += 1000) {
+        const xx = x(d), t = (d / 1000) + ' km', w = textWidth(svg, t);
+        svg.append('line').attr('x1', xx).attr('x2', xx).attr('y1', yb + 1).attr('y2', yb + 5).attr('stroke', cssVar('--cds-chart-axis'));
+        if (xx + w / 2 <= W) svg.append('text').attr('x', xx).attr('y', yb + 16).attr('text-anchor', 'middle').attr('font-size', fs).attr('fill', muted).text(t);
       }
-      // Halo de la couleur du fond : les traits pointillés ne traversent pas les noms.
-      svg.append('text').attr('x', r.x0).attr('y', 11 + r.rang * LH).attr('font-size', fs).attr('font-weight', r.fort ? 600 : null)
-        .attr('fill', r.fort ? cssVar('--color-fg') : cssVar('--color-fg-muted'))
-        .attr('stroke', cssVar('--color-panel')).attr('stroke-width', 4).attr('stroke-linejoin', 'round').attr('paint-order', 'stroke').text(r.txt);
+    }
+    const nom = (p, y0) => {
+      // Halo de la couleur du fond : un trait pointillé ne traverse jamais un nom.
+      const t = svg.append('text').attr('font-size', fs).attr('font-weight', p.fort ? 600 : null)
+        .attr('fill', p.fort || p.ou === 'bas' ? fg : muted)
+        .attr('stroke', fond).attr('stroke-width', 4).attr('stroke-linejoin', 'round').attr('paint-order', 'stroke');
+      p.lignes.forEach((l, n) => t.append('tspan').attr('x', p.x0).attr('y', y0 + (n + 1) * LH - 3).text(l));
+    };
+    dessus.places.forEach((p) => {
+      const y0 = dessus.haut(p.rang);
+      if (p.ligne) {
+        const xx = x(p.d);
+        g.append('line').attr('x1', xx).attr('x2', xx).attr('y1', y0 + p.lignes.length * LH + 1).attr('y2', yb)
+          .attr('stroke', p.fort ? muted : cssVar('--cds-chart-reference')).attr('stroke-width', p.fort ? 1.2 : 1).attr('stroke-dasharray', '3 3').attr('pointer-events', 'none');
+      }
+      nom(p, y0);
     });
+    dessous.places.forEach((p) => nom(p, yb + kmH + 6 + dessous.haut(p.rang)));
     const card = el.closest('.rn-card'), tip = tipIn(card);
-    const hi = svg.append('rect').attr('fill', 'none').attr('stroke', cssVar('--color-fg')).attr('stroke-width', 1.5).attr('visibility', 'hidden').attr('pointer-events', 'none');
+    const hi = svg.append('rect').attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 1.5).attr('visibility', 'hidden').attr('pointer-events', 'none');
     svg.append('rect').attr('x', ml).attr('y', mt).attr('width', plotW).attr('height', ch * CRENEAUX.length).attr('fill', 'transparent')
       .on('mousemove', (evt) => {
         const [px, py] = d3.pointer(evt);
@@ -1197,7 +1239,7 @@ dash.calc('acces_creneau', {
     const parC = new Map(dash.data('matinee_type').data.map((r) => [r.creneau, r]));
     const nb = c[0].rouge.length, fin = nb * 100;
     drawET(el, {
-      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin, el.clientWidth < 520), ou: segDe(tr), ch: 16,
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), km: true, ou: segDe(tr), ch: 16,
       aria: 'Diagramme de la matinée type sur la RN85 : distance depuis Vizille en largeur, heure de 7 h à 9 h en hauteur, couleur selon la fréquence du rouge',
       cell: (cr, i) => { const r = parC.get(cr); return r ? cellType(r.part[i], r.matinees) : null; },
     });
@@ -1243,7 +1285,7 @@ dash.calc('acces_creneau', {
     const parC = new Map(c.filter((r) => r.date === j).map((r) => [r.creneau, r]));
     const nb = c[0].rouge.length, fin = nb * 100;
     drawET(el, {
-      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin, el.clientWidth < 520), ou: segDe(tr), ch: 16,
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), km: true, ou: segDe(tr), ch: 16,
       aria: 'Diagramme d’une matinée sur la RN85 : distance depuis Vizille en largeur, heure en hauteur, couleur relevée sur Google Maps',
       cell: (cr, i) => { const r = parC.get(cr); return r ? cellJour(r.rouge[i] === '1' ? '1' : (r.hors_vert[i] === '1' ? '2' : '0')) : null; },
     });
@@ -1461,7 +1503,11 @@ dash.calc('acces_creneau', {
     const rouge = trv('--tr-rouge');
     const svg0 = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', 'Longueur en rouge à chaque relevé, une ligne par matinée');
     const ml = Math.ceil(d3.max(jours, (j) => textWidth(svg0, dateCourte(j, jourDe[j])))) + 10;
-    const mt = 8, legH = 34, mb = 22 + legH, mr = 6;
+    // Légende : de gauche à droite, sur deux lignes quand l'écran est trop étroit.
+    const pasLeg = [0, 0.25, 0.5, 0.75, 1].map((s) => { const v = Math.round(vmax * s / 10) * 10; return { s, v, t: metres(v) }; });
+    let lx = 0, rangs = 0;
+    pasLeg.forEach((p) => { const w = 18 + textWidth(svg0, p.t) + 14; if (lx > 0 && lx + w > W) { rangs++; lx = 0; } p.x = lx; p.rang = rangs; lx += w; });
+    const mt = 8, legH = 16 + 18 * (rangs + 1), mb = 22 + legH, mr = 6;
     const cw = (W - ml - mr) / CRENEAUX.length;
     const ch = Math.max(16, Math.min(26, cw * 1.1));
     const H = mt + ch * jours.length + mb;
@@ -1489,13 +1535,11 @@ dash.calc('acces_creneau', {
       svg.append('text').attr('x', ml + k * cw + cw / 2).attr('y', yAx + 12).attr('text-anchor', k === 0 ? 'start' : (k === CRENEAUX.length - 1 ? 'end' : 'middle')).attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(heureAxe(c));
     });
     const ly = yAx + 26;
-    let lx = ml;
-    [0, 0.25, 0.5, 0.75, 1].forEach((s) => {
-      const v = Math.round(vmax * s / 10) * 10;
-      const r = svg.append('rect').attr('x', lx).attr('y', ly).attr('width', 14).attr('height', 12).attr('rx', 2);
-      if (v === 0) r.attr('fill', cssVar('--color-border-line')).attr('opacity', 0.45); else r.attr('fill', rouge).attr('fill-opacity', 0.12 + 0.88 * s);
-      const t = svg.append('text').attr('x', lx + 18).attr('y', ly + 10).attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(metres(v));
-      lx += 18 + t.node().getComputedTextLength() + 12;
+    pasLeg.forEach((p) => {
+      const y = ly + p.rang * 18;
+      const r = svg.append('rect').attr('x', p.x).attr('y', y).attr('width', 14).attr('height', 12).attr('rx', 2);
+      if (p.v === 0) r.attr('fill', cssVar('--color-border-line')).attr('opacity', 0.45); else r.attr('fill', rouge).attr('fill-opacity', 0.12 + 0.88 * p.s);
+      svg.append('text').attr('x', p.x + 18).attr('y', y + 10).attr('font-size', cssVar('--cds-font-size-caption')).attr('fill', cssVar('--color-fg-muted')).text(p.t);
     });
     el.style.minHeight = H + 'px';
   }
@@ -1856,77 +1900,6 @@ dash.calc('acces_creneau', {
     return { maj, stop };
   })();
 
-  // ================= Petits graphiques des chiffres clés =================
-  // Une barre par matinée : rouge quand le pic atteint 800 m ou plus, gris sinon.
-  function drawMini(id, cle) {
-    const el = document.getElementById(id);
-    if (!el || !estVisible(el)) return;
-    const d = dash.data('par_jour');
-    if (d.status !== 'ok') { el.replaceChildren(); return; }
-    el.replaceChildren();
-    const rows = d.data, SEUIL = 800;
-    const sombre = !!el.closest('.rn-hero');
-    const W = Math.max(110, el.clientWidth), H = sombre ? 62 : 46;
-    const cs = getComputedStyle(el);
-    const bas = cs.getPropertyValue('--rn-mini-bas').trim() || '#c9cfd4';
-    const doux = sombre ? (cs.getPropertyValue('--rn-bitume-doux').trim() || '#a9b2ba') : cssVar('--color-fg-muted');
-    const rouge = trv('--tr-rouge');
-    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
-      .attr('aria-label', 'Pic de chaque matinée, en rouge quand il atteint 800 m ou plus');
-    const etiq = svg.append('text').attr('x', 0).attr('font-size', 10).attr('fill', doux).text('800 m');
-    const ml = Math.ceil(etiq.node().getComputedTextLength()) + 6;
-    const n = rows.length, gap = 2;
-    const bw = Math.max(2, Math.min(14, (W - ml - gap * (n - 1)) / n));
-    const x0 = W - (bw * n + gap * (n - 1));
-    const vmax = Math.max(d3.max(rows, (r) => r[cle + '_pic']) || 1, SEUIL * 1.15);
-    const y = (v) => H - 1 - (H - 4) * v / vmax;
-    etiq.attr('y', y(SEUIL) + 3.5);
-    svg.append('line').attr('x1', ml - 2).attr('x2', W).attr('y1', y(SEUIL)).attr('y2', y(SEUIL)).attr('stroke', doux).attr('stroke-width', 1).attr('stroke-dasharray', '2 2').attr('opacity', 0.8);
-    const card = el.closest('.rn-hero, .rn-stat'), tip = tipIn(card);
-    rows.forEach((r, i) => {
-      const v = r[cle + '_pic'], x = x0 + i * (bw + gap), fill = v >= SEUIL ? rouge : bas;
-      // Matinée incomplète : barre seulement dessinée en contour (son vrai pic a pu échapper au relevé).
-      const barre = svg.append('rect').attr('x', x + (r.complete ? 0 : 0.75)).attr('y', y(v) + (r.complete ? 0 : 0.75))
-        .attr('width', Math.max(1, bw - (r.complete ? 0 : 1.5))).attr('height', Math.max(1, H - 1 - y(v) - (r.complete ? 0 : 0.75))).attr('rx', 1.5);
-      if (r.complete) barre.attr('fill', fill);
-      else barre.attr('fill', 'none').attr('stroke', fill).attr('stroke-width', 1.5);
-      svg.append('rect').attr('x', x - gap / 2).attr('y', 0).attr('width', bw + gap).attr('height', H).attr('fill', 'transparent')
-        .on('mousemove', (evt) => {
-          tipLines(tip, dateCourte(r.date, r.jour), [{ color: fill, text: 'Pic : ' + metres(v) + ' à ' + heure(r[cle + '_pic_heure']) }].concat(r.complete ? [] : [{ text: 'Matinée incomplète' }]));
-          const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
-        })
-        .on('mouseleave', () => { tip.hidden = true; });
-    });
-  }
-
-  // La route au pire moment : chaque portion de 100 m, en rouge là où la file était.
-  function drawCumul() {
-    const el = document.getElementById('cumul');
-    if (!el || !estVisible(el)) return;
-    const s = pire(), c = dash.data('carte_releves'), t = dash.data('troncons');
-    if (!s || c.status !== 'ok' || t.status !== 'ok') { el.replaceChildren(); return; }
-    const row = c.data.find((r) => r.date === s.max_date && r.creneau === s.max_creneau);
-    if (!row) { el.replaceChildren(); return; }
-    el.replaceChildren();
-    const tr = trier(t.data);
-    const fin = horsZone(tr) || row.rouge.length * 100;
-    const nb = Math.ceil(fin / 100);
-    const W = Math.max(140, el.clientWidth), H = 30, hb = 10, gap = 1;
-    const cw = (W - gap * (nb - 1)) / nb;
-    const xd = (d) => (d / 100) * (cw + gap);
-    const rouge = trv('--tr-rouge'), bas = getComputedStyle(el).getPropertyValue('--rn-mini-bas').trim() || '#c9cfd4';
-    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img')
-      .attr('aria-label', 'La route à ce moment-là, de Vizille à gauche jusqu’après le feu de Champagnier à droite : en rouge, les files');
-    for (let i = 0; i < nb; i++) {
-      svg.append('rect').attr('x', i * (cw + gap)).attr('y', 0).attr('width', cw).attr('height', hb).attr('fill', row.rouge[i] === '1' ? rouge : bas);
-    }
-    const fg = cssVar('--color-fg'), muted = cssVar('--color-fg-muted');
-    const feux = tr.filter((x) => x.id === 's3' || x.id === 's6').map((x) => x.debut_m);
-    feux.forEach((d) => svg.append('rect').attr('x', xd(d) - 1).attr('y', hb + 1).attr('width', 2).attr('height', 5).attr('fill', fg));
-    svg.append('text').attr('x', 0).attr('y', H - 1).attr('font-size', 10).attr('fill', muted).text('Vizille');
-    svg.append('text').attr('x', W).attr('y', H - 1).attr('text-anchor', 'end').attr('font-size', 10).attr('fill', muted).text('Champagnier');
-  }
-
   // ================= Onglets et dessin =================
   const PAGES = ['comprendre', 'comparer', 'explorer'];
   let page = 'comprendre';
@@ -1945,16 +1918,17 @@ dash.calc('acces_creneau', {
     let j = null;
     if (e.key === 'ArrowRight') j = (i + 1) % onglets.length;
     if (e.key === 'ArrowLeft') j = (i - 1 + onglets.length) % onglets.length;
+    if (e.key === 'Home') j = 0;
+    if (e.key === 'End') j = onglets.length - 1;
     if (j != null) { e.preventDefault(); montrer(onglets[j].dataset.tab); dash.setLink(onglets[j].dataset.tab); onglets[j].focus(); }
   });
 
   function dessiner() {
     remplirTextes();
-    drawMini('mini-vizille', 'vizille'); drawMini('mini-feu', 'feu'); drawCumul();
     drawTableSynthese(); drawTableTroncons(); drawTableJours(); drawTableMethodes();
-    if (page === 'comprendre') { drawETType(); drawPics(); carte.maj(); }
+    if (page === 'comprendre') { drawPics(); carte.maj(); }
     if (page === 'comparer') { drawBarres(); drawETJour(); drawGrille(); }
-    if (page === 'explorer') { drawAcces(); }
+    if (page === 'explorer') { drawETType(); drawAcces(); }
   }
 
   const lien = location.hash.slice(1);
