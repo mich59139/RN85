@@ -1566,7 +1566,7 @@ dash.calc('acces_creneau', {
       state.timer = setInterval(() => {
         if (state.k >= CRENEAUX.length - 1) { stop(); return; }
         state.k += 1; frame();
-      }, 650);
+      }, 900);
       frame();
     };
     play.addEventListener('click', () => { state.touche = true; if (state.timer) stop(); else start(); });
@@ -1760,6 +1760,9 @@ dash.calc('acces_creneau', {
       return { type: false, vizille: r ? r.rouge_s1 + r.rouge_s2 : null, feu: r ? r.rouge_s4 + r.rouge_s5 : null, peage: q ? q.rouge_peage : null, thorez: q ? q.rouge_thorez : null, heure: (r || q).heure };
     }
 
+    // Pendant la lecture, les couleurs passent de l'une à l'autre en fondu (sauf si le système
+    // demande de réduire les animations) : le mouvement des files se suit plus facilement.
+    const sansAnimation = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function frame() {
       if (!geo) return;
       const c = CRENEAUX[state.k];
@@ -1768,12 +1771,15 @@ dash.calc('acces_creneau', {
       const svg = d3.select('#carte-svg svg');
       const vide = cssVar('--color-border-line');
       let aucun = true;
+      const segments = state.timer && !sansAnimation
+        ? svg.selectAll('.rn-bin').transition().duration(550).ease(d3.easeCubicInOut)
+        : svg.selectAll('.rn-bin').interrupt();
       if (state.jour === 'type') {
         const t = dash.data('matinee_type'), a = dash.data('acces_type');
         const rowR = t.status === 'ok' ? t.data.find((x) => x.creneau === c) : null;
         const rowA = a.status === 'ok' ? a.data.find((x) => x.creneau === c) : null;
         aucun = !rowR && !rowA;
-        svg.selectAll('.rn-bin').attr('stroke', (b) => {
+        segments.attr('stroke', (b) => {
           if (b.ligne === 'rn85') return rowR ? couleurType(rowR.part[b.i]) : vide;
           return rowA && rowA[b.ligne] ? couleurType(rowA[b.ligne][b.i]) : vide;
         });
@@ -1782,7 +1788,7 @@ dash.calc('acces_creneau', {
         const rowR = cr.status === 'ok' ? cr.data.find((x) => x.date === state.jour && x.creneau === c) : null;
         const rowA = ar.status === 'ok' ? ar.data.find((x) => x.date === state.jour && x.creneau === c) : null;
         aucun = !rowR && !rowA;
-        svg.selectAll('.rn-bin').attr('stroke', (b) => {
+        segments.attr('stroke', (b) => {
           if (b.ligne === 'rn85') return rowR ? couleurCode(rowR.rouge[b.i] === '1' ? '1' : (rowR.hors_vert[b.i] === '1' ? '2' : '0')) : vide;
           return rowA && rowA['bins_' + b.ligne] ? couleurCode(rowA['bins_' + b.ligne][b.i]) : vide;
         });
