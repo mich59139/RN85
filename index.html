@@ -2097,8 +2097,11 @@ dash.calc('derniere', {
       document.getElementById('am-periode').textContent = d0 === d1 ? 'le ' + DE(d0) + ' 2026' : 'du ' + (memeMois ? DE(d0).split(' ')[0] : DE(d0)) + ' au ' + DE(d1) + ' 2026';
       document.getElementById('am-releves').textContent = fInt(a.data.length) + ' captures Google Maps sur ' + js.length + ' après-midi';
     }
-    // Phrase de résumé : la plus longue file relevée au retour.
-    const top = zt.data.filter((z) => z.max_m != null).reduce((b, z) => (!b || z.max_m > b.max_m ? z : b), null);
+    // Phrase de résumé : la plus longue file relevée au retour. La file qui attend au feu de Champagnier
+    // s'étend sur deux tronçons (fin de la zone relevée et au-delà) : elle est comptée d'un seul tenant.
+    let top = zt.data.filter((z) => z.max_m != null && z.id !== 'r6' && z.id !== 'r7').reduce((b, z) => (!b || z.max_m > b.max_m ? z : b), null);
+    const champ = a.data.reduce((b, r) => { const v = (r.retour_s6 || 0) + (r.retour_s7 || 0); return !b || v > b.max_m ? { max_m: v, r } : b; }, null);
+    if (champ && (!top || champ.max_m > top.max_m)) top = { max_m: champ.max_m, lieu: 'avant le feu de Champagnier, en venant de Pont-de-Claix', max_jour: champ.r.jour, max_date: champ.r.date, max_heure: champ.r.heure };
     if (!top || top.max_m < 50) resume.textContent = 'Aucune file de 50 m ou plus n’a encore été relevée au retour.';
     else {
       resume.replaceChildren();
