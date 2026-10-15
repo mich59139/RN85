@@ -16,6 +16,7 @@
 <meta name="apple-mobile-web-app-title" content="RN85">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preload" href="polices/source-serif-4-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="leaflet/leaflet.css">
 <style>
 /* Police des titres : Source Serif 4, à empattements (licence OFL, fichier dans « polices »). */
 @font-face { font-family: "Source Serif 4"; font-style: normal; font-weight: 600; font-display: swap; src: url("polices/source-serif-4-600.woff2") format("woff2"); }
@@ -134,6 +135,17 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rn-chiffre-quand { margin: 0; font-size: 15px; line-height: 1.4; }
 .rn-chiffre-note { margin: 6px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--rn-bande-doux); }
 .rn-chiffre-note b { color: var(--rn-bande-texte); font-weight: 600; }
+/* Dernière matinée relevée, en tête de la bande (demande de Michel, 15 octobre 2026). */
+.rn-derniere { padding: 22px var(--rn-gouttiere) 20px; display: grid; gap: 12px; border-bottom: 1px solid var(--rn-bande-filet); }
+.rn-derniere-titre { margin: 0; font-family: var(--rn-serif); font-size: 22px; font-weight: 600; line-height: 1.2; }
+.rn-derniere-files { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
+.rn-derniere-files li { display: grid; gap: 2px; }
+.rn-derniere-lieu { font-size: 14px; font-weight: 600; }
+.rn-derniere-val { font-size: 32px; font-weight: 600; line-height: 1.1; white-space: nowrap; }
+.rn-derniere-val small { font-size: 15px; font-weight: 400; margin-left: .35em; color: var(--rn-bande-doux); }
+.rn-derniere-tend { font-size: 14px; line-height: 1.4; color: var(--rn-bande-doux); }
+.rn-derniere-tend b { color: var(--rn-bande-texte); font-weight: 600; }
+.rn-records-titre { margin: 0; padding: 16px var(--rn-gouttiere) 0; font-size: 13.5px; font-weight: 600; color: var(--rn-bande-doux); }
 @media (min-width: 760px) {
   .rn-chiffres { margin: 40px 0 0; grid-template-columns: repeat(3, minmax(0, 1fr)); border-radius: 6px; }
   .rn-chiffre { padding: 26px 28px 28px; gap: 4px; }
@@ -141,6 +153,11 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
   .rn-chiffre-sous, .rn-chiffre-note { font-size: 14px; }
   .rn-chiffre + .rn-chiffre { border-top: 0; border-left: 1px solid var(--rn-bande-filet); }
   .rn-chiffre-val { font-size: 54px; }
+  .rn-derniere { grid-column: 1 / -1; padding: 26px 28px 24px; }
+  .rn-derniere-titre { font-size: 26px; }
+  .rn-derniere-files { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+  .rn-derniere-val { font-size: 38px; }
+  .rn-records-titre { grid-column: 1 / -1; padding: 20px 28px 0; font-size: 14px; }
 }
 
 /* ---------- Onglets : du texte souligné, qui reste en haut de l'écran ---------- */
@@ -296,6 +313,15 @@ h3.rn-card-title { font-size: 21px; }
 .rn-map-col { display: grid; gap: 10px; min-width: 0; align-content: start; }
 .rn-map { position: relative; min-height: 280px; }
 .rn-map svg { display: block; }
+/* Carte IGN (Leaflet, depuis le 15 octobre 2026) : sa propre pile d'affichage, sous les onglets qui restent en haut. */
+.rn-map.leaflet-container { height: 460px; min-height: 0; z-index: 0; isolation: isolate; border-radius: 6px; font: inherit; background: #eef0f2; }
+@media (max-width: 559px) { .rn-map.leaflet-container { height: 380px; } }
+.rn-fond-clair { filter: grayscale(1) brightness(1.06) contrast(.88); }
+.rn-map .leaflet-tooltip.rn-etiquette { background: rgba(255, 255, 255, .9); border: 0; border-radius: 3px; box-shadow: none; padding: 1px 5px; color: #1b1f23; font-size: 12.5px; line-height: 1.3; }
+.rn-map .leaflet-tooltip.rn-etiquette::before { display: none; }
+.rn-map .leaflet-tooltip.rn-fort { font-weight: 600; }
+.rn-map .leaflet-control-layers-base label { font-size: 13px; }
+.rn-map-msg { position: absolute; left: 50%; bottom: 30px; transform: translateX(-50%); z-index: 800; background: rgba(255, 255, 255, .92); padding: 3px 9px; border-radius: 4px; font-size: 13px; color: #1b1f23; pointer-events: none; }
 .rn-map .rn-bin { transition: none; }
 @media (prefers-reduced-motion: no-preference) { .rn-map .rn-bin { transition: stroke var(--cds-dur-slow) var(--cds-ease-out); } }
 .rn-map-read { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 15px; font-variant-numeric: tabular-nums; }
@@ -325,6 +351,11 @@ h3.rn-card-title { font-size: 21px; }
   </header>
 
   <section class="rn-chiffres" id="chiffres" aria-label="Chiffres clés">
+    <div class="rn-derniere" id="derniere">
+      <h2 class="rn-derniere-titre" id="derniere-titre">Dernière matinée relevée</h2>
+      <ul class="rn-derniere-files" id="derniere-files"></ul>
+    </div>
+    <h2 class="rn-records-titre">Les plus longues files depuis le <span data-source="synthese" data-field="date_min" data-row="0">—</span></h2>
     <article class="rn-chiffre">
       <h2 class="rn-chiffre-titre">Sortie de Vizille</h2>
       <p class="rn-chiffre-sous">File la plus longue relevée, jusqu’au feu avant l’autopont</p>
@@ -387,7 +418,7 @@ h3.rn-card-title { font-size: 21px; }
       <div class="rn-card rn-map-card">
         <div class="rn-card-tete">
           <h2 class="rn-card-title">La matinée en carte</h2>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Le plan rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Il s’ouvre à 7 h sur la matinée du pire relevé. Le bouton Lecture rejoue la matinée depuis 7 h. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « Où et quand ça bouchonne » de l’onglet « Le détail ». Le plan est à l’échelle : la barre en bas à gauche donne la mesure.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>La carte rejoue la matinée choisie, relevé après relevé, sur la RN85 et sur ses deux accès dans Vizille. Elle s’ouvre à 7 h sur la dernière matinée mesurée. Le bouton Lecture rejoue la matinée depuis 7 h. Le fond de carte (plan clair, plan IGN ou photos aériennes) se choisit avec le bouton en haut à droite de la carte. Un trait pointillé signale un relevé manquant. En « matinée type », la couleur indique sur combien de matinées la portion était en rouge à cette heure-là, avec les mêmes niveaux que le diagramme « Où et quand ça bouchonne » de l’onglet « Le détail ». La barre en bas à gauche de la carte donne l’échelle.</p></details>
         </div>
         <div class="rn-map-bar">
           <label class="rn-field" for="carte-jour"><span>Matinée</span><select id="carte-jour"></select></label>
@@ -638,6 +669,7 @@ h3.rn-card-title { font-size: 21px; }
 <footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes en semaine, de 7 h à 9 h (sens Vizille → Grenoble) et, depuis le 14 octobre, de 16 h à 18 h 45 (sens des retours), analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet « Le détail ».</footer>
 </div>
 <script src="d3.v7.min.js"></script>
+<script src="leaflet/leaflet.js"></script>
 <script>
 // Moteur de la page autonome : charge les fichiers de données, fait les calculs
 // déclarés plus bas (dash.calc) et prévient les graphiques quand tout est prêt.
@@ -1019,6 +1051,33 @@ dash.calc('am_jours', {
     return Array.from(m.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
   },
 });
+
+// Dernière matinée relevée, en tête de la bande sombre (demande de Michel, 15 octobre 2026) :
+// son pic à la sortie de Vizille et avant le feu de Champagnier, comparé au pic moyen des matinées
+// complètes précédentes. Écart de moins de 10 % (ou de 50 m) : « dans la moyenne ».
+dash.calc('derniere', {
+  inputs: ['par_jour'],
+  title: 'Dernière matinée relevée',
+  description: 'Date de la dernière matinée, ses pics (sortie de Vizille, approche du feu de Champagnier) et leur écart au pic moyen des matinées complètes précédentes.',
+  fn: (jours) => {
+    if (!jours.length) return [];
+    const d = jours[jours.length - 1];
+    const avant = jours.slice(0, -1).filter((j) => j.complete);
+    const tendance = (k) => {
+      if (!avant.length) return { moyenne: null, sens: null, ecart: null };
+      const m = avant.reduce((s, j) => s + j[k], 0) / avant.length;
+      const e = d[k] - m;
+      const sens = Math.abs(e) <= Math.max(50, 0.1 * m) ? 0 : (e > 0 ? 1 : -1);
+      return { moyenne: Math.round(m / 10) * 10, sens, ecart: Math.round(Math.abs(e) / 10) * 10 };
+    };
+    const tv = tendance('vizille_pic'), tf = tendance('feu_pic');
+    return [{
+      date: d.date, jour: d.jour, releves: d.releves, complete: d.complete, matinees_avant: avant.length,
+      vizille_pic: d.vizille_pic, vizille_pic_heure: d.vizille_pic_heure, vizille_moyenne: tv.moyenne, vizille_sens: tv.sens, vizille_ecart: tv.ecart,
+      feu_pic: d.feu_pic, feu_pic_heure: d.feu_pic_heure, feu_moyenne: tf.moyenne, feu_sens: tf.sens, feu_ecart: tf.ecart,
+    }];
+  },
+});
 </script>
 
 <script>
@@ -1322,22 +1381,34 @@ dash.calc('am_jours', {
     } else if (pj.status === 'ok') {
       lignes = pj.data.map((r) => ({ date: r.date, jour: r.jour, complete: r.complete }));
     }
+    // La dernière matinée mesurée vient en tête, la matinée type en dernier (demande de Michel, 15 octobre 2026).
     const p = pire();
-    const opts = (avecType ? [['type', 'Matinée type (toutes)']] : []).concat(lignes.map((l) => [l.date, dateCourte(l.date, l.jour) + (p && l.date === p.max_date && source !== 'acces' ? ' (pire relevé)' : '') + (l.complete ? '' : ' (incomplète)')]));
+    const dern = lignes.length ? lignes[lignes.length - 1].date : null;
+    const nom = (l) => {
+      const notes = [];
+      if (l.date === dern) notes.push('dernière');
+      if (p && l.date === p.max_date && source !== 'acces') notes.push('pire relevé');
+      if (!l.complete) notes.push('incomplète');
+      return dateCourte(l.date, l.jour) + (notes.length ? ' (' + notes.join(', ') + ')' : '');
+    };
+    const opts = lignes.slice().reverse().map((l) => [l.date, nom(l)]).concat(avecType ? [['type', 'Matinée type (toutes)']] : []);
     const sig = opts.map((o) => o.join('=')).join('|');
     if (signatures[sel.id] !== sig) { sel.replaceChildren(...opts.map(([v, t]) => new Option(t, v))); signatures[sel.id] = sig; }
     return opts.map((o) => o[0]);
   }
-  document.getElementById('et-jour').addEventListener('change', (e) => dash.setParams({ vue_ou: e.target.value }));
-  document.getElementById('acces-jour').addEventListener('change', (e) => dash.setParams({ jour_acces: e.target.value }));
+  // Choix de matinée gardés le temps de la visite seulement : à l'ouverture, la dernière matinée mesurée
+  // est toujours choisie (demande de Michel, 15 octobre 2026).
+  const choix = { ou: null, acces: null, am: null };
+  document.getElementById('et-jour').addEventListener('change', (e) => { choix.ou = e.target.value; dessiner(); });
+  document.getElementById('acces-jour').addEventListener('change', (e) => { choix.acces = e.target.value; dessiner(); });
 
   // Où et quand ça bouchonne : la matinée type (toutes les matinées) ou une matinée au choix, dans le même diagramme.
   function drawOu() {
     const el = document.getElementById('et-type');
     const sel = document.getElementById('et-jour');
     const valeurs = optionsMatinees(sel, true, 'rn');
-    let j = dash.params().vue_ou || 'type';
-    if (!valeurs.includes(j)) j = 'type';
+    let j = choix.ou;
+    if (!j || !valeurs.includes(j)) j = valeurs[0];
     sel.value = j;
     if (!estVisible(el)) return;
     const st = etat(['carte_releves', 'troncons', 'matinee_type', 'synthese']);
@@ -1439,7 +1510,7 @@ dash.calc('am_jours', {
     const tb = document.querySelector('#table-jours tbody');
     const d = dash.data('par_jour');
     if (d.status !== 'ok') { tb.replaceChildren(); return; }
-    tb.replaceChildren(...d.data.map((r) => {
+    tb.replaceChildren(...d.data.slice().reverse().map((r) => {
       const tr = document.createElement('tr'); tr.dataset.key = r.date;
       if (!r.complete) tr.className = 'rn-out';
       // Pic et heure dans la même case : le tableau reste lisible sur téléphone.
@@ -1549,7 +1620,7 @@ dash.calc('am_jours', {
       feu: (r) => r.rouge_s4 + r.rouge_s5,
     }[zone] || ((r) => 0);
     const rel = d.data;
-    const jours = Array.from(new Set(rel.map((r) => r.date))).sort();
+    const jours = Array.from(new Set(rel.map((r) => r.date))).sort().reverse();   // la dernière matinée en haut
     const jourDe = {}; rel.forEach((r) => { jourDe[r.date] = r.jour; });
     const idx = new Map(rel.map((r) => [r.date + ' ' + r.creneau, r]));
     const vmax = d3.max(rel, val) || 1;
@@ -1602,8 +1673,8 @@ dash.calc('am_jours', {
   function drawAcces() {
     const sel = document.getElementById('acces-jour');
     const valeurs = optionsMatinees(sel, true, 'acces');
-    const j = dash.params().jour_acces || 'type';
-    sel.value = valeurs.includes(j) ? j : 'type';
+    const j = choix.acces;
+    sel.value = j && valeurs.includes(j) ? j : valeurs[0];
     const jj = sel.value;
     const els = { peage: document.getElementById('et-peage'), thorez: document.getElementById('et-thorez') };
     if (!estVisible(els.peage)) return;
@@ -1664,30 +1735,137 @@ dash.calc('am_jours', {
     range.addEventListener('input', () => { state.touche = true; stop(); state.reprise = true; state.k = Number(range.value); frame(); });
     sel.addEventListener('change', () => { state.touche = true; stop(); state.reprise = false; state.jour = sel.value; drawAll(); });
 
-    function buildGeo(lignes, W) {
-      const tous = Object.values(lignes).flat();
-      const lat0 = d3.mean(tous, (p) => p.lat), c = Math.cos(lat0 * Math.PI / 180);
-      const xs = d3.extent(tous, (p) => p.lon * c), ys = d3.extent(tous, (p) => -p.lat);
-      // Plan plus compact qu'avant, toujours à l'échelle (même facteur en largeur et en hauteur).
-      const padX = Math.min(56, W * 0.1), padT = 30, padB = 34;
-      const Hmax = Math.max(280, Math.min(520, W * 1.05));
-      const k = Math.min((W - 2 * padX) / (xs[1] - xs[0]), (Hmax - padT - padB) / (ys[1] - ys[0]));
-      const H = Math.round((ys[1] - ys[0]) * k + padT + padB);
-      const ox = (W - (xs[1] - xs[0]) * k) / 2;
-      // 1 km vaut 1/111,32 degré de latitude : nombre de pixels pour 1 km, pour la barre d'échelle.
-      const out = { W, H, pxKm: k / 111.32 };
+    // Carte IGN (Leaflet), demandée par Michel le 15 octobre 2026 : même fond que sa page « Romanche & Oisans ».
+    // La RN85 et les deux accès sont dessinés par portions de 100 m, sur un liseré blanc qui les détache du fond.
+    let lmap = null, couches = null, bins = [], msg = null, etiquettes = [], lisereLignes = [];
+    const DECAL = { top: [0, -6], bottom: [0, 6], left: [-6, 0], right: [6, 0] };
+    // Chaque nom est posé à côté de son point, du côté qui ne recouvre ni une route, ni un nom plus
+    // important, ni le bord de la carte. Faute de place, il est masqué et réapparaît en zoomant.
+    // Positions essayées pour un nom, dans l'ordre : côtés préférés, puis un peu plus loin, puis en biais.
+    function candidats(dirs) {
+      const loin = { top: [0, -18], bottom: [0, 18], left: [-16, 0], right: [16, 0] };
+      return dirs.map((d) => [d, DECAL[d]]).concat(dirs.map((d) => [d, loin[d]]),
+        [['right', [8, -14]], ['right', [8, 14]], ['left', [-8, -14]], ['left', [-8, 14]]]);
+    }
+    function rangerEtiquettes() {
+      if (!lmap || !etiquettes.length) return;
+      const cadre = lmap.getContainer().getBoundingClientRect();
+      if (!cadre.width) return;
+      const routes = [];
+      lisereLignes.forEach((l) => l.getLatLngs().forEach((ll) => { const p = lmap.latLngToContainerPoint(ll); routes.push([p.x + cadre.left, p.y + cadre.top]); }));
+      const posees = [];
+      const dedans = (r) => r.left > cadre.left + 2 && r.right < cadre.right - 2 && r.top > cadre.top + 2 && r.bottom < cadre.bottom - 22;
+      const seul = (r) => !posees.some((q) => r.left < q.right + 4 && r.right > q.left - 4 && r.top < q.bottom + 2 && r.bottom > q.top - 2);
+      const horsRoute = (r) => !routes.some(([x, y]) => x > r.left - 3 && x < r.right + 3 && y > r.top - 3 && y < r.bottom + 3);
+      const essayer = (e, test) => {
+        const el = e.tt.getElement();
+        for (const [d, o] of candidats(e.dirs)) {
+          e.tt.options.direction = d; e.tt.options.offset = o; e.tt.update();
+          const r = el.getBoundingClientRect();
+          if (test(r)) { posees.push(r); return true; }
+        }
+        return false;
+      };
+      etiquettes.slice().sort((a, b) => a.prio - b.prio).forEach((e) => {
+        const el = e.tt.getElement();
+        if (!el) return;
+        // Un nom important peut, faute de mieux, mordre sur une route ; jamais sur un autre nom.
+        const place = essayer(e, (r) => dedans(r) && seul(r) && horsRoute(r)) || (e.prio <= 2 && essayer(e, (r) => dedans(r) && seul(r)));
+        if (!place) { e.tt.options.direction = e.dirs[0]; e.tt.options.offset = DECAL[e.dirs[0]]; e.tt.update(); }
+        el.style.visibility = place ? 'visible' : 'hidden';
+      });
+    }
+    function fondsIGN() {
+      const ign = (couche, format, classe) => {
+        const t = L.tileLayer('https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=' + couche
+          + '&STYLE=normal&FORMAT=' + format + '&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+        { attribution: '© <a href="https://www.ign.fr/">IGN</a> – Géoplateforme', maxNativeZoom: 19, maxZoom: 18, className: classe || '' });
+        // La Géoplateforme renvoie parfois une erreur passagère : une seule nouvelle tentative.
+        t.on('tileerror', (e) => {
+          const im = e.tile;
+          if (im.dataset.retry) return;
+          im.dataset.retry = '1';
+          setTimeout(() => { im.src = im.src.split('&_r=')[0] + '&_r=' + Date.now(); }, 1000);
+        });
+        return t;
+      };
+      return {
+        'Plan clair': ign('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png', 'rn-fond-clair'),
+        'Plan IGN': ign('GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2', 'image/png'),
+        'Photos aériennes': ign('ORTHOIMAGERY.ORTHOPHOTOS', 'image/jpeg'),
+      };
+    }
+    function creerCarte(el) {
+      el.replaceChildren();
+      // Sur un écran tactile, la carte ne capte pas le glissement du doigt : la page défile normalement.
+      const tactile = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      lmap = L.map(el, { scrollWheelZoom: false, dragging: !tactile, tap: false, zoomSnap: 0.25 });
+      lmap.attributionControl.setPrefix('<a href="https://leafletjs.com">Leaflet</a>');
+      const fonds = fondsIGN();
+      let nom = 'Plan clair';
+      try { const f = localStorage.getItem('rn85-fond'); if (f && fonds[f]) nom = f; } catch (e) { /* sans importance */ }
+      fonds[nom].addTo(lmap);
+      L.control.layers(fonds, null, { position: 'topright', collapsed: true }).addTo(lmap);
+      lmap.on('baselayerchange', (e) => { try { localStorage.setItem('rn85-fond', e.name); } catch (err) { /* sans importance */ } });
+      lmap.on('zoomend moveend resize', rangerEtiquettes);
+      L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(lmap);
+      msg = document.createElement('div');
+      msg.className = 'rn-map-msg';
+      el.appendChild(msg);
+    }
+    function lignesGeo(D) {
+      const lignes = { rn85: D.carte_trace, thorez: D.acces_trace.filter((p) => p.acces === 'thorez'), peage: D.acces_trace.filter((p) => p.acces === 'peage') };
+      const geo = {};
       for (const [nom, pts] of Object.entries(lignes)) {
-        const P = pts.slice().sort((a, b) => a.i - b.i).map((p) => ({ x: ox + (p.lon * c - xs[0]) * k, y: padT + (-p.lat - ys[0]) * k, d: p.dist_m }));
-        const total = P[P.length - 1].d;
+        const P = pts.slice().sort((a, b) => a.i - b.i);
+        const total = P[P.length - 1].dist_m;
         const at = (d) => {
           d = Math.max(0, Math.min(total, d));
-          let i = 1; while (i < P.length - 1 && P[i].d < d) i++;
-          const a = P[i - 1], b = P[i], t = b.d === a.d ? 0 : (d - a.d) / (b.d - a.d);
-          return { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t };
+          let i = 1; while (i < P.length - 1 && P[i].dist_m < d) i++;
+          const a = P[i - 1], b = P[i], t = b.dist_m === a.dist_m ? 0 : (d - a.dist_m) / (b.dist_m - a.dist_m);
+          return [a.lat + (b.lat - a.lat) * t, a.lon + (b.lon - a.lon) * t];
         };
-        out[nom] = { P, total, at, piece: (d1, d2) => [at(d1), ...P.filter((p) => p.d > d1 && p.d < d2), at(d2)] };
+        geo[nom] = { total, at, tous: P.map((p) => [p.lat, p.lon]), piece: (d1, d2) => [at(d1), ...P.filter((p) => p.dist_m > d1 && p.dist_m < d2).map((p) => [p.lat, p.lon]), at(d2)] };
       }
-      return out;
+      return geo;
+    }
+    function tracer(D) {
+      if (couches) couches.remove();
+      couches = L.layerGroup().addTo(lmap);
+      const geo = lignesGeo(D);
+      const troncons = trier(D.troncons);
+      const finZone = horsZone(troncons) != null ? horsZone(troncons) : geo.rn85.total;
+      const lisere = (g, w) => L.polyline(g.tous, { color: '#ffffff', weight: w, opacity: 0.92, lineCap: 'round', lineJoin: 'round', interactive: false }).addTo(couches);
+      lisereLignes = [lisere(geo.rn85, 12), lisere(geo.thorez, 10), lisere(geo.peage, 10)];
+      const longueur = (cle) => { const r = D.acces_releves.find((x) => x[cle]); return r ? r[cle].length : 0; };
+      const binsDe = (nom, g, n, hors) => d3.range(n).map((i) => ({ ligne: nom, i, d1: i * 100, d2: Math.min((i + 1) * 100, g.total), hors: hors != null ? i * 100 >= hors : false })).filter((b) => b.d2 > b.d1);
+      bins = [
+        ...binsDe('rn85', geo.rn85, D.carte_releves[0].rouge.length, finZone),
+        ...binsDe('thorez', geo.thorez, longueur('bins_thorez'), null),
+        ...binsDe('peage', geo.peage, longueur('bins_peage'), null),
+      ];
+      bins.forEach((b) => {
+        b.layer = L.polyline(geo[b.ligne].piece(b.d1, b.d2), { weight: b.ligne === 'rn85' ? 7 : 6, opacity: b.hors ? 0.6 : 1, lineCap: 'butt', lineJoin: 'round', className: 'rn-bin', interactive: false }).addTo(couches);
+      });
+      // Repères : noms choisis par Michel le 14 octobre 2026 (rond-point Muzet, feu avant l'autopont).
+      const fg = cssVar('--color-fg');
+      etiquettes = [];
+      const repere = (pt, txt, dirs, prio, fort) => {
+        const m = L.circleMarker(pt, { radius: 4, color: fg, weight: 1.5, fillColor: '#ffffff', fillOpacity: 1, interactive: false }).addTo(couches);
+        m.bindTooltip(txt, { permanent: true, direction: dirs[0], offset: DECAL[dirs[0]], className: 'rn-etiquette' + (fort ? ' rn-fort' : '') });
+        etiquettes.push({ tt: m.getTooltip(), dirs, prio });
+      };
+      const NOMS = [
+        ['s6', 'Feu de Champagnier', ['right', 'left', 'top', 'bottom'], 1, true],
+        ['s3', 'Feu avant l’autopont', ['top', 'bottom', 'left', 'right'], 1, true],
+        ['s4', 'Basse-Jarrie', ['bottom', 'top', 'left', 'right'], 2, true],
+        ['s2', 'Rond-point Muzet', ['top', 'bottom', 'right', 'left'], 3],
+        ['s7', 'Fin du relevé', ['right', 'left', 'top', 'bottom'], 4],
+      ];
+      NOMS.forEach(([id, txt, dirs, prio, fort]) => { const t = troncons.find((x) => x.id === id); if (t) repere(geo.rn85.at(t.debut_m), txt, dirs, prio, fort); });
+      repere(geo.thorez.at(0), ACCES.thorez, ['right', 'top', 'bottom', 'left'], 3);
+      repere(geo.peage.at(0), ACCES.peage, ['left', 'right', 'top', 'bottom'], 3);
+      return geo;
     }
     const couleurCode = (code) => (code === '1' ? trv('--tr-rouge') : (code === '2' ? trv('--tr-orange') : trv('--tr-neutre-trait')));
     const couleurType = (p) => couleurNiveau(niveau(p), true);
@@ -1773,7 +1951,7 @@ dash.calc('am_jours', {
     function remplirSelect() {
       const valeurs = optionsMatinees(sel, true, 'rn');
       const p = pire();
-      if (!state.touche && p) { state.jour = p.max_date; state.k = 0; }
+      if (!state.touche && valeurs.length) { state.jour = valeurs[0]; state.k = 0; }
       if (!state.jour || !valeurs.includes(state.jour)) state.jour = valeurs.includes('type') ? (p && valeurs.includes(p.max_date) ? p.max_date : 'type') : null;
       if (state.jour) sel.value = state.jour;
     }
@@ -1782,58 +1960,21 @@ dash.calc('am_jours', {
       const el = document.getElementById('carte-svg');
       if (!estVisible(el)) return;
       const st = etat(['carte_trace', 'carte_releves', 'troncons', 'acces_trace', 'acces_releves', 'synthese']);
-      if (st === 'error') { fail(el); return; }
-      if (st !== 'ok') { attente(el); return; }
+      if (st === 'error' || typeof L === 'undefined') { fail(el); lmap = null; return; }
+      if (st !== 'ok') { if (!lmap) attente(el); return; }
       pret(el);
       remplirSelect();
       const D = {}; ['carte_trace', 'carte_releves', 'troncons', 'acces_trace', 'acces_releves'].forEach((id) => { D[id] = dash.data(id).data; });
-      const W = Math.max(320, el.clientWidth);
-      geo = buildGeo({ rn85: D.carte_trace, thorez: D.acces_trace.filter((p) => p.acces === 'thorez'), peage: D.acces_trace.filter((p) => p.acces === 'peage') }, W);
-      el.replaceChildren();
-      const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${geo.W} ${geo.H}`).attr('role', 'img').attr('aria-label', 'Plan schématique de la RN85 entre Vizille et Champagnier et de ses accès depuis Le Péage et l’avenue Maurice-Thorez, colorés selon le trafic');
-      const troncons = trier(D.troncons);
-      const finZone = horsZone(troncons) != null ? horsZone(troncons) : geo.rn85.total;
-      const line = d3.line().x((p) => p.x).y((p) => p.y);
-      const route = (g, d1, d2, w, op) => svg.append('path').attr('d', line(g.piece(d1, d2))).attr('fill', 'none').attr('stroke', cssVar('--color-border-line')).attr('stroke-width', w).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round').attr('opacity', op);
-      route(geo.rn85, 0, finZone, 17, 1);
-      route(geo.rn85, finZone, geo.rn85.total, 13, 0.6);
-      route(geo.thorez, 0, geo.thorez.total, 13, 1);
-      route(geo.peage, 0, geo.peage.total, 13, 1);
-      const binsDe = (nom, g, n, hors) => d3.range(n).map((i) => ({ ligne: nom, i, d1: i * 100, d2: Math.min((i + 1) * 100, g.total), hors: hors != null ? i * 100 >= hors : false })).filter((b) => b.d2 > b.d1);
-      const bins = [
-        ...binsDe('rn85', geo.rn85, D.carte_releves[0].rouge.length, finZone),
-        ...binsDe('thorez', geo.thorez, D.acces_releves[0].bins_thorez.length, null),
-        ...binsDe('peage', geo.peage, D.acces_releves[0].bins_peage.length, null),
-      ];
-      svg.append('g').selectAll('path').data(bins).join('path')
-        .attr('class', 'rn-bin')
-        .attr('d', (b) => line(geo[b.ligne].piece(b.d1, b.d2)))
-        .attr('fill', 'none').attr('stroke-width', (b) => (b.hors ? 7 : (b.ligne === 'rn85' ? 10 : 8))).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round')
-        .attr('opacity', (b) => (b.hors ? 0.55 : 1));
-      const lab = svg.append('g');
-      const fs = cssVar('--cds-font-size-caption'), muted = cssVar('--color-fg-muted');
-      const occupes = [];
-      // Barre d'échelle en bas à gauche : le plan est à l'échelle, la barre permet de le vérifier.
-      let L = geo.pxKm, txtEch = '1 km';
-      if (L > geo.W * 0.3) { L = geo.pxKm / 2; txtEch = '500 m'; }
-      const sx = 10, sy = geo.H - 10;
-      lab.append('path').attr('d', `M${sx},${sy - 5}V${sy}H${sx + L}V${sy - 5}`).attr('fill', 'none').attr('stroke', muted).attr('stroke-width', 1.5);
-      const tEch = lab.append('text').attr('x', sx + L + 6).attr('y', sy).attr('font-size', fs).attr('fill', muted).text(txtEch);
-      occupes.push({ x0: sx - 2, y0: sy - 14, x1: sx + L + 10 + tEch.node().getComputedTextLength(), y1: sy + 4 });
-      // Le carrefour de départ, où arrivent Le Péage et l'avenue Maurice-Thorez, n'a pas d'étiquette propre :
-      // les noms des deux accès suffisent et libèrent la place autour du rond-point Muzet.
-      // Noms des lieux choisis par Michel le 14 octobre 2026 : rond-point Muzet, feu avant l'autopont.
-      const NOMS = { s2: { txt: 'Rond-point Muzet' }, s3: { txt: 'Feu avant l’autopont', fort: true }, s4: { txt: 'Basse-Jarrie', fort: true }, s6: { txt: 'Feu de Champagnier', fort: true }, s7: { txt: 'Fin du relevé' } };
-      const items = troncons.filter((t) => NOMS[t.id]).map((t) => ({ p: geo.rn85.at(t.debut_m), txt: NOMS[t.id].txt, fort: !!NOMS[t.id].fort }));
-      items.push({ p: geo.peage.at(0), txt: ACCES.peage, fort: false }, { p: geo.thorez.at(0), txt: ACCES.thorez, fort: false });
-      items.push({ p: geo.rn85.at(geo.rn85.total), txt: 'vers Grenoble', fort: false, sansPoint: true, discret: true });
-      items.sort((a, b) => (b.fort ? 1 : 0) - (a.fort ? 1 : 0));
-      poserEtiquettes(svg, lab, items, [geo.rn85, geo.thorez, geo.peage], occupes);
-      svg.append('text').attr('class', 'rn-map-msg').attr('x', geo.W / 2).attr('y', geo.H - 10).attr('text-anchor', 'middle').attr('font-size', fs).attr('fill', muted).text('');
-      el.style.minHeight = geo.H * (el.clientWidth / geo.W) + 'px';
+      const nouvelle = !lmap;
+      if (nouvelle) creerCarte(el);
+      else lmap.invalidateSize();
+      const geo = tracer(D);
+      if (nouvelle) lmap.fitBounds(L.latLngBounds([...geo.rn85.tous, ...geo.thorez.tous, ...geo.peage.tous]), { padding: [24, 24] });
+      lastW = el.clientWidth;
       legendeCarte();
       drawStrip();
       frame();
+      rangerEtiquettes();
     }
 
     function valeurs(c) {
@@ -1855,36 +1996,34 @@ dash.calc('am_jours', {
     // demande de réduire les animations) : le mouvement des files se suit plus facilement.
     const sansAnimation = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     function frame() {
-      if (!geo) return;
+      if (!lmap || !bins.length) return;
       const c = CRENEAUX[state.k];
       range.value = state.k;
       clock.textContent = heure(c);
-      const svg = d3.select('#carte-svg svg');
-      const vide = cssVar('--color-border-line');
+      const vide = cssVar('--tr-neutre-trait');
+      // Relevé manquant : trait pointillé, jamais confondu avec « ni orange ni rouge ».
+      const peindre = (b, couleur) => b.layer.setStyle(couleur ? { color: couleur, dashArray: null } : { color: vide, dashArray: '2 7' });
       let aucun = true;
-      const segments = state.timer && !sansAnimation
-        ? svg.selectAll('.rn-bin').transition().duration(550).ease(d3.easeCubicInOut)
-        : svg.selectAll('.rn-bin').interrupt();
       if (state.jour === 'type') {
         const t = dash.data('matinee_type'), a = dash.data('acces_type');
         const rowR = t.status === 'ok' ? t.data.find((x) => x.creneau === c) : null;
         const rowA = a.status === 'ok' ? a.data.find((x) => x.creneau === c) : null;
         aucun = !rowR && !rowA;
-        segments.attr('stroke', (b) => {
-          if (b.ligne === 'rn85') return rowR ? couleurType(rowR.part[b.i]) : vide;
-          return rowA && rowA[b.ligne] ? couleurType(rowA[b.ligne][b.i]) : vide;
+        bins.forEach((b) => {
+          if (b.ligne === 'rn85') peindre(b, rowR ? couleurType(rowR.part[b.i]) : null);
+          else peindre(b, rowA && rowA[b.ligne] ? couleurType(rowA[b.ligne][b.i]) : null);
         });
       } else {
         const cr = dash.data('carte_releves'), ar = dash.data('acces_releves');
         const rowR = cr.status === 'ok' ? cr.data.find((x) => x.date === state.jour && x.creneau === c) : null;
         const rowA = ar.status === 'ok' ? ar.data.find((x) => x.date === state.jour && x.creneau === c) : null;
         aucun = !rowR && !rowA;
-        segments.attr('stroke', (b) => {
-          if (b.ligne === 'rn85') return rowR ? couleurCode(rowR.rouge[b.i] === '1' ? '1' : (rowR.hors_vert[b.i] === '1' ? '2' : '0')) : vide;
-          return rowA && rowA['bins_' + b.ligne] ? couleurCode(rowA['bins_' + b.ligne][b.i]) : vide;
+        bins.forEach((b) => {
+          if (b.ligne === 'rn85') peindre(b, rowR ? couleurCode(rowR.rouge[b.i] === '1' ? '1' : (rowR.hors_vert[b.i] === '1' ? '2' : '0')) : null);
+          else peindre(b, rowA && rowA['bins_' + b.ligne] ? couleurCode(rowA['bins_' + b.ligne][b.i]) : null);
         });
       }
-      svg.select('.rn-map-msg').text(aucun ? 'Pas de relevé à cette heure' : '');
+      if (msg) { msg.textContent = aucun ? 'Pas de relevé à cette heure' : ''; msg.hidden = !aucun; }
       const lec = document.getElementById('carte-lecture');
       const v = valeurs(c);
       lec.replaceChildren();
@@ -1976,8 +2115,9 @@ dash.calc('am_jours', {
       const el = document.getElementById('carte-svg');
       if (!estVisible(el)) return;
       const sig = ['carte_trace', 'carte_releves', 'troncons', 'matinee_type', 'releves', 'par_creneau', 'acces_trace', 'acces_releves', 'acces_type', 'acces_creneau', 'synthese'].map((id) => dash.data(id).status).join(',');
-      if (el.clientWidth !== lastW || sig !== lastSig || !geo) { lastW = el.clientWidth; lastSig = sig; drawAll(); }
-      else frame();
+      if (!lmap || sig !== lastSig) { lastSig = sig; drawAll(); return; }
+      if (el.clientWidth !== lastW) { lastW = el.clientWidth; lmap.invalidateSize(); drawStrip(); rangerEtiquettes(); }
+      frame();
     }
     return { maj, stop };
   })();
@@ -1993,7 +2133,7 @@ dash.calc('am_jours', {
     const r = z.data.find((x) => x.id === (s.id === 's4' || s.id === 's5' ? 'r45' : 'r' + s.id.slice(1)));
     return r ? r.nom + (r.hors ? ' (hors zone)' : '') : null;
   };
-  document.getElementById('am-jour').addEventListener('change', (e) => dash.setParams({ jour_am: e.target.value }));
+  document.getElementById('am-jour').addEventListener('change', (e) => { choix.am = e.target.value; dessiner(); });
   function drawApresMidi() {
     const a = dash.data('apres_midi'), jours = dash.data('am_jours'), zt = dash.data('am_troncons');
     const resume = document.getElementById('am-resume');
@@ -2046,7 +2186,7 @@ dash.calc('am_jours', {
     const opts = js.slice().reverse().map((j) => [j.date, dateCourte(j.date, j.jour) + ' (' + j.releves + ' relevé' + (j.releves > 1 ? 's' : '') + ')']);
     const sig = opts.map((o) => o.join('=')).join('|');
     if (signatures[sel.id] !== sig) { sel.replaceChildren(...opts.map(([v, t]) => new Option(t, v))); signatures[sel.id] = sig; }
-    let j = dash.params().jour_am;
+    let j = choix.am;
     if (!opts.some((o) => o[0] === j)) j = opts.length ? opts[0][0] : null;
     if (j) sel.value = j;
     if (!estVisible(el)) return;
@@ -2063,6 +2203,33 @@ dash.calc('am_jours', {
       aria: 'Diagramme d’un après-midi sur la RN85, sens des retours : distance depuis Vizille en largeur, heure de 16 h à 18 h 45 en hauteur, couleur relevée sur Google Maps',
       cell: (cr, i) => { const r = parCreneau.get(cr); return r ? cellJour(r.retour[i]) : null; },
     });
+  }
+
+  // ================= Dernière matinée, en tête de la bande sombre (15 octobre 2026) =================
+  function drawDerniere() {
+    const d = dash.data('derniere');
+    if (d.status !== 'ok' || !d.data.length) return;
+    const r = d.data[0];
+    document.getElementById('derniere-titre').textContent = 'Dernière matinée relevée\u00a0: ' + r.jour + ' ' + DE(r.date)
+      + (r.complete ? '' : ' (incomplète, ' + r.releves + ' relevés)');
+    const ligne = (lieu, pic, h, sens, ecart, moyenne) => {
+      const li = document.createElement('li');
+      const a = document.createElement('span'); a.className = 'rn-derniere-lieu'; a.textContent = lieu;
+      const v = document.createElement('span'); v.className = 'rn-derniere-val'; v.textContent = metres(pic);
+      const sm = document.createElement('small'); sm.textContent = 'à ' + heure(h); v.append(sm);
+      const t = document.createElement('span'); t.className = 'rn-derniere-tend';
+      if (sens == null) t.textContent = 'Pas encore de matinée précédente pour comparer.';
+      else {
+        const b = document.createElement('b');
+        if (sens === 0) { b.textContent = 'Dans la moyenne'; t.append(b, ' des matinées précédentes (pic moyen ' + metres(moyenne) + ').'); }
+        else { b.textContent = metres(ecart) + (sens > 0 ? ' de plus' : ' de moins'); t.append(b, ' que le pic moyen des matinées précédentes (' + metres(moyenne) + ').'); }
+      }
+      li.append(a, v, t);
+      return li;
+    };
+    document.getElementById('derniere-files').replaceChildren(
+      ligne('Sortie de Vizille', r.vizille_pic, r.vizille_pic_heure, r.vizille_sens, r.vizille_ecart, r.vizille_moyenne),
+      ligne('Approche du feu de Champagnier', r.feu_pic, r.feu_pic_heure, r.feu_sens, r.feu_ecart, r.feu_moyenne));
   }
 
   // ================= Onglets et dessin =================
@@ -2092,6 +2259,7 @@ dash.calc('am_jours', {
 
   function dessiner() {
     remplirTextes();
+    drawDerniere();
     drawTableTroncons(); drawTableJours(); drawTableMethodes();
     if (page === 'essentiel') { drawPics(); carte.maj(); drawBarres(); }
     if (page === 'detail') { drawOu(); drawGrille(); drawAcces(); }
