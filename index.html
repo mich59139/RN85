@@ -2115,7 +2115,8 @@ dash.calc('derniere', {
       const cel = [
         { t: r.nom + (r.hors ? ' (hors zone)' : '') },
         { t: metres(r.longueur_m), opt: true },
-        { t: metres(r.max_m), s: r.max_m >= 50 ? DE(r.max_date) + ' à ' + heure(r.max_heure) : null, pic: true },
+        // Moins de 50 m n'est pas compté comme bouchon : « moins de 50 m » plutôt qu'une longueur sans bouchon moyen.
+        { t: r.max_m > 0 && r.max_m < 50 ? 'moins de 50\u00a0m' : metres(r.max_m), s: r.max_m >= 50 ? DE(r.max_date) + ' à ' + heure(r.max_heure) : null, pic: true },
         { t: r.bouchon_moyen_m == null ? 'aucun' : metres(r.bouchon_moyen_m) },
         { t: pct(r.pct_bouchon) },
       ];
