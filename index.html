@@ -351,6 +351,7 @@ h3.rn-card-title { font-size: 21px; }
   <nav class="rn-tabs" role="tablist" aria-label="Parties de la page">
     <button type="button" role="tab" id="onglet-essentiel" aria-controls="essentiel" data-tab="essentiel">L’essentiel</button>
     <button type="button" role="tab" id="onglet-detail" aria-controls="detail" data-tab="detail">Le détail</button>
+    <button type="button" role="tab" id="onglet-apresmidi" aria-controls="apresmidi" data-tab="apresmidi">L’après-midi</button>
   </nav>
 
   <!-- ===================== L’ESSENTIEL ===================== -->
@@ -583,8 +584,58 @@ h3.rn-card-title { font-size: 21px; }
       </div>
     </section>
   </section>
+
+  <!-- ===================== L'APRÈS-MIDI (sens des retours, depuis le 14 octobre 2026) ===================== -->
+  <section class="rn-page" id="apresmidi" role="tabpanel" aria-labelledby="onglet-apresmidi" hidden>
+    <section class="rn-section" id="am-intro">
+      <h2 class="rn-h2">Les retours de l’après-midi</h2>
+      <p class="rn-chapo">Depuis le 14 octobre, la RN85 est aussi relevée l’après-midi, de 16 h à 18 h 45, toutes les 5 minutes. Google Maps dessine les deux sens côte à côte : cet onglet ne compte que le sens des retours, de Grenoble vers Vizille.</p>
+      <p class="rn-chapo" id="am-resume"></p>
+      <dl class="rn-fiche" aria-label="Relevés de l’après-midi">
+        <div><dt>Période</dt><dd id="am-periode">—</dd></div>
+        <div><dt>Relevés</dt><dd id="am-releves">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="rn-section" id="am-ou">
+      <div class="rn-card">
+        <div class="rn-card-top">
+          <div>
+            <h2 class="rn-card-title">Où et quand ça bouchonne au retour</h2>
+            <p class="rn-chapo">Chaque case représente une portion de 100 m à une heure donnée, avec la couleur relevée sur Google Maps dans le sens des retours.</p>
+            <details class="rn-aide"><summary>Comment lire</summary><p>De gauche à droite, la RN85 depuis Vizille jusque vers Pont-de-Claix, comme le matin. Au retour, les voitures roulent de droite à gauche : une file se forme à droite d’un feu ou d’un carrefour. De haut en bas, l’heure, de 16 h à 18 h 45. Une case hachurée signale un relevé manquant, jamais une absence de bouchon.</p></details>
+          </div>
+          <label class="rn-field" for="am-jour"><span>Après-midi</span><select id="am-jour"></select></label>
+        </div>
+        <div class="rn-legend" id="am-legende"></div>
+        <div class="rn-chart" id="am-et" data-source="apres_midi troncons"></div>
+      </div>
+    </section>
+
+    <section class="rn-section" id="am-troncons">
+      <div class="rn-card">
+        <div class="rn-card-tete">
+          <h2 class="rn-card-title">Tronçon par tronçon, au retour</h2>
+          <details class="rn-aide"><summary>Comment lire</summary><p>Les tronçons sont ceux du matin, dans l’ordre où les voitures les parcourent au retour. Pic observé : plus grande longueur en rouge relevée. Bouchon moyen : longueur moyenne en rouge des seuls relevés avec bouchon. Avec bouchon : au moins 50 m en rouge, part de l’ensemble des relevés de l’après-midi.</p></details>
+        </div>
+        <div class="rn-wrap">
+          <table class="rn-table" id="table-am" data-source="am_troncons" data-row-key="id">
+            <thead><tr>
+              <th data-field="nom">Tronçon, au retour</th>
+              <th data-field="longueur_m" class="rn-opt">Longueur</th>
+              <th data-field="max_m">Pic observé</th>
+              <th data-field="bouchon_moyen_m">Bouchon moyen</th>
+              <th data-field="pct_bouchon">Avec bouchon</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="rn-note">Le premier après-midi, le 14 octobre, n’a été relevé que de 16 h à 16 h 20. Les relevés de l’après-midi sont ajoutés chaque matin, avec ceux du matin.</p>
+      </div>
+    </section>
+  </section>
 </div>
-<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes de 7 h à 9 h en semaine, sens Vizille → Grenoble, analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet « Le détail ».</footer>
+<footer class="rn-pied">Relevés Google Maps pris toutes les 5 minutes en semaine, de 7 h à 9 h (sens Vizille → Grenoble) et, depuis le 14 octobre, de 16 h à 18 h 45 (sens des retours), analysés automatiquement chaque matin vers 9 h 30. La méthode et les limites sont détaillées dans l’onglet « Le détail ».</footer>
 </div>
 <script src="d3.v7.min.js"></script>
 <script>
@@ -593,7 +644,8 @@ h3.rn-card-title { font-size: 21px; }
 (function () {
   'use strict';
   const BASE = 'donnees/';
-  const SOURCES = ['releves', 'carte_releves', 'acces_releves', 'troncons', 'carte_trace', 'acces_trace'];
+  // apres_midi : relevés de 16 h à 18 h 45, deux sens séparés (depuis le 14 octobre 2026).
+  const SOURCES = ['releves', 'carte_releves', 'acces_releves', 'troncons', 'carte_trace', 'acces_trace', 'apres_midi'];
   const DEFAUTS = { zone: 'ensemble', jour: 'pire', jour_acces: 'type' };
   const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   const etat = {};
@@ -928,6 +980,45 @@ dash.calc('acces_creneau', {
     });
   },
 });
+// ================= L'après-midi (depuis le 14 octobre 2026) : sens des retours, Grenoble → Vizille =================
+// Mêmes tronçons que le matin, pris dans l'ordre où les voitures les parcourent au retour.
+// Entre le feu de Champagnier et Basse-Jarrie, les tronçons s4 et s5 sont réunis.
+const ZONES_RETOUR = [
+  { id: 'r7', ts: ['s7'], nom: 'Depuis Pont-de-Claix', lieu: 'en arrivant de Pont-de-Claix', hors: true },
+  { id: 'r6', ts: ['s6'], nom: 'Fin de la zone relevée → feu de Champagnier', lieu: 'avant le feu de Champagnier' },
+  { id: 'r45', ts: ['s4', 's5'], nom: 'Feu de Champagnier → Basse-Jarrie', lieu: 'entre le feu de Champagnier et Basse-Jarrie' },
+  { id: 'r3', ts: ['s3'], nom: 'Autopont', lieu: 'sur l’autopont' },
+  { id: 'r2', ts: ['s2'], nom: 'Feu → rond-point Muzet', lieu: 'avant le rond-point Muzet' },
+  { id: 'r1', ts: ['s1'], nom: 'Rond-point Muzet → av. Maurice-Thorez', lieu: 'à l’entrée de Vizille' },
+];
+dash.calc('am_troncons', {
+  inputs: ['apres_midi', 'troncons'],
+  title: 'Après-midi, sens des retours, par tronçon',
+  description: 'Pour chaque tronçon parcouru au retour : pic observé (jour et heure), bouchon moyen (moyenne des seuls relevés avec au moins 50 m en rouge) et part des relevés avec bouchon.',
+  fn: (rows, troncons) => ZONES_RETOUR.map((z) => {
+    const lg = z.ts.reduce((s, id) => s + (troncons.find((t) => t.id === id) || { longueur_m: 0 }).longueur_m, 0);
+    const v = rows.map((r) => z.ts.reduce((s, id) => s + (r['retour_' + id] || 0), 0));
+    let k = -1;
+    v.forEach((x, i) => { if (k < 0 || x > v[k]) k = i; });
+    const avec = v.filter((x) => x >= 50);
+    return {
+      id: z.id, nom: z.nom, lieu: z.lieu, hors: !!z.hors, longueur_m: lg, releves: v.length,
+      max_m: k >= 0 ? v[k] : null, max_date: k >= 0 ? rows[k].date : null, max_jour: k >= 0 ? rows[k].jour : null, max_heure: k >= 0 ? rows[k].heure : null,
+      bouchon_moyen_m: avec.length ? Math.round(avec.reduce((a, b) => a + b, 0) / avec.length / 10) * 10 : null,
+      pct_bouchon: v.length ? avec.length / v.length : null,
+    };
+  }),
+});
+dash.calc('am_jours', {
+  inputs: ['apres_midi'],
+  title: 'Après-midi relevés',
+  description: 'Un élément par après-midi : date, jour, nombre de relevés, premier et dernier relevé.',
+  fn: (rows) => {
+    const m = new Map();
+    rows.forEach((r) => { const o = m.get(r.date) || { date: r.date, jour: r.jour, releves: 0, premier: r.heure, dernier: r.heure }; o.releves += 1; if (r.heure < o.premier) o.premier = r.heure; if (r.heure > o.dernier) o.dernier = r.heure; m.set(r.date, o); });
+    return Array.from(m.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+  },
+});
 </script>
 
 <script>
@@ -1116,13 +1207,14 @@ dash.calc('acces_creneau', {
   }
 
   function drawET(el, o) {
+    const CR = o.creneaux || CRENEAUX;
     el.replaceChildren();
     const W = Math.max(300, el.clientWidth);
     const etroit = W < 560;
     const fs = cssVar('--cds-font-size-caption');
     const fg = cssVar('--color-fg'), muted = cssVar('--color-fg-muted'), fond = cssVar('--color-panel');
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img').attr('aria-label', o.aria);
-    const ml = Math.ceil(textWidth(svg, '8 h 45')) + 10, mr = 10;
+    const ml = Math.ceil(textWidth(svg, o.creneaux ? '18 h 45' : '8 h 45')) + 10, mr = 10;
     const plotW = W - ml - mr;
     const x = (d) => ml + plotW * d / o.echelle;
     const LH = 14;
@@ -1151,21 +1243,21 @@ dash.calc('acces_creneau', {
     const dessous = placer(o.reperes.filter((r) => r.ou === 'bas'), etroit ? 1 : 2);
     const mt = dessus.total ? dessus.total + 8 : 6;
     const ch = o.ch || 16;
-    const yb = mt + ch * CRENEAUX.length;          // bas du diagramme
+    const yb = mt + ch * CR.length;                // bas du diagramme
     const kmH = o.km ? 18 : 0;                     // rangée de l'échelle des kilomètres
     const H = yb + kmH + (dessous.total ? dessous.total + 8 : 4);
     svg.attr('viewBox', `0 0 ${W} ${H}`);
     const hach = hachures(svg);
     const pas = W < 520 ? 30 : 15;
-    CRENEAUX.forEach((c, k) => {
+    CR.forEach((c, k) => {
       const mn = Number(c.slice(3));
       if (mn % pas === 0) svg.append('text').attr('x', ml - 6).attr('y', mt + k * ch + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', muted).text(heureAxe(c));
     });
     const g = svg.append('g');
     const cw = plotW * 100 / o.echelle;
-    for (let k = 0; k < CRENEAUX.length; k++) {
+    for (let k = 0; k < CR.length; k++) {
       for (let i = 0; i < o.nb; i++) {
-        const v = o.cell(CRENEAUX[k], i);
+        const v = o.cell(CR[k], i);
         const hors = o.horsDe != null && i * 100 >= o.horsDe;
         g.append('rect').attr('x', x(i * 100) + 0.5).attr('y', mt + k * ch + 0.5).attr('width', Math.max(1, cw - 1)).attr('height', ch - 1)
           .attr('fill', v ? v.fill : hach).attr('fill-opacity', v ? v.op : 1).attr('opacity', hors ? 0.45 : 1);
@@ -1198,17 +1290,17 @@ dash.calc('acces_creneau', {
     dessous.places.forEach((p) => nom(p, yb + kmH + 6 + dessous.haut(p.rang)));
     const card = el.closest('.rn-card'), tip = tipIn(card);
     const hi = svg.append('rect').attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 1.5).attr('visibility', 'hidden').attr('pointer-events', 'none');
-    svg.append('rect').attr('x', ml).attr('y', mt).attr('width', plotW).attr('height', ch * CRENEAUX.length).attr('fill', 'transparent')
+    svg.append('rect').attr('x', ml).attr('y', mt).attr('width', plotW).attr('height', ch * CR.length).attr('fill', 'transparent')
       .on('mousemove', (evt) => {
         const [px, py] = d3.pointer(evt);
         const i = Math.floor((px - ml) / cw), k = Math.floor((py - mt) / ch);
-        if (i < 0 || i >= o.nb || k < 0 || k >= CRENEAUX.length) { tip.hidden = true; hi.attr('visibility', 'hidden'); return; }
-        const v = o.cell(CRENEAUX[k], i);
+        if (i < 0 || i >= o.nb || k < 0 || k >= CR.length) { tip.hidden = true; hi.attr('visibility', 'hidden'); return; }
+        const v = o.cell(CR[k], i);
         const lignes = [{ text: v ? v.texte : 'Pas de relevé à cette heure' }];
         const ou = o.ou ? o.ou(i * 100) : null;
         if (ou) lignes.push({ text: ou });
         const fin = Math.min((i + 1) * 100, o.longueur || (i + 1) * 100);
-        tipLines(tip, heure(CRENEAUX[k]) + ', de ' + fKm(i / 10) + ' à ' + fKm(fin / 1000) + ' km', lignes);
+        tipLines(tip, heure(CR[k]) + ', de ' + fKm(i / 10) + ' à ' + fKm(fin / 1000) + ' km', lignes);
         hi.attr('x', x(i * 100)).attr('y', mt + k * ch).attr('width', cw).attr('height', ch).attr('visibility', 'visible');
         const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
       })
@@ -1890,8 +1982,91 @@ dash.calc('acces_creneau', {
     return { maj, stop };
   })();
 
+  // ================= L'après-midi : sens des retours (depuis le 14 octobre 2026) =================
+  const CRENEAUX_AM = d3.range(0, 170, 5).map((m) => String(16 + Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
+  const DE = (d) => { const p = d.split('-').map(Number); return p[2] + (p[2] === 1 ? 'er' : '') + ' ' + MOIS[p[1] - 1]; };
+  // Nom du tronçon au retour, pour la bulle du diagramme.
+  const segRetour = (tr) => (d) => {
+    const z = dash.data('am_troncons');
+    const s = tr.find((x) => d >= x.debut_m && d < x.fin_m);
+    if (!s || z.status !== 'ok') return null;
+    const r = z.data.find((x) => x.id === (s.id === 's4' || s.id === 's5' ? 'r45' : 'r' + s.id.slice(1)));
+    return r ? r.nom + (r.hors ? ' (hors zone)' : '') : null;
+  };
+  document.getElementById('am-jour').addEventListener('change', (e) => dash.setParams({ jour_am: e.target.value }));
+  function drawApresMidi() {
+    const a = dash.data('apres_midi'), jours = dash.data('am_jours'), zt = dash.data('am_troncons');
+    const resume = document.getElementById('am-resume');
+    const el = document.getElementById('am-et'), sel = document.getElementById('am-jour');
+    const tb = document.querySelector('#table-am tbody');
+    if (a.status === 'error') {
+      resume.textContent = 'Les relevés de l’après-midi ne sont pas encore disponibles.';
+      el.replaceChildren(); tb.replaceChildren();
+      return;
+    }
+    if (a.status !== 'ok' || jours.status !== 'ok' || zt.status !== 'ok') return;
+    const js = jours.data;
+    // Fiche : période et nombre de relevés.
+    if (js.length) {
+      const d0 = js[0].date, d1 = js[js.length - 1].date;
+      const memeMois = d0.slice(0, 7) === d1.slice(0, 7);
+      document.getElementById('am-periode').textContent = d0 === d1 ? 'le ' + DE(d0) + ' 2026' : 'du ' + (memeMois ? DE(d0).split(' ')[0] : DE(d0)) + ' au ' + DE(d1) + ' 2026';
+      document.getElementById('am-releves').textContent = fInt(a.data.length) + ' captures Google Maps sur ' + js.length + ' après-midi';
+    }
+    // Phrase de résumé : la plus longue file relevée au retour.
+    const top = zt.data.filter((z) => z.max_m != null).reduce((b, z) => (!b || z.max_m > b.max_m ? z : b), null);
+    if (!top || top.max_m < 50) resume.textContent = 'Aucune file de 50 m ou plus n’a encore été relevée au retour.';
+    else {
+      resume.replaceChildren();
+      const b = document.createElement('b'); b.textContent = metres(top.max_m);
+      resume.append('Plus longue file relevée au retour : ', b, ' ' + top.lieu + ', le ' + top.max_jour + ' ' + DE(top.max_date) + ' à ' + heure(top.max_heure) + '.');
+    }
+    // Tableau par tronçon, dans l'ordre du retour.
+    tb.replaceChildren(...zt.data.map((r) => {
+      const tr = document.createElement('tr'); tr.dataset.key = r.id;
+      if (r.hors) tr.className = 'rn-out';
+      const cel = [
+        { t: r.nom + (r.hors ? ' (hors zone)' : '') },
+        { t: metres(r.longueur_m), opt: true },
+        { t: metres(r.max_m), s: r.max_m >= 50 ? DE(r.max_date) + ' à ' + heure(r.max_heure) : null, pic: true },
+        { t: r.bouchon_moyen_m == null ? 'aucun' : metres(r.bouchon_moyen_m) },
+        { t: pct(r.pct_bouchon) },
+      ];
+      cel.forEach((c) => {
+        const td = document.createElement('td');
+        td.append(document.createTextNode(c.t));
+        if (c.s) { const sm = document.createElement('small'); sm.textContent = c.s; td.append(sm); }
+        if (c.pic) td.className = 'rn-pic';
+        if (c.opt) td.className = 'rn-opt';
+        tr.appendChild(td);
+      });
+      return tr;
+    }));
+    // Choix de l'après-midi : le plus récent par défaut.
+    const opts = js.slice().reverse().map((j) => [j.date, dateCourte(j.date, j.jour) + ' (' + j.releves + ' relevé' + (j.releves > 1 ? 's' : '') + ')']);
+    const sig = opts.map((o) => o.join('=')).join('|');
+    if (signatures[sel.id] !== sig) { sel.replaceChildren(...opts.map(([v, t]) => new Option(t, v))); signatures[sel.id] = sig; }
+    let j = dash.params().jour_am;
+    if (!opts.some((o) => o[0] === j)) j = opts.length ? opts[0][0] : null;
+    if (j) sel.value = j;
+    if (!estVisible(el)) return;
+    const t = dash.data('troncons');
+    if (t.status !== 'ok' || !a.data.length) { el.replaceChildren(); return; }
+    pret(el);
+    legende(document.getElementById('am-legende'), 'jour');
+    const tr = trier(t.data);
+    const nb = a.data[0].retour.length, fin = nb * 100;
+    const parCreneau = new Map(a.data.filter((r) => r.date === j).map((r) => [r.creneau, r]));
+    drawET(el, {
+      nb, echelle: fin, longueur: fin, horsDe: horsZone(tr), reperes: reperesRN(tr, fin), km: true, ou: segRetour(tr), ch: 13,
+      creneaux: CRENEAUX_AM,
+      aria: 'Diagramme d’un après-midi sur la RN85, sens des retours : distance depuis Vizille en largeur, heure de 16 h à 18 h 45 en hauteur, couleur relevée sur Google Maps',
+      cell: (cr, i) => { const r = parCreneau.get(cr); return r ? cellJour(r.retour[i]) : null; },
+    });
+  }
+
   // ================= Onglets et dessin =================
-  const PAGES = ['essentiel', 'detail'];
+  const PAGES = ['essentiel', 'detail', 'apresmidi'];
   // Anciens liens (trois onglets) : ils mènent à l'onglet qui contient désormais leurs parties.
   const ANCIENS = { comprendre: 'essentiel', comparer: 'essentiel', explorer: 'detail' };
   let page = 'essentiel';
@@ -1920,6 +2095,7 @@ dash.calc('acces_creneau', {
     drawTableTroncons(); drawTableJours(); drawTableMethodes();
     if (page === 'essentiel') { drawPics(); carte.maj(); drawBarres(); }
     if (page === 'detail') { drawOu(); drawGrille(); drawAcces(); }
+    if (page === 'apresmidi') drawApresMidi();
   }
 
   const lien = location.hash.slice(1);
