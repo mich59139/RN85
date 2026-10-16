@@ -1309,9 +1309,12 @@ dash.calc('soir_par_troncon', {
       fm.replaceChildren(
         liType('Sortie de Vizille', pj, 'vizille_pic', s && { mot: 'matinées', texte: metres(s.pic_vizille) + ' le ' + quand(s.pic_vizille_jour, s.pic_vizille_date, s.pic_vizille_heure) }),
         liType('Approche du feu de Champagnier', pj, 'feu_pic', s && { mot: 'matinées', texte: metres(s.pic_feu) + ' le ' + quand(s.pic_feu_jour, s.pic_feu_date, s.pic_feu_heure) }));
-      if (sj.length) fs.replaceChildren(
+      // Même règle qu'au jour le jour : l'arrivée à Vizille seulement si une file d'au moins 50 m y a été relevée.
+      const entreeMax = sj.reduce((m, x) => Math.max(m, x.entree_pic), 0);
+      if (sj.length) fs.replaceChildren(...[
         liType('Feu de Champagnier, depuis Pont-de-Claix', sj, 'champ_pic', { mot: 'soirs', texte: recSoir('champ') }),
-        liType('Arrivée à Vizille', sj, 'entree_pic', { mot: 'soirs', texte: recSoir('entree') }));
+        entreeMax >= 50 ? liType('Arrivée à Vizille', sj, 'entree_pic', { mot: 'soirs', texte: recSoir('entree') }) : null,
+      ].filter(Boolean));
       else vide(fs, 'Pas encore de relevé le soir.');
       note(nm, ''); note(ns, '');
       records.hidden = true;
@@ -1339,9 +1342,11 @@ dash.calc('soir_par_troncon', {
       const mots = sj[sj.length - 1].date === e.date ? { groupe: 'soirs précédents' } : { groupe: 'autres soirs' };
       const autres = sj.filter((x) => x.date !== e.date && x.complete).length;
       const compare = autres >= 3;
-      fs.replaceChildren(
-        liFile('Feu de Champagnier, depuis Pont-de-Claix', e.champ_pic, e.champ_pic_heure, compare ? tendance(sj, e, 'champ_pic', 3) : undefined, mots),
-        liFile('Arrivée à Vizille', e.entree_pic, e.entree_pic_heure, compare ? tendance(sj, e, 'entree_pic', 3) : undefined, mots));
+      // Aucun texte ne met en avant une route fluide (Michel, 14 octobre 2026) : l'arrivée à Vizille
+      // n'apparaît dans le tableau noir que si une file d'au moins 50 m y a été relevée.
+      const lis = [liFile('Feu de Champagnier, depuis Pont-de-Claix', e.champ_pic, e.champ_pic_heure, compare ? tendance(sj, e, 'champ_pic', 3) : undefined, mots)];
+      if (e.entree_pic >= 50) lis.push(liFile('Arrivée à Vizille', e.entree_pic, e.entree_pic_heure, compare ? tendance(sj, e, 'entree_pic', 3) : undefined, mots));
+      fs.replaceChildren(...lis);
       const notes = [];
       if (!e.complete) notes.push('Soir incomplet : relevé de ' + heure(e.premier) + ' à ' + heure(e.dernier) + ' seulement (' + e.releves + ' relevé' + (e.releves > 1 ? 's' : '') + ').');
       if (!compare) notes.push('Comparaison avec les autres soirs à partir de trois soirs complets.');
