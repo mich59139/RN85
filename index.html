@@ -460,7 +460,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <div>
           <h2 class="rn-card-title">La D1091, de la Croix du Mottet à Vizille</h2>
           <p class="rn-note" id="d1-intro"></p>
-          <details class="rn-aide"><summary>Comment lire</summary><p>La D1091 est découpée en quatre tronçons : le kilomètre au-delà de la Croix du Mottet, côté Séchilienne ; de la Croix du Mottet au carrefour du Péage, où se trouve l’alternat des travaux de piste cyclable ; du carrefour du Péage à Vizille ; de Vizille au carrefour de la RN85. Pour chaque relevé de 5 minutes et chaque tronçon, une case donne la longueur en rouge vue par Google Maps : plus la case est foncée, plus la file est longue ; le pic de chaque tronçon est encadré. À l’échelle des captures, Google dessine les deux sens d’un seul trait : la mesure vaut pour la route. Avec l’alternat, chaque sens attend de son côté des travaux : la file des voitures qui vont vers Vizille se forme côté Croix du Mottet, celle des voitures qui vont vers l’Oisans côté Vizille. Une file compte à partir de 50 m en rouge sur le tronçon. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>La D1091 est découpée en quatre tronçons : le kilomètre au-delà de la Croix du Mottet, côté Séchilienne ; de la Croix du Mottet au carrefour du Péage, où se trouve l’alternat des travaux de piste cyclable ; du carrefour du Péage à Vizille ; de Vizille au carrefour de la RN85. Pour chaque relevé de 5 minutes et chaque tronçon, une case donne la longueur en rouge vue par Google Maps : plus la case est foncée, plus la file est longue ; le pic de chaque tronçon est encadré. À l’échelle des captures, Google dessine les deux sens d’un seul trait : la mesure vaut pour la route. Avec l’alternat, chaque sens attend de son côté des travaux : la file du sens sud-nord (vers Vizille) se forme entre la Croix du Mottet et le carrefour du Péage, celle du sens nord-sud (vers l’Oisans) entre le carrefour du Péage et Vizille. Une file compte à partir de 50 m en rouge sur le tronçon. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
         </div>
       </div>
       <div class="rn-cr-texte" id="d1-texte"></div>
@@ -2357,6 +2357,40 @@ dash.calc('soir_par_troncon', {
     return out;
   }
 
+  // Les deux sens au Péage. Depuis l'alternat (19 octobre 2026), installé au carrefour du Péage (pictogrammes de
+  // travaux sur les captures du 21 octobre 2026), chaque sens attend de son côté des travaux : le sens sud-nord
+  // (vers Vizille) entre la Croix du Mottet et le carrefour (T1, puis T0 au-delà de la Croix), le sens nord-sud
+  // (vers l'Oisans) entre le carrefour et Vizille (T2).
+  function d1Sens(D, j) {
+    if (!j.n) return 'pas de relevé';
+    const pk = (q) => { const v = j.pics[q]; return v && v[0] >= SEUIL_ROUGE ? v : null; };
+    const fmt = (v) => 'jusqu’à ' + metres(v[0]) + ' à ' + heure(v[1]);
+    const t0 = pk('T0'), t1 = pk('T1'), t2 = pk('T2'), t3 = pk('T3');
+    let sn = 'sud-nord (vers Vizille), ';
+    if (t1 && t0) sn += fmt(t1) + ' avant la Croix du Mottet et ' + fmt(t0) + ' au-delà';
+    else if (t1) sn += fmt(t1) + ', sans dépasser la Croix du Mottet';
+    else if (t0) sn += fmt(t0) + ' au-delà de la Croix du Mottet';
+    else sn += 'pas de file d’au moins 50 m';
+    const ns = 'nord-sud (vers l’Oisans), ' + (t2 ? fmt(t2) : 'pas de file d’au moins 50 m');
+    return sn + ' ; ' + ns + (t3 ? ' ; entre Vizille et le carrefour de la RN85, ' + fmt(t3) : '');
+  }
+  // Sur plusieurs demi-journées depuis l'alternat : plus longue file et relevés avec une file d'au moins 50 m.
+  function d1SensEnsemble(D, js) {
+    const un = (q) => {
+      const a = d1Compte(js, q);
+      if (!a.n) return 'pas de relevé';
+      if (!a.nf) return 'pas de file d’au moins 50 m sur ' + a.n + ' relevé' + (a.n > 1 ? 's' : '');
+      return 'au plus ' + metres(a.pic[0]) + ' (' + dateLong(a.pic[2]) + ', ' + heure(a.pic[1]) + '), file d’au moins 50 m dans ' + a.nf + ' relevé' + (a.nf > 1 ? 's' : '') + ' sur ' + a.n;
+    };
+    return 'sud-nord (vers Vizille), ' + un('T1') + ' ; nord-sud (vers l’Oisans), ' + un('T2');
+  }
+  function d1Paragraphe(titre, morceaux) {
+    const pp = document.createElement('p');
+    const b = document.createElement('b'); b.textContent = titre + ' ';
+    pp.append(b, insec(morceaux.join('. ') + '.'));
+    return pp;
+  }
+
   function drawD1091Demi(el, D, j, p, ech) {
     el.replaceChildren(); pret(el);
     if (!j || !j.n) { el.hidden = true; return; }
@@ -2441,6 +2475,9 @@ dash.calc('soir_par_troncon', {
       elM.hidden = true; elS.hidden = true; pret(elM); leg.hidden = true;
       const p0 = document.createElement('p');
       p0.textContent = insec('Toutes les journées relevées, avant les travaux du Péage (jusqu’au 16 octobre) et depuis leur début (19 octobre). Une file compte à partir de 50 m en rouge sur le tronçon. Choisissez une journée pour voir chaque relevé.');
+      const depuis = D.jours.filter((j) => j.date >= D1_TRAVAUX);
+      const mx = ['matin', 'soir'].map((p) => { const js2 = depuis.filter((j) => j.periode === p); return js2.length ? D1_DEMI[p].titre + ' : ' + d1SensEnsemble(D, js2) : null; }).filter(Boolean);
+      if (mx.length) txt.append(d1Paragraphe('Le Péage de Vizille, dans les deux sens, depuis le début de l’alternat.', mx));
       txt.append(p0);
       const lignes = [];
       ['matin', 'soir'].forEach((p) => {
@@ -2462,7 +2499,9 @@ dash.calc('soir_par_troncon', {
       txt.append(p0);
       return;
     }
-    [['matin', jm], ['soir', js]].forEach(([p, j]) => {
+    if (v >= D1_TRAVAUX) {
+      txt.append(d1Paragraphe('Le Péage de Vizille, dans les deux sens.', [['matin', jm], ['soir', js]].filter(([, j]) => j).map(([p, j]) => D1_DEMI[p].titre + ' : ' + d1Sens(D, j))));
+    } else [['matin', jm], ['soir', js]].forEach(([p, j]) => {
       if (!j) return;
       const bloc = document.createElement('div'); bloc.className = 'rn-cr-bloc';
       const ul = document.createElement('ul'); ul.className = 'rn-cr-liste';
