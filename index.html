@@ -355,12 +355,10 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 
-/* ---------- Google et TomTom, relevé par relevé (20 octobre 2026) ---------- */
+/* ---------- La D1091 : textes, légende, diagrammes et tableau ---------- */
 .rn-cr-texte { display: grid; gap: 8px; font-size: 15px; line-height: 1.55; max-width: 78ch; }
 .rn-cr-texte p { margin: 0; }
 .rn-cr-bloc { display: grid; gap: 4px; }
-.rn-demi-tt { margin: 2px 0 0; padding-top: 8px; border-top: 1px solid var(--rn-bande-filet); }
-.rn-demi-tt b { color: var(--rn-bande-texte); font-weight: 600; }
 .rn-cr-demi { font-weight: 600; }
 .rn-cr-liste { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
 .rn-cr-legende { display: grid; gap: 4px; }
@@ -369,8 +367,8 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rn-sw.rn-sw-vide { background: none; border: 1px dashed var(--cds-chart-axis); width: calc(.8rem - 2px); height: calc(.8rem - 2px); }
 .rn-sw.rn-sw-pic { background: none; border: 1.5px solid var(--color-fg); width: calc(.8rem - 3px); height: calc(.8rem - 3px); }
 .rn-cr-chart { min-height: 0; cursor: crosshair; }
-#table-croisement tr.rn-cr-groupe td, #table-d1091 tr.rn-cr-groupe td { text-align: left; font-weight: 600; padding-top: 14px; color: var(--color-fg); border-bottom: 1px solid var(--color-fg); }
-#table-croisement td:first-child, #table-d1091 td:first-child { white-space: normal; min-width: 9rem; }
+#table-d1091 tr.rn-cr-groupe td { text-align: left; font-weight: 600; padding-top: 14px; color: var(--color-fg); border-bottom: 1px solid var(--color-fg); }
+#table-d1091 td:first-child { white-space: normal; min-width: 9rem; }
 </style>
 </head>
 <body>
@@ -397,7 +395,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <button type="button" class="rn-fleche" id="jour-apres" aria-label="Journée suivante">›</button>
     </div>
     <nav class="rn-liens" aria-label="Parties de la page">
-      <a href="#carte">La carte</a><a href="#croisement">Google et TomTom</a><a href="#d1091">D1091</a><a href="#jours">Jour après jour</a><a href="#troncons">Tronçons</a><a href="#methode">Méthode</a>
+      <a href="#carte">La carte</a><a href="#d1091">D1091</a><a href="#jours">Jour après jour</a><a href="#troncons">Tronçons</a><a href="#methode">Méthode</a>
     </nav>
   </div>
 
@@ -412,13 +410,11 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
           <h3 class="rn-demi-titre"><b>Le matin</b> vers Grenoble, de 7 h à 9 h</h3>
           <p class="rn-demi-note" id="note-matin" hidden></p>
           <ul class="rn-files" id="files-matin"></ul>
-          <p class="rn-demi-note rn-demi-tt" id="tt-matin" hidden></p>
         </div>
         <div class="rn-demi" id="demi-soir">
           <h3 class="rn-demi-titre"><b>Le soir</b> retour vers Vizille, de 16 h à 18 h 45</h3>
           <p class="rn-demi-note" id="note-soir" hidden></p>
           <ul class="rn-files" id="files-soir"></ul>
-          <p class="rn-demi-note rn-demi-tt" id="tt-soir" hidden></p>
         </div>
       </div>
       <div class="rn-records" id="records">
@@ -458,35 +454,13 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
     </details>
   </section>
 
-  <section class="rn-section" id="croisement">
-    <div class="rn-card">
-      <div class="rn-card-top">
-        <div>
-          <h2 class="rn-card-title">Google et TomTom, relevé par relevé</h2>
-          <p class="rn-note" id="cr-intro"></p>
-          <details class="rn-aide"><summary>Comment lire</summary><p>Pour chaque relevé de 5 minutes et chaque portion de route, deux lignes : en haut la longueur en rouge vue par Google Maps, en bas la longueur en bouchon relevée par TomTom au même moment. Plus la case est foncée, plus la file est longue, avec la même échelle pour les deux sources ; le pic de chaque ligne est encadré. Les deux sources ne voient pas tout à fait la même chose : Google colore la route selon la vitesse des voitures, TomTom donne la longueur de route où la circulation est ralentie, orange compris. Bouchon selon Google : au moins 50 m en rouge sur la portion ; selon TomTom : au moins 50 m en bouchon. Le matin, la portion du feu de Champagnier s’arrête au feu pour Google : au-delà, le rouge relevé le matin est surtout la file de l’autre sens. Du feu de Champagnier à l’A480, seul TomTom est lu pour l’instant : les captures Google de cette portion, prises depuis le 19 octobre, ne sont pas encore analysées. Avant le 19 octobre, TomTom ne donnait pas le détail par portion : les portions entre le rond-point Muzet et le feu de Champagnier sont alors réunies. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
-        </div>
-      </div>
-      <div class="rn-cr-texte" id="cr-texte"></div>
-      <div class="rn-legend rn-cr-legende" id="cr-legende"></div>
-      <div class="rn-chart rn-cr-chart" id="cr-matin" data-source="croisement"></div>
-      <div class="rn-chart rn-cr-chart" id="cr-soir" data-source="croisement" hidden></div>
-      <div class="rn-wrap rn-wrap-fige" id="cr-tableau" hidden>
-        <table class="rn-table" id="table-croisement">
-          <thead><tr id="cr-tete"></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
   <section class="rn-section" id="d1091">
     <div class="rn-card">
       <div class="rn-card-top">
         <div>
           <h2 class="rn-card-title">La D1091, de la Croix du Mottet à Vizille</h2>
           <p class="rn-note" id="d1-intro"></p>
-          <details class="rn-aide"><summary>Comment lire</summary><p>La D1091 est découpée en quatre tronçons : le kilomètre au-delà de la Croix du Mottet, côté Séchilienne (relevé depuis le 21 octobre 2026) ; de la Croix du Mottet au carrefour du Péage, où se trouve l’alternat des travaux de piste cyclable ; du carrefour du Péage à Vizille ; de Vizille au carrefour de la RN85. Pour chaque relevé de 5 minutes et chaque tronçon, trois lignes : en haut la longueur en rouge vue par Google Maps sur la route, puis la longueur en bouchon relevée par TomTom dans le sens de Vizille et dans le sens de l’Oisans. À l’échelle des captures, Google dessine les deux sens d’un seul trait : sa ligne vaut pour la route, sans distinguer le sens. Plus la case est foncée, plus la file est longue, avec la même échelle pour les deux sources ; le pic de chaque ligne est encadré. File comptée selon Google : au moins 50 m en rouge sur le tronçon ; selon TomTom : au moins 50 m en bouchon. Le soir, Google est relevé jusqu’à 18 h 45 et TomTom jusqu’à 19 h 15. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>La D1091 est découpée en quatre tronçons : le kilomètre au-delà de la Croix du Mottet, côté Séchilienne ; de la Croix du Mottet au carrefour du Péage, où se trouve l’alternat des travaux de piste cyclable ; du carrefour du Péage à Vizille ; de Vizille au carrefour de la RN85. Pour chaque relevé de 5 minutes et chaque tronçon, une case donne la longueur en rouge vue par Google Maps : plus la case est foncée, plus la file est longue ; le pic de chaque tronçon est encadré. À l’échelle des captures, Google dessine les deux sens d’un seul trait : la mesure vaut pour la route. Avec l’alternat, chaque sens attend de son côté des travaux : la file des voitures qui vont vers Vizille se forme côté Croix du Mottet, celle des voitures qui vont vers l’Oisans côté Vizille. Une file compte à partir de 50 m en rouge sur le tronçon. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
         </div>
       </div>
       <div class="rn-cr-texte" id="d1-texte"></div>
@@ -603,9 +577,8 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
   'use strict';
   const BASE = 'donnees/';
   // apres_midi : relevés de 16 h à 18 h 45, deux sens séparés (depuis le 14 octobre 2026).
-  // croisement : Google et TomTom réunis, relevé par relevé et portion par portion (depuis le 20 octobre 2026).
-  // d1091 : la D1091 de la Croix du Mottet au carrefour de la RN85, Google et TomTom dans les deux sens (depuis le 20 octobre 2026).
-  const SOURCES = ['releves', 'carte_releves', 'acces_releves', 'troncons', 'carte_trace', 'acces_trace', 'apres_midi', 'croisement', 'd1091'];
+  // d1091 : la D1091 de la Croix du Mottet au carrefour de la RN85, lue sur les captures Google (depuis le 20 octobre 2026).
+  const SOURCES = ['releves', 'carte_releves', 'acces_releves', 'troncons', 'carte_trace', 'acces_trace', 'apres_midi', 'd1091'];
   const DEFAUTS = { zone: 'ensemble', jour: 'pire', jour_acces: 'type' };
   const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
   const etat = {};
@@ -1382,12 +1355,10 @@ dash.calc('soir_par_troncon', {
       ].filter(Boolean));
       else vide(fs, 'Pas encore de relevé le soir.');
       note(nm, ''); note(ns, '');
-      ligneTomTom(null, 'matin'); ligneTomTom(null, 'soir');
       records.hidden = true;
       return;
     }
     records.hidden = false;
-    ligneTomTom(v, 'matin'); ligneTomTom(v, 'soir');
     const j = js.find((x) => x.date === v);
     if (!j) return;
     titre.textContent = CAP(j.jour) + ' ' + dateLong(j.date);
@@ -1433,24 +1404,6 @@ dash.calc('soir_par_troncon', {
       }
     }
     drawRecords();
-  }
-  // Sous les files de Google : la plus longue file en bouchon du même matin ou du même soir selon TomTom
-  // (20 octobre 2026 ; des longueurs, jamais de temps). Rien n'est écrit quand TomTom n'a pas relevé ou ne
-  // relève aucun bouchon : la bande ne met jamais en avant une route fluide.
-  function ligneTomTom(date, p) {
-    const el = document.getElementById('tt-' + p);
-    const j = date ? crDemi(date, p) : null;
-    const pic = j && j.n_tomtom ? j.tomtom.m_pic : null;
-    if (!pic || pic[0] < SEUIL_T) { el.hidden = true; el.replaceChildren(); return; }
-    const [m, c, g] = pic;
-    const trajet = p === 'matin' ? (j.trajet === 'A480' ? 'de Vizille à l’A480' : 'de Vizille au feu de Champagnier') : (j.trajet === 'A480' ? 'de l’A480 à Vizille' : 'du feu de Champagnier à Vizille');
-    el.replaceChildren();
-    el.append(insec('Selon TomTom : jusqu’à '), Object.assign(document.createElement('b'), { textContent: insec(metres(m)) }),
-      insec(' en bouchon ' + trajet + ', à ' + heure(c) + (g >= 2 ? ' (' + GRAV[g] + ')' : '') + '. '));
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'rn-lien'; b.textContent = 'Comparer avec Google';
-    b.addEventListener('click', () => { const sec2 = document.getElementById('croisement'); if (sec2) sec2.scrollIntoView({ behavior: sansAnimation ? 'auto' : 'smooth', block: 'start' }); });
-    el.append(b);
-    el.hidden = false;
   }
   function drawRecords() {
     const ul = document.getElementById('records-liste');
@@ -2324,189 +2277,29 @@ dash.calc('soir_par_troncon', {
     });
   }
 
-  // ================= Google et TomTom, relevé par relevé (demande de Michel, 20 octobre 2026) =================
-  // Calculé par outil/croisement_rn85.py (donnees/croisement.json) : pour chaque relevé et chaque portion,
-  // la longueur en rouge vue par Google et la longueur en bouchon relevée par TomTom au même moment.
+  // ================= Outils communs aux diagrammes de la D1091 =================
   // Seules les longueurs comptent : aucun temps n'est affiché (Michel, 20 octobre 2026).
   // Typographie française : espaces insécables avant « : » et « ; », dans les heures et les nombres.
-  const insec = (t) => t.replace(/ ([:;?!])/g, '\u00a0$1').replace(/(\d) (\d{3})/g, '$1\u00a0$2')
-    .replace(/(\d) (h|min|s|m|km)(?=[\s,.;)]|$)/g, '$1\u00a0$2').replace(/(\u00a0h) (\d)/g, '$1\u00a0$2');
-  const GRAV = ['', 'orange', 'rouge', 'rouge foncé'];
-  const DEMI = {
-    matin: { titre: 'Le matin', sous: 'vers Grenoble, de 7 h à 9 h', mot: 'matin', liste: () => CRENEAUX },
-    soir: { titre: 'Le soir', sous: 'retour vers Vizille, de 16 h à 18 h 45', mot: 'soir', liste: () => CRENEAUX_AM },
-  };
-  const SEUIL_G = 50, SEUIL_T = 50;
-  const crDonnees = () => { const c = dash.data('croisement'); return c.status === 'ok' ? c.data : null; };
-  const crDemi = (date, p) => { const D = crDonnees(); return D ? D.jours.find((j) => j.date === date && j.periode === p) || null : null; };
-  // Une seule échelle de longueur pour Google et TomTom, commune à toutes les journées.
-  function crEchelles(D) {
-    let m = 300;
-    D.jours.forEach((j) => Object.values(j.releves).forEach((r) => {
-      if (r.g) Object.values(r.g).forEach((v) => { if (v != null) m = Math.max(m, v); });
-      if (r.t) Object.values(r.t).forEach((v) => { if (v) m = Math.max(m, v.m); });
-    }));
-    return { m };
-  }
-  const crCouleur = (v, max) => (v === 0 ? { fill: cssVar('--color-border-line'), op: 0.45 } : { fill: trv('--tr-rouge'), op: 0.12 + 0.88 * Math.min(1, v / max) });
-  // Plages de créneaux : « à 7 h 05 », « de 8 h 35 à 9 h 00 ».
-  function plages(liste, ks) {
-    const out = [];
-    let debut = null, prec = null;
-    liste.forEach((c, i) => {
-      const dedans = ks.includes(c);
-      if (dedans && debut === null) debut = c;
-      if (!dedans && debut !== null) { out.push([debut, prec]); debut = null; }
-      if (dedans) prec = c;
-      if (dedans && i === liste.length - 1) out.push([debut, c]);
-    });
-    return out.map(([a, b]) => (a === b ? 'à ' + heure(a) : 'de ' + heure(a) + ' à ' + heure(b)));
-  }
-  const listeFr = (xs) => (xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' et ' + xs[xs.length - 1]);
-
-  function phrasesDemi(j, p) {
-    const out = [];
-    if (!j.n_tomtom) {
-      out.push('TomTom n’a pas pu relever ce ' + DEMI[p].mot + '-là' + (j.tomtom_manques ? ' : la tâche n’a pas tourné à temps.' : '.'));
-      return out;
-    }
-    const por = j.portions;
-    let tp = null;
-    por.forEach((q) => { const b = j.bilans[q.id]; if (b && b.t_pic && (!tp || b.t_pic[0] > tp.b.t_pic[0])) tp = { q, b }; });
-    if (tp) {
-      const [m, c] = tp.b.t_pic;
-      const r = j.releves[c];
-      const tout = r && r.tt && r.tt.m > m + 50 ? ' (' + metres(r.tt.m) + ' sur tout le trajet' + (j.trajet === 'A480' ? ' jusqu’à l’A480' : '') + ')' : '';
-      let t = 'La plus longue file selon TomTom : ' + metres(m) + ' en bouchon à ' + heure(c) + tout + ', ' + tp.q.entre + '. ';
-      if (!tp.q.google) t += 'Google ne lit pas encore cette portion.';
-      else if (!r || !r.g) t += 'Google n’a pas de relevé à cette heure-là.';
-      else {
-        const g = r.g[tp.q.id];
-        t += g >= SEUIL_G ? 'Google y voit au même moment ' + metres(g) + ' en rouge.' : g > 0 ? 'Google n’y voit alors que ' + metres(g) + ' en rouge.' : 'Google n’y voit alors pas de rouge.';
-      }
-      out.push(t);
-    } else out.push('TomTom ne relève pas de bouchon ce ' + DEMI[p].mot + '-là.');
-    let gp = null;
-    por.forEach((q) => { const b = j.bilans[q.id]; if (q.google && b && b.g_pic && (!gp || b.g_pic[0] > gp.b.g_pic[0])) gp = { q, b }; });
-    if (gp) {
-      const [g, c] = gp.b.g_pic;
-      let t = 'La plus longue file en rouge selon Google : ' + metres(g) + ' à ' + heure(c) + ', ' + (tp && tp.q.id === gp.q.id ? 'au même endroit' : gp.q.entre) + '. ';
-      const r = j.releves[c], v = r && r.t ? r.t[gp.q.id] : null;
-      if (!v) t += 'TomTom n’a pas de relevé à cette heure-là.';
-      else if (v.m >= SEUIL_T) t += 'TomTom y relève au même moment ' + metres(v.m) + ' en bouchon.';
-      else if (v.m > 0) t += 'TomTom n’y relève alors que ' + metres(v.m) + ' en bouchon.';
-      else t += 'TomTom n’y relève alors aucun bouchon.';
-      out.push(t);
-    }
-    // Accord ou désaccord marqué sur une portion, sur au moins 5 relevés faits par les deux.
-    por.forEach((q) => {
-      const b = j.bilans[q.id];
-      if (!q.google || !b || b.communs < 5) return;
-      const debut = CAP(q.entre) + ', ';
-      if (b.deux >= 3 && b.deux >= b.google && b.deux >= b.tomtom) out.push(debut + 'les deux sources voient la même file dans ' + b.deux + ' relevés sur ' + b.communs + '.');
-      else if (b.google >= 3 && b.google >= 2 * b.deux) out.push(debut + 'Google voit une file dans ' + b.google + ' relevés sur ' + b.communs + ' sans que TomTom y relève de bouchon' + (b.deux ? ' ; les deux la voient dans ' + b.deux + ' autre' + (b.deux > 1 ? 's' : '') + '.' : '.'));
-      else if (b.tomtom >= 3 && b.tomtom >= 2 * b.deux) out.push(debut + 'TomTom relève un bouchon dans ' + b.tomtom + ' relevés sur ' + b.communs + ' sans que Google y voie de file' + (b.deux ? ' ; les deux le voient dans ' + b.deux + ' autre' + (b.deux > 1 ? 's' : '') + '.' : '.'));
-    });
-    // Ce qui manque à l'une des deux sources (jamais compté comme une absence de bouchon).
-    const liste = DEMI[p].liste();
-    const sansG = liste.filter((c) => j.releves[c] && j.releves[c].t && !j.releves[c].g);
-    const sansT = liste.filter((c) => j.releves[c] && j.releves[c].g && !j.releves[c].t);
-    if (j.n_google && sansG.length) out.push('Pas de relevé Google ' + listeFr(plages(liste, sansG)) + '.');
-    if (!j.n_google) out.push('Pas de relevé Google ce ' + DEMI[p].mot + '-là.');
-    if (sansT.length) out.push('Pas de relevé TomTom ' + listeFr(plages(liste, sansT)) + '.');
-    return out;
-  }
-
-  function drawCroisementDemi(el, j, p, ech) {
-    el.replaceChildren(); pret(el);
-    if (!j || !j.n_tomtom) { el.hidden = true; return; }
-    el.hidden = false;
-    const liste = DEMI[p].liste();
-    const W = Math.max(300, el.clientWidth), etroit = W < 600;
-    const fs = cssVar('--cds-font-size-caption'), muted = cssVar('--color-fg-muted'), fg = cssVar('--color-fg');
-    const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img')
-      .attr('aria-label', DEMI[p].titre + ' : longueur en rouge selon Google et longueur en bouchon selon TomTom, à chaque relevé et sur chaque portion');
-    const hach = hachures(svg);
-    const ml = Math.ceil(Math.max(textWidth(svg, 'Google', true), textWidth(svg, 'TomTom', true))) + 10, mr = 2;
-    const cw = (W - ml - mr) / liste.length;
-    const ch = Math.round(Math.max(15, Math.min(21, cw * 1.15)));
-    let y = 24;
-    halo(svg.append('text').attr('x', 0).attr('y', 15).attr('font-size', 14).attr('fill', fg))
-      .call((t) => { t.append('tspan').attr('font-weight', 600).text(DEMI[p].titre + ' '); t.append('tspan').attr('fill', muted).text(etroit ? DEMI[p].sous.split(',')[0] : DEMI[p].sous); });
-    const rangs = [];
-    j.portions.forEach((q) => {
-      halo(svg.append('text').attr('x', ml).attr('y', y + 13).attr('font-size', fs).attr('font-weight', 600).attr('fill', fg)).text(q.nom);
-      y += 18;
-      rangs.push({ q, src: 'g', y }); y += ch;
-      rangs.push({ q, src: 't', y }); y += ch + 8;
-    });
-    const yAx = y - 4;
-    const H = yAx + 16;
-    svg.attr('viewBox', `0 0 ${W} ${H}`);
-    const xk = (k) => ml + k * cw;
-    rangs.forEach(({ q, src, y: y0 }) => {
-      svg.append('text').attr('x', ml - 8).attr('y', y0 + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', muted).text(src === 'g' ? 'Google' : 'TomTom');
-      if (src === 'g' && !q.google) {
-        svg.append('rect').attr('x', ml).attr('y', y0 + 2).attr('width', W - ml - mr).attr('height', ch - 4).attr('rx', 2).attr('fill', hach);
-        halo(svg.append('text').attr('x', ml + (W - ml - mr) / 2).attr('y', y0 + ch / 2 + 4).attr('text-anchor', 'middle').attr('font-size', fs).attr('fill', fg)).text(etroit ? 'Pas encore lue par Google' : 'Portion pas encore lue par Google');
-        return;
-      }
-      liste.forEach((c, k) => {
-        const r = j.releves[c];
-        const v = src === 'g' ? (r && r.g ? r.g[q.id] : null) : (r && r.t && r.t[q.id] ? r.t[q.id].m : null);
-        const rr = svg.append('rect').attr('x', xk(k) + 1).attr('y', y0 + 2).attr('width', Math.max(1, cw - 2)).attr('height', ch - 4).attr('rx', 1.5);
-        if (v == null) { rr.attr('fill', 'none').attr('stroke', cssVar('--color-border-line')).attr('stroke-dasharray', '2 2'); return; }
-        const cl = crCouleur(v, ech.m);
-        rr.attr('fill', cl.fill).attr('fill-opacity', cl.op);
-      });
-      // Le pic de la portion, encadré.
-      const b = j.bilans[q.id], pic = b ? (src === 'g' ? b.g_pic : b.t_pic) : null;
-      const k = pic ? liste.indexOf(pic[1]) : -1;
-      if (k >= 0) svg.append('rect').attr('x', xk(k) + 0.5).attr('y', y0 + 1).attr('width', Math.max(2, cw - 1)).attr('height', ch - 2).attr('rx', 2).attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 1.5).attr('pointer-events', 'none');
-    });
-    liste.forEach((c, k) => {
-      if (!(c.endsWith(':00') || (!etroit && c.endsWith(':30')))) return;
-      svg.append('text').attr('x', xk(k) + (k === 0 ? 1 : cw / 2)).attr('y', yAx + 12).attr('text-anchor', k === 0 ? 'start' : 'middle').attr('font-size', fs).attr('fill', muted).text(heureAxe(c));
-    });
-    const card = el.closest('.rn-card'), tip = tipIn(card);
-    svg.append('rect').attr('x', ml).attr('y', 24).attr('width', W - ml - mr).attr('height', Math.max(1, yAx - 24)).attr('fill', 'transparent')
-      .on('mousemove', (evt) => {
-        const [px] = d3.pointer(evt);
-        const k = Math.floor((px - ml) / cw);
-        if (k < 0 || k >= liste.length) { tip.hidden = true; return; }
-        const c = liste[k], r = j.releves[c] || {};
-        const lignes = [];
-        j.portions.forEach((q) => {
-          lignes.push({ text: q.nom });
-          const g = r.g ? r.g[q.id] : null, t = r.t ? r.t[q.id] : null;
-          lignes.push({ text: '  Google : ' + (!q.google ? 'portion pas encore lue' : g == null ? 'pas de relevé' : g === 0 ? 'pas de rouge' : metres(g) + ' en rouge') });
-          lignes.push({ text: '  TomTom : ' + (!t ? 'pas de relevé' : t.m === 0 ? 'pas de bouchon' : metres(t.m) + ' en bouchon') });
-        });
-        if (r.tt) lignes.push({ text: 'TomTom, tout le trajet' + (j.trajet === 'A480' ? ' jusqu’à l’A480' : '') + ' : ' + (r.tt.m ? metres(r.tt.m) + ' en bouchon' + (r.tt.grav ? ' (' + GRAV[r.tt.grav] + ')' : '') : 'pas de bouchon') });
-        tipLines(tip, heure(c) + ', ' + DEMI[p].mot + ' du ' + dateLong(j.date), lignes);
-        const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
-      })
-      .on('mouseleave', () => { tip.hidden = true; });
-    el.style.minHeight = H + 'px';
-  }
-
-  function crLegende(el, ech) {
+  const insec = (t) => t.replace(/ ([:;?!])/g, ' $1').replace(/(\d) (\d{3})/g, '$1 $2')
+    .replace(/(\d) (h|min|s|m|km)(?=[\s,.;)]|$)/g, '$1 $2').replace(/( h) (\d)/g, '$1 $2');
+  const SEUIL_ROUGE = 50;   // une file compte à partir de 50 m en rouge sur le tronçon
+  const couleurRouge = (v, max) => (v === 0 ? { fill: cssVar('--color-border-line'), op: 0.45 } : { fill: trv('--tr-rouge'), op: 0.12 + 0.88 * Math.min(1, v / max) });
+  function legendeRouge(el, ech) {
     el.replaceChildren();
     const d0 = document.createElement('div'); d0.className = 'rn-cr-leg';
-    d0.append(span('rn-cr-leg-t', 'Longueur en rouge (Google) ou en bouchon (TomTom) :'));
+    d0.append(span('rn-cr-leg-t', 'Longueur en rouge :'));
     const rm = (f) => Math.round(ech.m * f / 50) * 50;
     [[0, 'pas de file'], [rm(0.25), metres(rm(0.25))], [rm(0.5), metres(rm(0.5))], [ech.m, metres(rm(1))]].forEach(([v, t]) => {
-      const cl = crCouleur(v, ech.m); const s = sw(cl.fill, t); s.firstChild.style.opacity = cl.op; d0.append(s);
+      const cl = couleurRouge(v, ech.m); const s = sw(cl.fill, t); s.firstChild.style.opacity = cl.op; d0.append(s);
     });
     el.append(d0);
     const d = document.createElement('div'); d.className = 'rn-cr-leg';
     const i = document.createElement('i'); i.className = 'rn-sw rn-sw-vide';
     const s = document.createElement('span'); s.append(i, document.createTextNode('Pas de relevé'));
-    const p = document.createElement('span'); p.append(span('rn-sw rn-sw-pic'), document.createTextNode('Pic de la portion'));
+    const p = document.createElement('span'); p.append(span('rn-sw rn-sw-pic'), document.createTextNode('Pic du tronçon'));
     d.append(s, p); el.append(d);
   }
-
-  function crTable(tb, lignes) {
+  function tableGroupes(tb, lignes) {
     tb.replaceChildren();
     lignes.forEach((l) => {
       const tr = document.createElement('tr');
@@ -2517,156 +2310,65 @@ dash.calc('soir_par_troncon', {
       tb.appendChild(tr);
     });
   }
-  const nb = (n, communs) => ({ t: communs ? String(n) : '—', s: communs ? 'sur ' + communs : '' });
-
-  function drawCroisement() {
-    const elM = document.getElementById('cr-matin'), elS = document.getElementById('cr-soir');
-    const txt = document.getElementById('cr-texte'), intro = document.getElementById('cr-intro');
-    const leg = document.getElementById('cr-legende'), tab = document.getElementById('cr-tableau');
-    const tb = document.querySelector('#table-croisement tbody'), th = document.getElementById('cr-tete');
-    const c = dash.data('croisement');
-    if (c.status === 'error') { fail(elM); elS.hidden = true; txt.replaceChildren(); leg.replaceChildren(); tab.hidden = true; return; }
-    if (c.status !== 'ok') { attente(elM); return; }
-    const D = c.data, ech = crEchelles(D);
-    const avec = D.jours.filter((j) => j.n_tomtom > 0 && j.n_google > 0);
-    const dates = Array.from(new Set(avec.map((j) => j.date)));
-    intro.textContent = insec(dates.length
-      ? 'Journées relevées à la fois par Google et par TomTom : ' + listeFr(dates.map((d) => {
-        const ps = avec.filter((j) => j.date === d).map((j) => j.periode);
-        return dateLong(d) + (ps.length === 2 ? ' (matin et soir)' : ps[0] === 'matin' ? ' (matin)' : ' (soir)');
-      })) + '. Les relevés TomTom complètent cette partie à chaque mise à jour.'
-      : 'Aucune journée n’a encore été relevée à la fois par Google et par TomTom.');
-    crLegende(leg, ech);
-    const v = jourChoisi();
-    txt.replaceChildren();
-    leg.hidden = false;
-    if (v === 'type') {
-      elM.hidden = true; elS.hidden = true; pret(elM); leg.hidden = true;
-      const p0 = document.createElement('p');
-      p0.textContent = insec('Toutes les journées relevées par les deux sources réunies. Un bouchon compte pour Google à partir de 50 m en rouge sur la portion, pour TomTom à partir de 50 m en bouchon. Choisissez une journée pour voir chaque relevé.');
-      txt.append(p0);
-      th.replaceChildren(...['Portion', 'Relevés faits par les deux', 'Bouchon vu par les deux', 'Google seul', 'TomTom seul'].map((t) => { const e = document.createElement('th'); e.textContent = t; return e; }));
-      const lignes = [];
-      ['matin', 'soir'].forEach((p) => {
-        const e = D.ensemble[p] || {};
-        const ids = ['AB', 'A', 'B'].filter((id) => e[id] && e[id].communs);
-        if (!ids.length) return;
-        lignes.push({ groupe: DEMI[p].titre + ', ' + DEMI[p].sous });
-        ids.forEach((id) => {
-          const a = e[id], q = id === 'AB' ? D.reunies[p] : D.portions[p].find((x) => x.id === id);
-          lignes.push({ cases: [
-            { t: q.nom + (id === 'AB' ? ' (deux portions réunies)' : ''), s: a.demis + (a.demis > 1 ? ' demi-journées' : ' demi-journée') },
-            { t: String(a.communs) }, nb(a.deux, a.communs), nb(a.google, a.communs), nb(a.tomtom, a.communs),
-          ] });
-        });
-      });
-      crTable(tb, lignes); tab.hidden = !lignes.length;
-      return;
-    }
-    const jm = crDemi(v, 'matin'), js = crDemi(v, 'soir');
-    if (!jm && !js) {
-      elM.hidden = true; elS.hidden = true; pret(elM); tab.hidden = true; leg.hidden = true;
-      const p0 = document.createElement('p');
-      p0.textContent = insec('Pas de relevé TomTom le ' + dateLong(v) + '.' + (dates.length ? ' Choisissez le ' + listeFr(dates.map(dateLong)) + ' pour comparer les deux sources.' : ''));
-      txt.append(p0);
-      return;
-    }
-    [['matin', jm], ['soir', js]].forEach(([p, j]) => {
-      if (!j) return;
-      const bloc = document.createElement('div'); bloc.className = 'rn-cr-bloc';
-      const ul = document.createElement('ul'); ul.className = 'rn-cr-liste';
-      phrasesDemi(j, p).forEach((ph) => { const li = document.createElement('li'); li.textContent = insec(ph); ul.appendChild(li); });
-      bloc.append(span('rn-cr-demi', DEMI[p].titre + (p === 'matin' ? ', vers Grenoble' : ', au retour vers Vizille')), ul);
-      txt.append(bloc);
-    });
-    drawCroisementDemi(elM, jm, 'matin', ech);
-    drawCroisementDemi(elS, js, 'soir', ech);
-    leg.hidden = elM.hidden && elS.hidden;
-    th.replaceChildren(...['Portion', 'Google : plus longue file en rouge', 'TomTom : plus longue file en bouchon', 'Bouchon vu par les deux', 'Google seul', 'TomTom seul'].map((t) => { const e = document.createElement('th'); e.textContent = t; return e; }));
-    const lignes = [];
-    [['matin', jm], ['soir', js]].forEach(([p, j]) => {
-      if (!j || !j.n_tomtom) return;
-      lignes.push({ groupe: DEMI[p].titre + ', ' + DEMI[p].sous });
-      j.portions.forEach((q) => {
-        const b = j.bilans[q.id];
-        const gp = !q.google ? { t: 'Pas encore lue' } : b.g_pic ? { t: metres(b.g_pic[0]), s: 'à ' + heure(b.g_pic[1]), pic: true } : { t: b.n_google ? 'pas de rouge' : 'pas de relevé' };
-        const tp = b.t_pic ? { t: metres(b.t_pic[0]), s: 'à ' + heure(b.t_pic[1]), pic: true } : { t: b.n_tomtom ? 'pas de bouchon' : 'pas de relevé' };
-        const k = q.google ? b.communs : 0;
-        lignes.push({ cases: [{ t: q.nom }, gp, tp, nb(b.deux, k), nb(b.google, k), nb(b.tomtom, k)] });
-      });
-    });
-    crTable(tb, lignes); tab.hidden = !lignes.length;
-  }
 
   // ================= La D1091, de la Croix du Mottet à Vizille (demande de Michel, 20 octobre 2026) =================
-  // Calculé par outil/d1091_rn85.py (donnees/d1091.json). Google : longueur en rouge sur la route (à l'échelle
-  // de la capture, Google dessine les deux sens d'un seul trait). TomTom : longueur en bouchon dans chaque sens,
-  // depuis le 20 octobre 2026 au soir. Seules les longueurs comptent : aucun temps n'est affiché.
-  const D1_SENS = [{ k: 'vers Vizille', txt: 'vers Vizille', court: '→ Vizille' }, { k: 'vers l\'Oisans', txt: 'vers l’Oisans', court: '→ Oisans' }];
+  // Calculé par outil/d1091_rn85.py (donnees/d1091.json) : longueur en rouge sur chaque tronçon, lue sur les
+  // captures « large » de Google Maps. À cette échelle, Google dessine les deux sens d'un seul trait.
   const D1_TRAVAUX = '2026-10-19';   // début des travaux de piste cyclable au Péage de Vizille (alternat)
   const D1_DEMI = {
-    matin: { titre: 'Le matin', sous: 'de 7 h à 9 h', mot: 'matin', liste: () => CRENEAUX, finG: '09:00' },
-    soir: { titre: 'Le soir', sous: 'de 16 h à 19 h 15', mot: 'soir', liste: () => creneaux(16, 40), finG: '18:45' },
+    matin: { titre: 'Le matin', sous: 'de 7 h à 9 h', mot: 'matin', liste: () => CRENEAUX },
+    soir: { titre: 'Le soir', sous: 'de 16 h à 18 h 45', mot: 'soir', liste: () => CRENEAUX_AM },
   };
   const d1Donnees = () => { const c = dash.data('d1091'); return c.status === 'ok' ? c.data : null; };
   const d1Demi = (date, p) => { const D = d1Donnees(); return D ? D.jours.find((j) => j.date === date && j.periode === p) || null : null; };
   const d1Nom = (D, id) => (D.troncons.find((t) => t.id === id) || {}).nom || id;
   const d1Entre = (D, id) => (D.troncons.find((t) => t.id === id) || {}).entre || '';
-  const d1NbT = (j) => D1_SENS.reduce((s, x) => s + ((j.n_tomtom || {})[x.k] || 0), 0);
-  // Tronçons dans l'ordre des données : depuis le 21 octobre 2026, T0 (le kilomètre au-delà de la Croix du Mottet).
   const d1Ids = (D) => D.troncons.map((t) => t.id);
-  // Une seule échelle de longueur pour Google et TomTom, commune à toutes les journées.
+  // Longueur en rouge d'un relevé sur un tronçon ; null : pas de relevé (capture manquante ou sans couleur).
+  const d1Val = (j, c, q) => { const r = j.releves[c]; return r ? (r[q] == null ? null : r[q]) : null; };
+  // Une seule échelle de longueur, commune à toutes les journées.
   function d1Echelle(D) {
     let m = 300;
-    D.jours.forEach((j) => Object.values(j.releves).forEach((r) => {
-      if (r.g) Object.values(r.g).forEach((v) => { if (v != null) m = Math.max(m, v); });
-      if (r.t) Object.values(r.t).forEach((t) => { if (t) Object.keys(t).filter((q) => /^T\d$/.test(q)).forEach((q) => { if (t[q] != null) m = Math.max(m, t[q]); }); });
-    }));
+    D.jours.forEach((j) => Object.values(j.releves).forEach((r) => { if (r) Object.values(r).forEach((v) => { if (v != null) m = Math.max(m, v); }); }));
     return { m };
+  }
+  // Sur un ensemble de demi-journées : relevés lus, relevés avec une file d'au moins 50 m, plus longue file.
+  function d1Compte(js, q) {
+    let n = 0, nf = 0, pic = null;
+    js.forEach((j) => Object.entries(j.releves).forEach(([c, r]) => {
+      const v = r ? r[q] : null;
+      if (v == null) return;
+      n++;
+      if (v >= SEUIL_ROUGE) nf++;
+      if (v > 0 && (!pic || v > pic[0])) pic = [v, c, j.date];
+    }));
+    return { n, nf, pic };
   }
 
   function d1Phrases(D, j, p) {
-    const out = [];
-    let gp = null;
-    d1Ids(D).forEach((q) => { const v = j.pics.g[q]; if (v && (!gp || v[0] > gp.v[0])) gp = { q, v }; });
-    if (!j.n_google) out.push('Pas de relevé Google ce ' + D1_DEMI[p].mot + '-là.');
-    else if (gp && gp.v[0] >= SEUIL_G) {
-      let t = 'La plus longue file en rouge selon Google : ' + metres(gp.v[0]) + ' à ' + heure(gp.v[1]) + ', ' + d1Entre(D, gp.q) + '.';
-      const r = j.releves[gp.v[1]], tt = r && r.t ? r.t : null;
-      if (tt) {
-        const vus = D1_SENS.filter((s) => tt[s.k] && tt[s.k][gp.q] >= SEUIL_T).map((s) => metres(tt[s.k][gp.q]) + ' ' + s.txt);
-        t += vus.length ? ' TomTom y relève au même moment ' + listeFr(vus) + ' en bouchon.' : ' TomTom n’y relève alors pas de bouchon d’au moins 50 m.';
-      }
-      out.push(t);
-    } else out.push('Google ne voit pas de file d’au moins 50 m en rouge sur la D1091 ce ' + D1_DEMI[p].mot + '-là.');
-    if (!d1NbT(j)) {
-      out.push(j.date < '2026-10-20' || (j.date === '2026-10-20' && p === 'matin') ? 'TomTom relève la D1091 dans les deux sens à partir du 20 octobre 2026 au soir.' : 'Pas de relevé TomTom de la D1091 ce ' + D1_DEMI[p].mot + '-là.');
-      return out;
-    }
-    D1_SENS.forEach((s) => {
-      const n = (j.n_tomtom || {})[s.k] || 0, v = j.pics.t[s.k];
-      if (!n) { out.push(CAP(s.txt) + ', pas de relevé TomTom.'); return; }
-      if (!v || v[0] < SEUIL_T) { out.push(CAP(s.txt) + ', TomTom ne relève pas de bouchon d’au moins 50 m.'); return; }
-      out.push(CAP(s.txt) + ', TomTom relève jusqu’à ' + metres(v[0]) + ' en bouchon à ' + heure(v[1]) + (v[2] ? ' (' + GRAV[v[2]] + ')' : '') + ', surtout ' + d1Entre(D, v[3]) + '.');
-    });
+    const out = [], mot = D1_DEMI[p].mot;
+    if (!j.n) { out.push('Pas de relevé de la D1091 ce ' + mot + '-là.'); return out; }
+    const files = d1Ids(D).map((q) => ({ q, v: j.pics[q] })).filter((x) => x.v && x.v[0] >= SEUIL_ROUGE);
+    if (!files.length) { out.push('Google ne voit pas de file d’au moins 50 m en rouge sur la D1091 ce ' + mot + '-là.'); return out; }
+    const top = files.reduce((a, b) => (b.v[0] > a.v[0] ? b : a));
+    out.push('La plus longue file en rouge : ' + metres(top.v[0]) + ' à ' + heure(top.v[1]) + ', ' + d1Entre(D, top.q) + '.');
+    files.filter((x) => x !== top).forEach((x) => out.push(CAP(d1Entre(D, x.q)) + ' : jusqu’à ' + metres(x.v[0]) + ' à ' + heure(x.v[1]) + '.'));
+    if (d1Ids(D).includes('T0') && files.some((x) => x.q === 'T1') && !files.some((x) => x.q === 'T0')) out.push('Pas de file au-delà de la Croix du Mottet, côté Séchilienne.');
     return out;
   }
 
   function drawD1091Demi(el, D, j, p, ech) {
     el.replaceChildren(); pret(el);
-    if (!j || (!j.n_google && !d1NbT(j))) { el.hidden = true; return; }
+    if (!j || !j.n) { el.hidden = true; return; }
     el.hidden = false;
-    const liste = D1_DEMI[p].liste(), finG = D1_DEMI[p].finG;
+    const liste = D1_DEMI[p].liste();
     const W = Math.max(300, el.clientWidth), etroit = W < 600;
     const fs = cssVar('--cds-font-size-caption'), muted = cssVar('--color-fg-muted'), fg = cssVar('--color-fg');
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('role', 'img')
-      .attr('aria-label', D1_DEMI[p].titre + ' sur la D1091 : longueur en rouge selon Google et longueur en bouchon selon TomTom dans chaque sens, à chaque relevé et sur chaque tronçon');
-    const hach = hachures(svg);
-    const lib = (s) => (etroit ? 'TomTom ' + s.court : 'TomTom ' + s.txt);
-    const ml = Math.ceil(Math.max(textWidth(svg, 'Google', true), ...D1_SENS.map((s) => textWidth(svg, lib(s), true)))) + 10, mr = 2;
+      .attr('aria-label', D1_DEMI[p].titre + ' sur la D1091 : longueur en rouge selon Google, à chaque relevé et sur chaque tronçon');
+    const ml = 0, mr = 2;
     const cw = (W - ml - mr) / liste.length;
-    const ch = Math.round(Math.max(13, Math.min(19, cw * 1.1)));
-    const avecT = d1NbT(j) > 0;
+    const ch = Math.round(Math.max(14, Math.min(20, cw * 1.1)));
     let y = 24;
     halo(svg.append('text').attr('x', 0).attr('y', 15).attr('font-size', 14).attr('fill', fg))
       .call((t) => { t.append('tspan').attr('font-weight', 600).text(D1_DEMI[p].titre + ' '); t.append('tspan').attr('fill', muted).text(D1_DEMI[p].sous); });
@@ -2674,42 +2376,24 @@ dash.calc('soir_par_troncon', {
     d1Ids(D).forEach((q) => {
       halo(svg.append('text').attr('x', ml).attr('y', y + 13).attr('font-size', fs).attr('font-weight', 600).attr('fill', fg)).text(d1Nom(D, q));
       y += 18;
-      rangs.push({ q, src: 'g', y }); y += ch;
-      D1_SENS.forEach((s) => { rangs.push({ q, src: s, y }); y += ch; });
-      y += 8;
+      rangs.push({ q, y }); y += ch + 8;
     });
     const yAx = y - 4;
     const H = yAx + 16;
     svg.attr('viewBox', `0 0 ${W} ${H}`);
     const xk = (k) => ml + k * cw;
-    rangs.forEach(({ q, src, y: y0 }) => {
-      svg.append('text').attr('x', ml - 8).attr('y', y0 + ch / 2 + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', muted).text(src === 'g' ? 'Google' : lib(src));
-      if (src !== 'g' && !avecT) {
-        // Pas encore de relevé TomTom : un seul bloc hachuré pour les deux sens, avec son explication.
-        if (src === D1_SENS[0]) {
-          svg.append('rect').attr('x', ml).attr('y', y0 + 2).attr('width', W - ml - mr).attr('height', 2 * ch - 4).attr('rx', 2).attr('fill', hach);
-          halo(svg.append('text').attr('x', ml + (W - ml - mr) / 2).attr('y', y0 + ch + 4).attr('text-anchor', 'middle').attr('font-size', fs).attr('fill', fg)).text(etroit ? 'TomTom : à partir du 20 octobre au soir' : 'TomTom relève la D1091 à partir du 20 octobre 2026 au soir');
-        }
-        return;
-      }
+    rangs.forEach(({ q, y: y0 }) => {
+      let pic = null;
       liste.forEach((c, k) => {
-        if (src === 'g' && c > finG) return;   // le soir, Google s'arrête à 18 h 45
-        const r = j.releves[c];
-        const v = src === 'g' ? (r && r.g ? r.g[q] : null) : (r && r.t && r.t[src.k] ? r.t[src.k][q] : null);
+        const v = d1Val(j, c, q);
         const rr = svg.append('rect').attr('x', xk(k) + 1).attr('y', y0 + 2).attr('width', Math.max(1, cw - 2)).attr('height', ch - 4).attr('rx', 1.5);
         if (v == null) { rr.attr('fill', 'none').attr('stroke', cssVar('--color-border-line')).attr('stroke-dasharray', '2 2'); return; }
-        const cl = crCouleur(v, ech.m);
+        const cl = couleurRouge(v, ech.m);
         rr.attr('fill', cl.fill).attr('fill-opacity', cl.op);
+        if (v && (!pic || v > pic[0])) pic = [v, k];
       });
-      // Le pic de la ligne, encadré.
-      let pic = null;
-      liste.forEach((c) => {
-        const r = j.releves[c];
-        const v = src === 'g' ? (r && r.g ? r.g[q] : null) : (r && r.t && r.t[src.k] ? r.t[src.k][q] : null);
-        if (v && (!pic || v > pic[0])) pic = [v, c];
-      });
-      const k = pic ? liste.indexOf(pic[1]) : -1;
-      if (k >= 0) svg.append('rect').attr('x', xk(k) + 0.5).attr('y', y0 + 1).attr('width', Math.max(2, cw - 1)).attr('height', ch - 2).attr('rx', 2).attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 1.5).attr('pointer-events', 'none');
+      // Le pic du tronçon, encadré.
+      if (pic) svg.append('rect').attr('x', xk(pic[1]) + 0.5).attr('y', y0 + 1).attr('width', Math.max(2, cw - 1)).attr('height', ch - 2).attr('rx', 2).attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 1.5).attr('pointer-events', 'none');
     });
     liste.forEach((c, k) => {
       if (!(c.endsWith(':00') || (!etroit && c.endsWith(':30')))) return;
@@ -2721,45 +2405,16 @@ dash.calc('soir_par_troncon', {
         const [px] = d3.pointer(evt);
         const k = Math.floor((px - ml) / cw);
         if (k < 0 || k >= liste.length) { tip.hidden = true; return; }
-        const c = liste[k], r = j.releves[c] || {};
-        const lignes = [];
-        d1Ids(D).forEach((q) => {
-          lignes.push({ text: d1Nom(D, q) });
-          const g = r.g ? r.g[q] : null;
-          lignes.push({ text: '  Google : ' + (c > finG ? 'pas de capture à cette heure' : g == null ? 'pas de relevé' : g === 0 ? 'pas de rouge' : metres(g) + ' en rouge') });
-          if (avecT) D1_SENS.forEach((s) => {
-            const t = r.t && r.t[s.k] ? r.t[s.k] : null;
-            lignes.push({ text: '  TomTom ' + s.txt + ' : ' + (!t ? 'pas de relevé' : !t[q] ? 'pas de bouchon' : metres(t[q]) + ' en bouchon') });
-          });
+        const c = liste[k];
+        const lignes = d1Ids(D).map((q) => {
+          const v = d1Val(j, c, q);
+          return { text: d1Nom(D, q) + ' : ' + (v == null ? 'pas de relevé' : v === 0 ? 'pas de rouge' : metres(v) + ' en rouge') };
         });
         tipLines(tip, heure(c) + ', ' + D1_DEMI[p].mot + ' du ' + dateLong(j.date), lignes);
         const [cx, cy] = relXY(evt, card); placeTip(tip, card, cx, cy);
       })
       .on('mouseleave', () => { tip.hidden = true; });
     el.style.minHeight = H + 'px';
-  }
-
-  // Journée type : avant et depuis les travaux du Péage, pour chaque tronçon.
-  function d1Ensemble(D, p, avant) {
-    const js = D.jours.filter((j) => j.periode === p && (avant ? j.date < D1_TRAVAUX : j.date >= D1_TRAVAUX));
-    if (!js.length) return null;
-    const out = { demis: js.length, q: {} };
-    d1Ids(D).forEach((q) => {
-      let n = 0, nf = 0, pic = null;
-      const pt = {};
-      js.forEach((j) => {
-        Object.entries(j.releves).forEach(([c, r]) => {
-          const g = r.g ? r.g[q] : null;
-          if (g != null) { n++; if (g >= SEUIL_G) nf++; if (g > 0 && (!pic || g > pic[0])) pic = [g, c, j.date]; }
-          D1_SENS.forEach((s) => {
-            const t = r.t && r.t[s.k] ? r.t[s.k][q] : null;
-            if (t && (!pt[s.k] || t > pt[s.k][0])) pt[s.k] = [t, c, j.date];
-          });
-        });
-      });
-      out.q[q] = { n, nf, pic, pt };
-    });
-    return out;
   }
 
   function drawD1091() {
@@ -2773,40 +2428,30 @@ dash.calc('soir_par_troncon', {
     if (c.status !== 'ok') { attente(elM); return; }
     const D = c.data, ech = d1Echelle(D);
     const dates = Array.from(new Set(D.jours.map((j) => j.date))).sort();
-    const datesT = Array.from(new Set(D.jours.filter((j) => d1NbT(j) > 0).map((j) => j.date))).sort();
-    intro.textContent = insec('La D1091 dans les deux sens, de la Croix du Mottet (carrefour avec la route des Rivoirands, limite de Vizille et de Séchilienne) au carrefour de la RN85, en passant par Le Péage de Vizille, où des travaux de piste cyclable imposent un alternat depuis le 19 octobre 2026. Depuis le 21 octobre, le relevé englobe aussi le kilomètre au-delà de la Croix du Mottet, côté Séchilienne : une file qui atteint ou dépasse le carrefour est mesurée dans les deux sens. Google : '
-      + (dates.length ? 'relevés lus sur les captures depuis le ' + dateLong(dates[0]) : 'aucun relevé pour l’instant') + '. TomTom : '
-      + (datesT.length ? 'relevés dans chaque sens depuis le ' + dateLong(datesT[0]) : 'relevés dans chaque sens à partir du 20 octobre 2026 au soir') + '.');
-    crLegende(leg, ech);
+    intro.textContent = insec('La D1091 de la Croix du Mottet (carrefour avec la route des Rivoirands, limite de Vizille et de Séchilienne) au carrefour de la RN85, en passant par Le Péage de Vizille, où des travaux de piste cyclable imposent un alternat depuis le 19 octobre 2026. Le relevé va jusqu’à un kilomètre au-delà de la Croix du Mottet, côté Séchilienne : une file qui atteint ou dépasse le carrefour est mesurée. '
+      + (dates.length ? 'Longueurs en rouge lues sur les captures Google depuis le ' + dateLong(dates[0]) + '.' : 'Aucun relevé pour l’instant.'));
+    legendeRouge(leg, ech);
     const v = jourChoisi();
     txt.replaceChildren();
     leg.hidden = false;
-    const tete = (cols) => th.replaceChildren(...cols.map((t) => { const e = document.createElement('th'); e.textContent = t; return e; }));
-    const val = (x, avecDate) => (x ? { t: metres(x[0]), s: (avecDate ? dateLong(x[2]) + ', ' : '') + 'à ' + heure(x[1]), pic: true } : null);
+    th.replaceChildren(...['Tronçon', 'Plus longue file en rouge', 'Relevés avec au moins 50 m en rouge'].map((t) => { const e = document.createElement('th'); e.textContent = t; return e; }));
+    const casePic = (a, avecDate) => (a.pic ? { t: metres(a.pic[0]), s: (avecDate ? dateLong(a.pic[2]) + ', ' : '') + 'à ' + heure(a.pic[1]), pic: true } : { t: a.n ? 'pas de rouge' : 'pas de relevé' });
+    const caseNb = (a) => (a.n ? { t: String(a.nf), s: 'sur ' + a.n } : { t: '—' });
     if (v === 'type') {
       elM.hidden = true; elS.hidden = true; pret(elM); leg.hidden = true;
       const p0 = document.createElement('p');
-      p0.textContent = insec('Toutes les journées relevées, avant les travaux du Péage (jusqu’au 16 octobre) et depuis leur début (19 octobre). Une file compte pour Google à partir de 50 m en rouge sur le tronçon, pour TomTom à partir de 50 m en bouchon. Choisissez une journée pour voir chaque relevé.');
+      p0.textContent = insec('Toutes les journées relevées, avant les travaux du Péage (jusqu’au 16 octobre) et depuis leur début (19 octobre). Une file compte à partir de 50 m en rouge sur le tronçon. Choisissez une journée pour voir chaque relevé.');
       txt.append(p0);
-      tete(['Tronçon', 'Google : plus longue file en rouge', 'Relevés avec au moins 50 m en rouge', 'TomTom vers Vizille : plus longue file', 'TomTom vers l’Oisans : plus longue file']);
       const lignes = [];
       ['matin', 'soir'].forEach((p) => {
         [true, false].forEach((avant) => {
-          const e = d1Ensemble(D, p, avant);
-          if (!e) return;
-          lignes.push({ groupe: D1_DEMI[p].titre + ', ' + (avant ? 'avant les travaux du Péage' : 'depuis le début des travaux du Péage') + ' (' + e.demis + (e.demis > 1 ? ' demi-journées)' : ' demi-journée)') });
-          d1Ids(D).forEach((q) => {
-            const a = e.q[q];
-            lignes.push({ cases: [
-              { t: d1Nom(D, q) },
-              val(a.pic, true) || { t: a.n ? 'pas de rouge' : 'pas de relevé' },
-              a.n ? { t: String(a.nf), s: 'sur ' + a.n } : { t: '—' },
-              ...D1_SENS.map((s) => val(a.pt[s.k], true) || { t: 'pas de relevé' }),
-            ] });
-          });
+          const js = D.jours.filter((j) => j.periode === p && (avant ? j.date < D1_TRAVAUX : j.date >= D1_TRAVAUX));
+          if (!js.length) return;
+          lignes.push({ groupe: D1_DEMI[p].titre + ', ' + (avant ? 'avant les travaux du Péage' : 'depuis le début des travaux du Péage') + ' (' + js.length + (js.length > 1 ? ' demi-journées)' : ' demi-journée)') });
+          d1Ids(D).forEach((q) => { const a = d1Compte(js, q); lignes.push({ cases: [{ t: d1Nom(D, q) }, casePic(a, true), caseNb(a)] }); });
         });
       });
-      crTable(tb, lignes); tab.hidden = !lignes.length;
+      tableGroupes(tb, lignes); tab.hidden = !lignes.length;
       return;
     }
     const jm = d1Demi(v, 'matin'), js = d1Demi(v, 'soir');
@@ -2828,23 +2473,13 @@ dash.calc('soir_par_troncon', {
     drawD1091Demi(elM, D, jm, 'matin', ech);
     drawD1091Demi(elS, D, js, 'soir', ech);
     leg.hidden = elM.hidden && elS.hidden;
-    tete(['Tronçon', 'Google : plus longue file en rouge', 'TomTom vers Vizille : plus longue file', 'TomTom vers l’Oisans : plus longue file']);
     const lignes = [];
     [['matin', jm], ['soir', js]].forEach(([p, j]) => {
       if (!j) return;
       lignes.push({ groupe: D1_DEMI[p].titre + ', ' + D1_DEMI[p].sous });
-      d1Ids(D).forEach((q) => {
-        const g = j.pics.g[q];
-        const ts = D1_SENS.map((s) => {
-          let pic = null;
-          Object.entries(j.releves).forEach(([c, r]) => { const t = r.t && r.t[s.k] ? r.t[s.k][q] : null; if (t && (!pic || t > pic[0])) pic = [t, c]; });
-          const mesure = Object.values(j.releves).some((r) => r.t && r.t[s.k] && r.t[s.k][q] != null);
-          return pic ? { t: metres(pic[0]), s: 'à ' + heure(pic[1]), pic: true } : { t: mesure ? 'pas de bouchon' : 'pas de relevé' };
-        });
-        lignes.push({ cases: [{ t: d1Nom(D, q) }, g ? { t: metres(g[0]), s: 'à ' + heure(g[1]), pic: true } : { t: j.n_google ? 'pas de rouge' : 'pas de relevé' }, ...ts] });
-      });
+      d1Ids(D).forEach((q) => { const a = d1Compte([j], q); lignes.push({ cases: [{ t: d1Nom(D, q) }, casePic(a, false), caseNb(a)] }); });
     });
-    crTable(tb, lignes); tab.hidden = !lignes.length;
+    tableGroupes(tb, lignes); tab.hidden = !lignes.length;
   }
 
   // ================= Dessin de la page =================
@@ -2859,7 +2494,6 @@ dash.calc('soir_par_troncon', {
     drawTableMethodes();
     resumeAcces();
     drawAcces();
-    drawCroisement();
     drawD1091();
   }
 
@@ -2867,7 +2501,7 @@ dash.calc('soir_par_troncon', {
   const ALIAS = {
     essentiel: 'journee', comprendre: 'journee', chiffres: 'journee', heure: 'journee', apresmidi: 'journee', 'am-intro': 'journee',
     ou: 'carte', 'am-ou': 'carte', detail: 'jours', comparer: 'jours', explorer: 'jours', 'pics-matinees': 'jours', 'grille-matinees': 'jours',
-    'troncons-detail': 'troncons', 'am-troncons': 'troncons',
+    'troncons-detail': 'troncons', 'am-troncons': 'troncons', croisement: 'd1091',
   };
   function ouvrir(id) {
     const el = id ? document.getElementById(id) : null;
