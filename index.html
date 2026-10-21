@@ -166,10 +166,13 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rn-files li { display: grid; gap: 2px; align-content: start; min-width: 0; }
 /* Les deux files côte à côte : noms, chiffres et tendances alignés sur les mêmes lignes. */
 @supports (grid-template-rows: subgrid) {
-  .rn-files li:not(.rn-file-vide) { grid-row: span 3; grid-template-rows: subgrid; row-gap: 2px; }
-  .rn-files li:not(.rn-file-vide) > .rn-file-lieu { align-self: end; }
+  .rn-files li:not(.rn-file-vide):not(.rn-file-sous) { grid-row: span 3; grid-template-rows: subgrid; row-gap: 2px; }
+  .rn-files li:not(.rn-file-vide):not(.rn-file-sous) > .rn-file-lieu { align-self: end; }
 }
 .rn-files li.rn-file-vide { grid-column: 1 / -1; display: block; font-size: 14px; line-height: 1.45; color: var(--rn-bande-doux); }
+/* Le Péage de Vizille, sous les files de la RN85 (depuis l'alternat du 19 octobre 2026). */
+.rn-files li.rn-file-sous { grid-column: 1 / -1; display: block; margin-top: 2px; padding-top: 12px; border-top: 1px solid var(--rn-bande-filet); font-size: 13.5px; line-height: 1.35; color: var(--rn-bande-doux); }
+.rn-files li.rn-file-sous b { color: var(--rn-bande-texte); font-weight: 600; margin-right: .3em; }
 .rn-lien { font: inherit; color: var(--rn-bande-texte); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .rn-lien:focus-visible { outline: 2px solid var(--rn-accent); outline-offset: 2px; border-radius: 2px; }
 .rn-file-lieu { font-size: 13.5px; font-weight: 600; line-height: 1.3; }
@@ -234,7 +237,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rn-carte-pied { display: grid; gap: 8px; }
 
 /* ---------- Parties repliables : les accès, les chiffres de chaque journée ---------- */
-.rn-plus { border-top: 1px solid var(--color-border-line); padding-top: 2px; }
+.rn-plus { border-top: 1px solid var(--color-border-line); padding-top: 2px; min-width: 0; }
 .rn-plus summary {
   cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   font-size: 16px; font-weight: 600; padding: 10px 0; min-height: 24px;
@@ -369,6 +372,8 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rn-cr-chart { min-height: 0; cursor: crosshair; }
 #table-d1091 tr.rn-cr-groupe td { text-align: left; font-weight: 600; padding-top: 14px; color: var(--color-fg); border-bottom: 1px solid var(--color-fg); }
 #table-d1091 td:first-child { white-space: normal; min-width: 9rem; }
+#table-troncons tr.rn-sous td { text-align: left; font-weight: 600; padding-top: 14px; color: var(--color-fg); border-bottom: 1px solid var(--color-fg); white-space: normal; position: static; max-width: none; }
+#table-troncons .rn-sous-txt { position: sticky; left: 0; display: inline-block; max-width: min(100%, calc(100vw - 48px)); }
 </style>
 </head>
 <body>
@@ -378,7 +383,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
   <header class="rn-head" id="haut">
     <div class="rn-head-texte">
       <h1 class="rn-title">Les bouchons de la RN85, matin et soir</h1>
-      <p class="rn-lede">En semaine, de 7 h à 9 h, la RN85 se bouche à deux endroits entre Vizille et Champagnier, chaque fois en amont d’un feu. Un bouchon apparaît entre le rond-point Muzet et le feu situé 1 km plus loin dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s2" class="dash-skeleton">—</span> des relevés et avant le feu de Champagnier dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s5" class="dash-skeleton">—</span>. Ces chiffres ne comptent pas les bouchons qui attendent ensuite les automobilistes sur la portion rapide qui mène à l’A480 et sur l’A480 jusqu’à l’entrée de Grenoble. <span id="lede-soir"></span></p>
+      <p class="rn-lede">En semaine, de 7 h à 9 h, la RN85 se bouche à deux endroits entre Vizille et Champagnier, chaque fois en amont d’un feu. Un bouchon apparaît entre le rond-point Muzet et le feu situé 1 km plus loin dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s2" class="dash-skeleton">—</span> des relevés et avant le feu de Champagnier dans <span data-source="par_troncon" data-field="pct_bouchon" data-where="id=s5" class="dash-skeleton">—</span>. Ces chiffres ne comptent pas les bouchons qui attendent ensuite les automobilistes sur la portion rapide qui mène à l’A480 et sur l’A480 jusqu’à l’entrée de Grenoble. <span id="lede-soir"></span> <span id="lede-peage"></span></p>
     </div>
     <dl class="rn-fiche" aria-label="Période et relevés">
       <div><dt>Période</dt><dd id="fiche-periode" class="dash-skeleton">—</dd></div>
@@ -486,12 +491,12 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <div class="rn-chart" id="grille" data-source="releves apres_midi"></div>
       <details class="rn-plus">
         <summary>Les chiffres de chaque journée</summary>
-        <p class="rn-note">Pic de chaque file avec son heure. Quand le pic revient plusieurs fois, l’heure indiquée est la première. Le pire relevé du matin additionne toute la longueur en rouge de la zone relevée au même moment. Une matinée est incomplète sous 20 relevés sur 25, un soir sous 27 relevés sur 34.</p>
+        <p class="rn-note">Pic de chaque file avec son heure. Quand le pic revient plusieurs fois, l’heure indiquée est la première. Le pire relevé du matin additionne toute la longueur en rouge de la zone relevée au même moment. Une matinée est incomplète sous 20 relevés sur 25, un soir sous 27 relevés sur 34. Le Péage : la plus longue des deux files de part et d’autre de l’alternat, avec son sens, depuis le 19 octobre ; le matin, jusqu’à 9 h 15 depuis le 22 octobre.</p>
         <div class="rn-wrap">
           <table class="rn-table rn-table-groupes" id="table-jours">
             <thead>
-              <tr class="rn-groupe"><th rowspan="2">Journée</th><th colspan="3">Le matin, vers Grenoble</th><th colspan="2">Le soir, au retour</th></tr>
-              <tr><th>Sortie de Vizille</th><th>Approche du feu de Champagnier</th><th>Pire relevé, toutes files</th><th>Feu de Champagnier, depuis Pont-de-Claix</th><th>Arrivée à Vizille</th></tr>
+              <tr class="rn-groupe"><th rowspan="2">Journée</th><th colspan="4">Le matin, vers Grenoble</th><th colspan="3">Le soir, au retour</th></tr>
+              <tr><th>Sortie de Vizille</th><th>Approche du feu de Champagnier</th><th>Pire relevé, toutes files</th><th>Le Péage, plus longue file</th><th>Feu de Champagnier, depuis Pont-de-Claix</th><th>Arrivée à Vizille</th><th>Le Péage, plus longue file</th></tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -504,7 +509,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
     <div class="rn-card">
       <div class="rn-card-tete">
         <h2 class="rn-card-title">Tronçon par tronçon</h2>
-        <details class="rn-aide"><summary>Comment lire</summary><p>Les mêmes portions de route le matin dans le sens Vizille → Grenoble et le soir dans le sens des retours. Pic observé : plus grande longueur en rouge relevée. Bouchon moyen : longueur moyenne en rouge des seuls relevés avec bouchon, suivie de la part du tronçon qu’elle occupe. Avec bouchon : au moins 50 m en rouge, part de l’ensemble des relevés du matin ou du soir. Sur téléphone, le tableau défile de côté.</p></details>
+        <details class="rn-aide"><summary>Comment lire</summary><p>La D1091, de la Croix du Mottet à Vizille, puis la RN85, de Vizille vers Pont-de-Claix. Sur la RN85, les mêmes portions de route le matin dans le sens Vizille → Grenoble et le soir dans le sens des retours ; sur la D1091, les deux sens ensemble, matin et soir. Pic observé : plus grande longueur en rouge relevée. Bouchon moyen : longueur moyenne en rouge des seuls relevés avec bouchon, suivie de la part du tronçon qu’elle occupe. Avec bouchon : au moins 50 m en rouge, part de l’ensemble des relevés du matin ou du soir. Sur téléphone, le tableau défile de côté.</p></details>
       </div>
       <div class="rn-wrap rn-wrap-fige">
         <table class="rn-table rn-table-groupes" id="table-troncons">
@@ -525,6 +530,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <h3>Ce qui est mesuré</h3>
       <p>Chaque capture Google Maps (couche trafic, cadrage fixe, toutes les 5 minutes de 7 h à 9 h en semaine) est lue le long de l’axe de la RN85, du carrefour de l’avenue Maurice-Thorez à Vizille jusqu’après le feu de Champagnier, puis au-delà vers Pont-de-Claix. Une portion compte comme rouge quand la chaussée y est rouge ou rouge foncé. Les morceaux de moins de 50 m sont écartés, pour ne pas confondre une étiquette de la carte avec un bouchon. Les temps de parcours ne sont pas utilisés.</p>
       <p>Depuis le 14 octobre, la même route est aussi relevée le soir, de 16 h à 18 h 45, toutes les 5 minutes. Google Maps dessine les deux sens côte à côte : le soir, seul le sens des retours, de Grenoble vers Vizille, est compté.</p>
+      <p>La D1091 est aussi lue sur les captures larges, d’un kilomètre au-delà de la Croix du Mottet (côté Séchilienne) jusqu’au carrefour de la RN85, en quatre tronçons, sur toutes les captures depuis le 2 octobre. À cette échelle, Google dessine la D1091 d’un seul trait pour les deux sens. Depuis l’alternat installé le 19 octobre au carrefour du Péage, chaque sens attend de son côté des travaux : le sens sud-nord (vers Vizille) entre la Croix du Mottet et le carrefour du Péage, le sens nord-sud (vers l’Oisans) entre le carrefour du Péage et Vizille. Depuis le 22 octobre, le matin est relevé jusqu’à 9 h 15 pour la D1091 ; la RN85 reste comptée de 7 h à 9 h.</p>
       <h3>Définitions</h3>
       <ul>
         <li><b>Pic observé</b> : plus grande longueur en rouge relevée, avec le jour et l’heure.</li>
@@ -558,6 +564,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <li>Deux portions d’environ 100 m sont en partie cachées par des noms de lieux sur la carte : vers l’Intermarché de Vizille et environ 400 m avant le feu de Champagnier. Le rouge y est sans doute un peu sous-estimé : une file continue peut aussi y paraître coupée en deux.</li>
         <li>Le diagramme et la carte découpent la route en portions de 100 m : une portion compte comme rouge dès que la moitié l’est. Ils montrent où et quand la file se forme. Pour les longueurs, les chiffres du tableau noir et les tableaux font foi : le découpage en portions montre en général un peu plus de rouge, de l’ordre d’une portion.</li>
         <li>La zone « après le feu » dépasse la zone relevée, en direction de Pont-de-Claix.</li>
+        <li>Sur la D1091, Google Maps dessine un seul trait pour les deux sens : le sens d’une file du Péage est déduit de sa place, avant ou après l’alternat. Une file qui se formerait dans l’autre sens au même endroit serait comptée avec elle.</li>
         <li>La zone relevée s’arrête peu après le feu de Champagnier. Les bouchons de la portion rapide qui mène à l’A480 et de l’A480 jusqu’à l’entrée de Grenoble n’y figurent pas.</li>
         <li>Tôt le matin, Google n’affiche parfois aucune couleur sur l’avenue Maurice-Thorez. Ces relevés sont comptés comme manquants pour l’avenue, jamais comme des relevés sans bouchon.</li>
         <li>Les longueurs suivent de très près la colonne « Longueur en rouge » du tableau Historique RN85, en un peu plus bas, car elles ne comptent que l’axe de la route.</li>
@@ -1284,6 +1291,15 @@ dash.calc('soir_par_troncon', {
       const part = a.data.filter((r) => SOIR.champ(r) >= 50).length / a.data.length;
       ls.textContent = 'Le soir, au retour vers Vizille, une file attend avant le feu de Champagnier, en venant de Pont-de-Claix, dans ' + pct(part) + ' des relevés faits depuis le ' + dateLong(premierSoir()) + '.';
     }
+    // Le Péage de Vizille : depuis l'alternat, plus longue file du matin dans chaque sens.
+    const lp = document.getElementById('lede-peage'), pm = peageJours('matin');
+    if (lp && pm.length) {
+      const max = (k) => pm.reduce((b, x) => (x[k + '_pic'] != null && (!b || x[k + '_pic'] > b[k + '_pic']) ? x : b), null);
+      const sn = max('sn'), ns = max('ns');
+      const f = (x, k) => (x && x[k + '_pic'] >= 50 ? metres(x[k + '_pic']) : 'moins de 50 m');
+      lp.textContent = insec('Depuis le ' + dateLong(D1_TRAVAUX) + ', avec l’alternat des travaux au Péage de Vizille, la D1091 est suivie dans les deux sens : le matin, la plus longue file relevée mesure '
+        + f(sn, 'sn') + ' dans le sens sud-nord (vers Vizille) et ' + f(ns, 'ns') + ' dans le sens nord-sud (vers l’Oisans).');
+    } else if (lp) lp.textContent = '';
   }
 
   // ================= Le tableau noir de la journée =================
@@ -1349,12 +1365,14 @@ dash.calc('soir_par_troncon', {
       const recSoir = (cle) => { const r = sj.reduce((b, x) => (!b || x[cle + '_pic'] > b[cle + '_pic'] ? x : b), null); return r ? valeurFile(r[cle + '_pic']) + (r[cle + '_pic'] >= 50 ? ' le ' + quand(r.jour, r.date, r[cle + '_pic_heure']) : '') : '—'; };
       fm.replaceChildren(
         liType('Sortie de Vizille', pj, 'vizille_pic', s && { mot: 'matinées', texte: metres(s.pic_vizille) + ' le ' + quand(s.pic_vizille_jour, s.pic_vizille_date, s.pic_vizille_heure) }),
-        liType('Approche du feu de Champagnier', pj, 'feu_pic', s && { mot: 'matinées', texte: metres(s.pic_feu) + ' le ' + quand(s.pic_feu_jour, s.pic_feu_date, s.pic_feu_heure) }));
+        liType('Approche du feu de Champagnier', pj, 'feu_pic', s && { mot: 'matinées', texte: metres(s.pic_feu) + ' le ' + quand(s.pic_feu_jour, s.pic_feu_date, s.pic_feu_heure) }),
+        ...peageTypes('matin'));
       // Même règle qu'au jour le jour : l'arrivée à Vizille seulement si une file d'au moins 50 m y a été relevée.
       const entreeMax = sj.reduce((m, x) => Math.max(m, x.entree_pic), 0);
       if (sj.length) fs.replaceChildren(...[
         liType('Feu de Champagnier, depuis Pont-de-Claix', sj, 'champ_pic', { mot: 'soirs', texte: recSoir('champ') }),
         entreeMax >= 50 ? liType('Arrivée à Vizille', sj, 'entree_pic', { mot: 'soirs', texte: recSoir('entree') }) : null,
+        ...peageTypes('soir'),
       ].filter(Boolean));
       else vide(fs, 'Pas encore de relevé le soir.');
       note(nm, ''); note(ns, '');
@@ -1374,7 +1392,8 @@ dash.calc('soir_par_troncon', {
         : { groupe: 'autres matinées', manque: 'Pas d’autre matinée complète pour comparer.' };
       fm.replaceChildren(
         liFile('Sortie de Vizille', m.vizille_pic, m.vizille_pic_heure, tendance(pj, m, 'vizille_pic'), mots),
-        liFile('Approche du feu de Champagnier', m.feu_pic, m.feu_pic_heure, tendance(pj, m, 'feu_pic'), mots));
+        liFile('Approche du feu de Champagnier', m.feu_pic, m.feu_pic_heure, tendance(pj, m, 'feu_pic'), mots),
+        ...peageLignes(j.date, 'matin'));
       note(nm, m.complete ? '' : 'Matinée incomplète : ' + m.releves + ' relevés sur 25, le vrai pic a pu échapper au relevé.');
     } else { vide(fm, 'Pas de relevé ce matin-là.'); note(nm, ''); }
     // Le soir, sens des retours. La comparaison attend trois autres soirs complets.
@@ -1387,6 +1406,7 @@ dash.calc('soir_par_troncon', {
       // n'apparaît dans le tableau noir que si une file d'au moins 50 m y a été relevée.
       const lis = [liFile('Feu de Champagnier, depuis Pont-de-Claix', e.champ_pic, e.champ_pic_heure, compare ? tendance(sj, e, 'champ_pic', 3) : undefined, mots)];
       if (e.entree_pic >= 50) lis.push(liFile('Arrivée à Vizille', e.entree_pic, e.entree_pic_heure, compare ? tendance(sj, e, 'entree_pic', 3) : undefined, mots));
+      lis.push(...peageLignes(j.date, 'soir'));
       fs.replaceChildren(...lis);
       const notes = [];
       if (!e.complete) notes.push('Soir incomplet : relevé de ' + heure(e.premier) + ' à ' + heure(e.dernier) + ' seulement (' + e.releves + ' relevé' + (e.releves > 1 ? 's' : '') + ').');
@@ -1420,6 +1440,12 @@ dash.calc('soir_par_troncon', {
     ];
     const champ = soirs().reduce((b, r) => (!b || r.champ_pic > b.champ_pic ? r : b), null);
     if (champ) items.push(['Soir, feu de Champagnier', champ.champ_pic, quand(champ.jour, champ.date, champ.champ_pic_heure)]);
+    // Le Péage depuis l'alternat, matin et soir confondus, dans chaque sens.
+    ['sn', 'ns'].forEach((k) => {
+      let b = null;
+      ['matin', 'soir'].forEach((p) => peageJours(p).forEach((x) => { if (x[k + '_pic'] != null && (!b || x[k + '_pic'] > b.v)) b = { v: x[k + '_pic'], x, p }; }));
+      if (b && b.v >= 50) items.push([PEAGE[k].nom, b.v, quand(b.x.jour, b.x.date, b.x[k + '_pic_heure'])]);
+    });
     ul.replaceChildren(...items.map(([l, v, q]) => { const li = document.createElement('li'); li.append(span('rn-rec-lieu', l), span('rn-rec-val', metres(v)), span('rn-rec-quand', q)); return li; }));
   }
 
@@ -1686,7 +1712,7 @@ dash.calc('soir_par_troncon', {
     let lmap = null, couches = null, bins = [], msg = null;
     let lastSig = '', lastJour = null, lastW = 0, idx = null, friseObj = null, etObj = null;
     // Le matin de la carte : de 7 h à 9 h 15 à partir du 22 octobre 2026 (D1091), de 7 h à 9 h avant.
-    let CRM = CRENEAUX, NBM = NB_MATIN, JC = JOURNEE;
+    let CRM = CRENEAUX, NBM = NB_MATIN, JOURNEE_C = JOURNEE;
     function fixerJournee(v) {
       const D1 = d1Donnees();
       const avec915 = v === 'type'
@@ -1694,7 +1720,7 @@ dash.calc('soir_par_troncon', {
         : v >= DEBUT_915;
       CRM = avec915 ? CRENEAUX_915 : CRENEAUX;
       NBM = CRM.length;
-      JC = CRM.map((c) => ({ c, p: 'matin' })).concat(CRENEAUX_AM.map((c) => ({ c, p: 'soir' })));
+      JOURNEE_C = CRM.map((c) => ({ c, p: 'matin' })).concat(CRENEAUX_AM.map((c) => ({ c, p: 'soir' })));
     }
     // La D1091 dans la carte de la journée (demande de Michel, 21 octobre 2026) : état par portions de 100 m
     // depuis le carrefour de la RN85, pour la journée choisie ou, en journée type, part des journées en rouge.
@@ -1739,7 +1765,7 @@ dash.calc('soir_par_troncon', {
     const aMatin = () => !!idx && (idx.type ? idx.mt.size > 0 : idx.rl.size > 0);
     const aSoir = () => !!idx && (idx.type ? idx.st.size > 0 : idx.am.size > 0);
     const premierK = () => (aMatin() || !aSoir() ? 0 : NBM);
-    const dernierK = () => (aSoir() ? JC.length - 1 : NBM - 1);
+    const dernierK = () => (aSoir() ? JOURNEE_C.length - 1 : NBM - 1);
 
     const stop = () => { if (state.timer) { clearInterval(state.timer); state.timer = null; } play.textContent = '▶ Lecture'; play.setAttribute('aria-label', 'Lancer la lecture de la journée'); };
     const start = () => {
@@ -1753,7 +1779,7 @@ dash.calc('soir_par_troncon', {
       }, 900);
       frame();
     };
-    const aller = (k) => { stop(); state.reprise = true; state.k = Math.max(0, Math.min(JC.length - 1, k)); frame(); };
+    const aller = (k) => { stop(); state.reprise = true; state.k = Math.max(0, Math.min(JOURNEE_C.length - 1, k)); frame(); };
     play.addEventListener('click', () => { if (state.timer) stop(); else start(); });
     function nouveauJour() { stop(); state.reprise = false; lastJour = null; }
 
@@ -1845,7 +1871,7 @@ dash.calc('soir_par_troncon', {
 
     // Valeur de la frise à un relevé : les deux files principales réunies (matin ou soir).
     function valeurK(k) {
-      const s = JC[k];
+      const s = JOURNEE_C[k];
       if (idx.type) { const r = s.p === 'matin' ? idx.pc.get(s.c) : idx.st.get(s.c); return r ? r.deux_max : null; }
       if (s.p === 'matin') { const r = idx.rl.get(s.c); return r ? matinDeux(r) : null; }
       const r = idx.am.get(s.c); return r ? soirDeux(r) : null;
@@ -1858,7 +1884,7 @@ dash.calc('soir_par_troncon', {
       return m || 1;
     }
     function infobulle(k) {
-      const s = JC[k], v = valeurK(k), matin = s.p === 'matin';
+      const s = JOURNEE_C[k], v = valeurK(k), matin = s.p === 'matin';
       const tete = heure(s.c) + (matin ? ', le matin' : ', le soir');
       if (v == null) return [tete, [{ text: !matin && !aSoir() && !idx.type ? soirAbsent(idx.date) : 'Pas de relevé à cette heure' }]];
       const rouge = trv('--tr-rouge');
@@ -1879,15 +1905,15 @@ dash.calc('soir_par_troncon', {
       const ticks = y.ticks(2).filter((t) => t > 0);
       const ml = Math.ceil(d3.max(ticks, (t) => textWidth(svg, metres(t))) || 0) + 8, mr = 2;
       const GAP = etroit ? 1.6 : 2;
-      const cw = (W - ml - mr) / (JC.length + GAP);
+      const cw = (W - ml - mr) / (JOURNEE_C.length + GAP);
       const xk = (k) => ml + (k < NBM ? k : k + GAP) * cw;
-      const x0m = xk(0), x1m = xk(NBM - 1) + cw, x0s = xk(NBM), x1s = xk(JC.length - 1) + cw;
+      const x0m = xk(0), x1m = xk(NBM - 1) + cw, x0s = xk(NBM), x1s = xk(JOURNEE_C.length - 1) + cw;
       ticks.forEach((t) => {
         [[x0m, x1m], [x0s, x1s]].forEach(([a, b]) => svg.append('line').attr('x1', a).attr('x2', b).attr('y1', y(t)).attr('y2', y(t)).attr('stroke', cssVar('--cds-chart-grid')));
         svg.append('text').attr('x', ml - 6).attr('y', y(t) + 4).attr('text-anchor', 'end').attr('font-size', fs).attr('fill', muted).text(metres(t));
       });
       const cur = svg.append('rect').attr('y', 0).attr('height', H - mb + 3).attr('width', cw).attr('rx', 3).attr('fill', cssVar('--cds-chart-grid'));
-      const vals = JC.map((s, k) => valeurK(k));
+      const vals = JOURNEE_C.map((s, k) => valeurK(k));
       // Une période sans aucun relevé : une plage hachurée et la raison, plutôt qu'une rangée de cases vides.
       const plage = (a, b, txt) => {
         svg.append('rect').attr('x', a).attr('y', mt - 4).attr('width', b - a).attr('height', H - mb - mt + 4).attr('fill', hachures(svg)).attr('rx', 2);
@@ -1906,12 +1932,12 @@ dash.calc('soir_par_troncon', {
         svg.append('rect').attr('x', xk(k) + cw * 0.14).attr('width', Math.max(1, cw * 0.72)).attr('y', y(v)).attr('height', Math.max(1, y(0) - y(v))).attr('rx', 1.5).attr('fill', rouge);
       });
       [[x0m, x1m], [x0s, x1s]].forEach(([a, b]) => svg.append('line').attr('x1', a).attr('x2', b).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', cssVar('--cds-chart-axis')));
-      heuresJournee(svg, (k) => xk(k) + (k === 0 ? 0 : cw / 2), H - 4, JC);
+      heuresJournee(svg, (k) => xk(k) + (k === 0 ? 0 : cw / 2), H - 4, JOURNEE_C);
       const val = halo(svg.append('text').attr('font-size', fs).attr('font-weight', 600).attr('fill', fg));
       const card = frise.closest('.rn-card'), tip = tipIn(card);
       const kDe = (px) => {
         let best = 0, d = Infinity;
-        JC.forEach((s, k) => { const e = Math.abs(xk(k) + cw / 2 - px); if (e < d) { d = e; best = k; } });
+        JOURNEE_C.forEach((s, k) => { const e = Math.abs(xk(k) + cw / 2 - px); if (e < d) { d = e; best = k; } });
         return best;
       };
       let glisse = false;
@@ -2066,7 +2092,7 @@ dash.calc('soir_par_troncon', {
     // demande de réduire les animations) : le mouvement des files se suit plus facilement.
     function frame() {
       if (!lmap || !bins.length || !idx) return;
-      const s = JC[state.k], matin = s.p === 'matin';
+      const s = JOURNEE_C[state.k], matin = s.p === 'matin';
       clock.textContent = heure(s.c);
       periodeEl.textContent = matin ? 'Le matin, vers Grenoble' : 'Le soir, retour vers Vizille';
       const vide = trv('--tr-neutre-trait');
@@ -2112,7 +2138,7 @@ dash.calc('soir_par_troncon', {
       if (friseObj) friseObj.maj(state.k);
       if (etObj) etObj.curseur(state.k);
       frise.setAttribute('aria-valuemin', '0');
-      frise.setAttribute('aria-valuemax', String(JC.length - 1));
+      frise.setAttribute('aria-valuemax', String(JOURNEE_C.length - 1));
       frise.setAttribute('aria-valuenow', String(state.k));
       frise.setAttribute('aria-valuetext', heure(s.c) + (matin ? ', le matin' : ', le soir'));
     }
@@ -2289,19 +2315,29 @@ dash.calc('soir_par_troncon', {
       if (m && !m.complete) notes.push('matin incomplet');
       if (e && !e.complete) notes.push('soir incomplet');
       const rien = (g) => ({ t: 'pas de relevé', g });
+      // Le Péage : la plus longue des deux files (sud-nord ou nord-sud), depuis l'alternat du 19 octobre 2026.
+      const peage = (p) => {
+        if (j.date < D1_TRAVAUX) return { t: '' };
+        const x = peageDemi(j.date, p);
+        if (!x) return { t: 'pas de relevé' };
+        const k = (x.ns_pic || 0) > (x.sn_pic || 0) ? 'ns' : 'sn', v = x[k + '_pic'];
+        return { t: valeurFile(v), s: v >= 50 ? PEAGE[k].court + ', à ' + heure(x[k + '_pic_heure']) : null, pic: v >= 50 };
+      };
       cellules(tr, [
         { t: dateCourte(j.date, j.jour), s: notes.join(', ') || null },
         m ? pic(m.vizille_pic, m.vizille_pic_heure, true) : rien(true),
         m ? pic(m.feu_pic, m.feu_pic_heure) : rien(),
         m ? pic(m.pire_m, m.pire_heure) : rien(),
+        peage('matin'),
         e ? pic(e.champ_pic, e.champ_pic_heure, true) : sansSoir(j.date, true),
         e ? pic(e.entree_pic, e.entree_pic_heure) : sansSoir(j.date),
+        e || j.date < D1_TRAVAUX ? peage('soir') : sansSoir(j.date),
       ]);
       return tr;
     }));
     const th = document.querySelectorAll('#table-jours thead tr:last-child th');
     if (th[0]) th[0].classList.add('rn-g');
-    if (th[3]) th[3].classList.add('rn-g');
+    if (th[4]) th[4].classList.add('rn-g');
     const g = document.querySelectorAll('#table-jours thead tr.rn-groupe th');
     if (g[1]) g[1].classList.add('rn-g');
     if (g[2]) g[2].classList.add('rn-g');
@@ -2317,7 +2353,8 @@ dash.calc('soir_par_troncon', {
     document.getElementById('troncons-soir').textContent = 'Le soir, au retour' + (sj.length ? ' (' + sj.length + ' soir' + (sj.length > 1 ? 's' : '') + ')' : '');
     const pk = (x, g) => ({ t: x.max_m > 0 && x.max_m < 50 ? 'moins de 50 m' : metres(x.max_m), pic: x.max_m >= 50, g });
     const bm = (x) => (x.bouchon_moyen_m == null ? { t: 'aucun' } : { t: metres(x.bouchon_moyen_m), s: pct(x.part) + ' du tronçon', bar: x.part });
-    tb.replaceChildren(...trier(d.data).map((r) => {
+    const sous = (txt) => { const tr = document.createElement('tr'); tr.className = 'rn-sous'; const td = document.createElement('td'); td.colSpan = 8; td.append(span('rn-sous-txt', txt)); tr.appendChild(td); return tr; };
+    const lignesRN = trier(d.data).map((r) => {
       const tr = document.createElement('tr'); tr.dataset.key = r.id;
       if (r.id === 's7') tr.className = 'rn-out';
       const e = soirsT.get(r.id);
@@ -2328,14 +2365,49 @@ dash.calc('soir_par_troncon', {
         e ? pk(e, true) : { t: 'pas de donnée', g: true }, e ? bm(e) : { t: '' }, e ? { t: pct(e.pct_bouchon) } : { t: '' },
       ]);
       return tr;
-    }));
+    });
+    // La D1091, de la Croix du Mottet à Vizille, dans l'ordre où le matin la parcourt vers la RN85 (Michel, 21 octobre 2026).
+    const D1 = d1Donnees();
+    const lignesD1 = D1 ? ['T0', 'T1', 'T2', 'T3'].map((q) => {
+      const t = D1.troncons.find((x) => x.id === q);
+      if (!t) return null;
+      const st = (p) => {
+        const v = [];
+        D1.jours.filter((j) => j.periode === p).forEach((j) => Object.values(j.releves).forEach((r) => { if (r && r[q] != null) v.push(r[q]); }));
+        if (!v.length) return null;
+        const avec = v.filter((x) => x >= 50);
+        const b = avec.length ? Math.round(avec.reduce((a, x) => a + x, 0) / avec.length / 10) * 10 : null;
+        return { max_m: Math.max(...v), bouchon_moyen_m: b, part: b == null ? 0 : b / t.m, pct_bouchon: avec.length / v.length };
+      };
+      const m = st('matin'), e = st('soir');
+      const pkD = (x) => ({ t: x.max_m < 50 ? 'moins de 50 m' : metres(x.max_m), pic: x.max_m >= 50, g: true });
+      const tr = document.createElement('tr'); tr.dataset.key = 'd1-' + q;
+      cellules(tr, [
+        { t: t.nom },
+        { t: metres(t.m), opt: true },
+        m ? pkD(m) : { t: 'pas de donnée', g: true }, m ? bm(m) : { t: '' }, m ? { t: pct(m.pct_bouchon) } : { t: '' },
+        e ? pkD(e) : { t: 'pas de donnée', g: true }, e ? bm(e) : { t: '' }, e ? { t: pct(e.pct_bouchon) } : { t: '' },
+      ]);
+      return tr;
+    }).filter(Boolean) : [];
+    let titreD1 = '';
+    if (lignesD1.length) {
+      const dm = D1.jours.filter((j) => j.periode === 'matin'), ds = D1.jours.filter((j) => j.periode === 'soir');
+      const pl = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');
+      titreD1 = 'La D1091, de la Croix du Mottet à Vizille, les deux sens ensemble'
+        + (dm.length ? ' : ' + pl(dm.length, 'matinée') + ' depuis le ' + dateLong(dm[0].date) + (ds.length ? ' et ' + pl(ds.length, 'soir') + ' depuis le ' + dateLong(ds[0].date) : '') : '');
+    }
+    tb.replaceChildren(...(lignesD1.length
+      ? [sous(titreD1), ...lignesD1, sous('La RN85, de Vizille vers Pont-de-Claix'), ...lignesRN]
+      : lignesRN));
     const g = document.querySelectorAll('#table-troncons thead tr.rn-groupe th');
     if (g[2]) g[2].classList.add('rn-g');
     if (g[3]) g[3].classList.add('rn-g');
     const th = document.querySelectorAll('#table-troncons thead tr:last-child th');
     if (th[0]) th[0].classList.add('rn-g');
     if (th[3]) th[3].classList.add('rn-g');
-    document.getElementById('troncons-note').textContent = 'Le soir, les tronçons gardent leur nom du matin : au retour, les voitures les parcourent dans l’autre sens, de Pont-de-Claix vers Vizille.'
+    document.getElementById('troncons-note').textContent = 'Le soir, les tronçons gardent leur nom du matin : au retour, les voitures les parcourent dans l’autre sens, de Pont-de-Claix vers Vizille. '
+      + 'Sur la D1091, Google dessine les deux sens d’un seul trait : ses chiffres valent pour la route, les deux sens ensemble. Avec l’alternat du Péage, la file du sens sud-nord (vers Vizille) se forme entre la Croix du Mottet et le carrefour du Péage, celle du sens nord-sud (vers l’Oisans) entre le carrefour du Péage et Vizille.'
       + (sj.length && sj.length < 5 ? ' Avec ' + sj.length + ' soir' + (sj.length > 1 ? 's' : '') + ' relevé' + (sj.length > 1 ? 's' : '') + ', les chiffres du soir restent provisoires.' : '');
   }
   function drawTableMethodes() {
@@ -2445,6 +2517,58 @@ dash.calc('soir_par_troncon', {
   const d1Nom = (D, id) => (D.troncons.find((t) => t.id === id) || {}).nom || id;
   const d1Entre = (D, id) => (D.troncons.find((t) => t.id === id) || {}).entre || '';
   const d1Ids = (D) => D.troncons.map((t) => t.id);
+  // ================= Le Péage dans les deux sens, partout sur la page (Michel, 21 octobre 2026) =================
+  // Depuis l'alternat (19 octobre 2026), installé au carrefour du Péage : sens sud-nord (vers Vizille) = tronçons
+  // T1 et T0, sens nord-sud (vers l'Oisans) = tronçon T2. Une demi-journée est complète à partir de 20 relevés le
+  // matin et de 27 le soir, comme pour la RN85.
+  const PEAGE = {
+    sn: { nom: 'Le Péage, sud-nord (vers Vizille)', court: 'sud-nord', lieu: 'Sud-nord, vers Vizille', f: (r) => (r.T1 || 0) + (r.T0 || 0) },
+    ns: { nom: 'Le Péage, nord-sud (vers l’Oisans)', court: 'nord-sud', lieu: 'Nord-sud, vers l’Oisans', f: (r) => r.T2 || 0 },
+  };
+  function peageSous(gras, suite) {
+    const li = document.createElement('li'); li.className = 'rn-file-sous';
+    const b = document.createElement('b'); b.textContent = gras;
+    li.append(b, suite);
+    return li;
+  }
+  function peageDemi(date, p) {
+    if (date < D1_TRAVAUX) return null;
+    const j = d1Demi(date, p);
+    if (!j || !j.n) return null;
+    const out = { date, jour: j.jour, n: j.n, complete: j.n >= (p === 'matin' ? 20 : 27) };
+    Object.entries(PEAGE).forEach(([k, z]) => {
+      let best = null;
+      Object.entries(j.releves).forEach(([c, r]) => { if (r) { const v = z.f(r); if (!best || v > best[0]) best = [v, c]; } });
+      out[k + '_pic'] = best ? best[0] : null;
+      out[k + '_pic_heure'] = best ? best[1] : null;
+    });
+    return out;
+  }
+  function peageJours(p) {
+    const D = d1Donnees();
+    if (!D) return [];
+    return D.jours.filter((j) => j.periode === p && j.date >= D1_TRAVAUX).map((j) => peageDemi(j.date, p)).filter(Boolean);
+  }
+  // Lignes du tableau noir pour une journée : Le Péage dans chaque sens, depuis l'alternat seulement.
+  // Un sens n'apparaît qu'à partir d'une file de 50 m (aucun texte ne met en avant une route fluide).
+  function peageLignes(date, p) {
+    const x = peageDemi(date, p);
+    if (!x) return [];
+    const sens = ['sn', 'ns'].filter((k) => x[k + '_pic'] >= 50);
+    if (!sens.length) return [];
+    const suite = 'de part et d’autre de l’alternat' + (p === 'matin' && date >= DEBUT_915 ? ', de 7 h à 9 h 15' : '');
+    return [peageSous('Le Péage de Vizille', suite), ...sens.map((k) => liFile(PEAGE[k].lieu, x[k + '_pic'], x[k + '_pic_heure']))];
+  }
+  function peageTypes(p) {
+    const xs = peageJours(p);
+    if (!xs.length) return [];
+    const lis = ['sn', 'ns'].map((k) => {
+      const b = xs.reduce((a, x) => (x[k + '_pic'] != null && (!a || x[k + '_pic'] > a[k + '_pic']) ? x : a), null);
+      if (!b || b[k + '_pic'] < 50) return null;
+      return liType(PEAGE[k].lieu, xs, k + '_pic', { mot: p === 'matin' ? 'matinées' : 'soirs', texte: metres(b[k + '_pic']) + ' le ' + quand(b.jour, b.date, b[k + '_pic_heure']) });
+    }).filter(Boolean);
+    return lis.length ? [peageSous('Le Péage de Vizille', 'depuis l’alternat du ' + dateLong(D1_TRAVAUX)), ...lis] : [];
+  }
   // Longueur en rouge d'un relevé sur un tronçon ; null : pas de relevé (capture manquante ou sans couleur).
   const d1Val = (j, c, q) => { const r = j.releves[c]; return r ? (r[q] == null ? null : r[q]) : null; };
   // Une seule échelle de longueur, commune à toutes les journées.
