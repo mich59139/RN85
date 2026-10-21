@@ -486,7 +486,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <div>
           <h2 class="rn-card-title">La D1091, de la Croix du Mottet à Vizille</h2>
           <p class="rn-note" id="d1-intro"></p>
-          <details class="rn-aide"><summary>Comment lire</summary><p>La D1091 est découpée en trois tronçons : de la Croix du Mottet au carrefour du Péage, où se trouve l’alternat des travaux de piste cyclable ; du carrefour du Péage à Vizille ; de Vizille au carrefour de la RN85. Pour chaque relevé de 5 minutes et chaque tronçon, trois lignes : en haut la longueur en rouge vue par Google Maps sur la route, puis la longueur en bouchon relevée par TomTom dans le sens de Vizille et dans le sens de l’Oisans. À l’échelle des captures, Google dessine les deux sens d’un seul trait : sa ligne vaut pour la route, sans distinguer le sens. Plus la case est foncée, plus la file est longue, avec la même échelle pour les deux sources ; le pic de chaque ligne est encadré. File comptée selon Google : au moins 50 m en rouge sur le tronçon ; selon TomTom : au moins 50 m en bouchon. Le soir, Google est relevé jusqu’à 18 h 45 et TomTom jusqu’à 19 h 15. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
+          <details class="rn-aide"><summary>Comment lire</summary><p>La D1091 est découpée en quatre tronçons : le kilomètre au-delà de la Croix du Mottet, côté Séchilienne (relevé depuis le 21 octobre 2026) ; de la Croix du Mottet au carrefour du Péage, où se trouve l’alternat des travaux de piste cyclable ; du carrefour du Péage à Vizille ; de Vizille au carrefour de la RN85. Pour chaque relevé de 5 minutes et chaque tronçon, trois lignes : en haut la longueur en rouge vue par Google Maps sur la route, puis la longueur en bouchon relevée par TomTom dans le sens de Vizille et dans le sens de l’Oisans. À l’échelle des captures, Google dessine les deux sens d’un seul trait : sa ligne vaut pour la route, sans distinguer le sens. Plus la case est foncée, plus la file est longue, avec la même échelle pour les deux sources ; le pic de chaque ligne est encadré. File comptée selon Google : au moins 50 m en rouge sur le tronçon ; selon TomTom : au moins 50 m en bouchon. Le soir, Google est relevé jusqu’à 18 h 45 et TomTom jusqu’à 19 h 15. Une case en pointillés signale un relevé manquant, jamais une absence de bouchon.</p></details>
         </div>
       </div>
       <div class="rn-cr-texte" id="d1-texte"></div>
@@ -2613,12 +2613,14 @@ dash.calc('soir_par_troncon', {
   const d1Nom = (D, id) => (D.troncons.find((t) => t.id === id) || {}).nom || id;
   const d1Entre = (D, id) => (D.troncons.find((t) => t.id === id) || {}).entre || '';
   const d1NbT = (j) => D1_SENS.reduce((s, x) => s + ((j.n_tomtom || {})[x.k] || 0), 0);
+  // Tronçons dans l'ordre des données : depuis le 21 octobre 2026, T0 (le kilomètre au-delà de la Croix du Mottet).
+  const d1Ids = (D) => D.troncons.map((t) => t.id);
   // Une seule échelle de longueur pour Google et TomTom, commune à toutes les journées.
   function d1Echelle(D) {
     let m = 300;
     D.jours.forEach((j) => Object.values(j.releves).forEach((r) => {
       if (r.g) Object.values(r.g).forEach((v) => { if (v != null) m = Math.max(m, v); });
-      if (r.t) Object.values(r.t).forEach((t) => { if (t) ['T1', 'T2', 'T3'].forEach((q) => { if (t[q] != null) m = Math.max(m, t[q]); }); });
+      if (r.t) Object.values(r.t).forEach((t) => { if (t) Object.keys(t).filter((q) => /^T\d$/.test(q)).forEach((q) => { if (t[q] != null) m = Math.max(m, t[q]); }); });
     }));
     return { m };
   }
@@ -2626,7 +2628,7 @@ dash.calc('soir_par_troncon', {
   function d1Phrases(D, j, p) {
     const out = [];
     let gp = null;
-    ['T1', 'T2', 'T3'].forEach((q) => { const v = j.pics.g[q]; if (v && (!gp || v[0] > gp.v[0])) gp = { q, v }; });
+    d1Ids(D).forEach((q) => { const v = j.pics.g[q]; if (v && (!gp || v[0] > gp.v[0])) gp = { q, v }; });
     if (!j.n_google) out.push('Pas de relevé Google ce ' + D1_DEMI[p].mot + '-là.');
     else if (gp && gp.v[0] >= SEUIL_G) {
       let t = 'La plus longue file en rouge selon Google : ' + metres(gp.v[0]) + ' à ' + heure(gp.v[1]) + ', ' + d1Entre(D, gp.q) + '.';
@@ -2669,7 +2671,7 @@ dash.calc('soir_par_troncon', {
     halo(svg.append('text').attr('x', 0).attr('y', 15).attr('font-size', 14).attr('fill', fg))
       .call((t) => { t.append('tspan').attr('font-weight', 600).text(D1_DEMI[p].titre + ' '); t.append('tspan').attr('fill', muted).text(D1_DEMI[p].sous); });
     const rangs = [];
-    ['T1', 'T2', 'T3'].forEach((q) => {
+    d1Ids(D).forEach((q) => {
       halo(svg.append('text').attr('x', ml).attr('y', y + 13).attr('font-size', fs).attr('font-weight', 600).attr('fill', fg)).text(d1Nom(D, q));
       y += 18;
       rangs.push({ q, src: 'g', y }); y += ch;
@@ -2721,7 +2723,7 @@ dash.calc('soir_par_troncon', {
         if (k < 0 || k >= liste.length) { tip.hidden = true; return; }
         const c = liste[k], r = j.releves[c] || {};
         const lignes = [];
-        ['T1', 'T2', 'T3'].forEach((q) => {
+        d1Ids(D).forEach((q) => {
           lignes.push({ text: d1Nom(D, q) });
           const g = r.g ? r.g[q] : null;
           lignes.push({ text: '  Google : ' + (c > finG ? 'pas de capture à cette heure' : g == null ? 'pas de relevé' : g === 0 ? 'pas de rouge' : metres(g) + ' en rouge') });
@@ -2742,7 +2744,7 @@ dash.calc('soir_par_troncon', {
     const js = D.jours.filter((j) => j.periode === p && (avant ? j.date < D1_TRAVAUX : j.date >= D1_TRAVAUX));
     if (!js.length) return null;
     const out = { demis: js.length, q: {} };
-    ['T1', 'T2', 'T3'].forEach((q) => {
+    d1Ids(D).forEach((q) => {
       let n = 0, nf = 0, pic = null;
       const pt = {};
       js.forEach((j) => {
@@ -2772,7 +2774,7 @@ dash.calc('soir_par_troncon', {
     const D = c.data, ech = d1Echelle(D);
     const dates = Array.from(new Set(D.jours.map((j) => j.date))).sort();
     const datesT = Array.from(new Set(D.jours.filter((j) => d1NbT(j) > 0).map((j) => j.date))).sort();
-    intro.textContent = insec('La D1091 dans les deux sens, de la Croix du Mottet (limite de Vizille et de Séchilienne) au carrefour de la RN85, en passant par Le Péage de Vizille, où des travaux de piste cyclable imposent un alternat depuis le 19 octobre 2026. Google : '
+    intro.textContent = insec('La D1091 dans les deux sens, de la Croix du Mottet (carrefour avec la route des Rivoirands, limite de Vizille et de Séchilienne) au carrefour de la RN85, en passant par Le Péage de Vizille, où des travaux de piste cyclable imposent un alternat depuis le 19 octobre 2026. Depuis le 21 octobre, le relevé englobe aussi le kilomètre au-delà de la Croix du Mottet, côté Séchilienne : une file qui atteint ou dépasse le carrefour est mesurée dans les deux sens. Google : '
       + (dates.length ? 'relevés lus sur les captures depuis le ' + dateLong(dates[0]) : 'aucun relevé pour l’instant') + '. TomTom : '
       + (datesT.length ? 'relevés dans chaque sens depuis le ' + dateLong(datesT[0]) : 'relevés dans chaque sens à partir du 20 octobre 2026 au soir') + '.');
     crLegende(leg, ech);
@@ -2793,7 +2795,7 @@ dash.calc('soir_par_troncon', {
           const e = d1Ensemble(D, p, avant);
           if (!e) return;
           lignes.push({ groupe: D1_DEMI[p].titre + ', ' + (avant ? 'avant les travaux du Péage' : 'depuis le début des travaux du Péage') + ' (' + e.demis + (e.demis > 1 ? ' demi-journées)' : ' demi-journée)') });
-          ['T1', 'T2', 'T3'].forEach((q) => {
+          d1Ids(D).forEach((q) => {
             const a = e.q[q];
             lignes.push({ cases: [
               { t: d1Nom(D, q) },
@@ -2831,12 +2833,13 @@ dash.calc('soir_par_troncon', {
     [['matin', jm], ['soir', js]].forEach(([p, j]) => {
       if (!j) return;
       lignes.push({ groupe: D1_DEMI[p].titre + ', ' + D1_DEMI[p].sous });
-      ['T1', 'T2', 'T3'].forEach((q) => {
+      d1Ids(D).forEach((q) => {
         const g = j.pics.g[q];
         const ts = D1_SENS.map((s) => {
           let pic = null;
           Object.entries(j.releves).forEach(([c, r]) => { const t = r.t && r.t[s.k] ? r.t[s.k][q] : null; if (t && (!pic || t > pic[0])) pic = [t, c]; });
-          return pic ? { t: metres(pic[0]), s: 'à ' + heure(pic[1]), pic: true } : { t: (j.n_tomtom || {})[s.k] ? 'pas de bouchon' : 'pas de relevé' };
+          const mesure = Object.values(j.releves).some((r) => r.t && r.t[s.k] && r.t[s.k][q] != null);
+          return pic ? { t: metres(pic[0]), s: 'à ' + heure(pic[1]), pic: true } : { t: mesure ? 'pas de bouchon' : 'pas de relevé' };
         });
         lignes.push({ cases: [{ t: d1Nom(D, q) }, g ? { t: metres(g[0]), s: 'à ' + heure(g[1]), pic: true } : { t: j.n_google ? 'pas de rouge' : 'pas de relevé' }, ...ts] });
       });
