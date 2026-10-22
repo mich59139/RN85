@@ -1,10 +1,10 @@
 {
- "maj": "2026-10-21T19:10+02:00",
- "releves": 331,
- "matinees": 16,
+ "maj": "2026-10-22T09:17+02:00",
+ "releves": 356,
+ "matinees": 17,
  "premiere_matinee": "2026-09-30",
- "derniere_matinee": "2026-10-21",
- "releves_acces": 290,
+ "derniere_matinee": "2026-10-22",
+ "releves_acces": 315,
  "ecartees": [
   {
    "date": "2026-10-06",
@@ -117,6 +117,36 @@
   {
    "date": "2026-10-21",
    "heure": "07:25",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-22",
+   "heure": "07:10",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-22",
+   "heure": "07:15",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-22",
+   "heure": "07:25",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-22",
+   "heure": "07:45",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-22",
+   "heure": "07:50",
    "capture": "large",
    "raison": "sans_couleur_thorez"
   }
