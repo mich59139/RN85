@@ -1,10 +1,10 @@
 {
- "maj": "2026-10-22T19:10+02:00",
- "releves": 356,
- "matinees": 17,
+ "maj": "2026-10-23T09:17+02:00",
+ "releves": 381,
+ "matinees": 18,
  "premiere_matinee": "2026-09-30",
- "derniere_matinee": "2026-10-22",
- "releves_acces": 315,
+ "derniere_matinee": "2026-10-23",
+ "releves_acces": 340,
  "ecartees": [
   {
    "date": "2026-10-06",
@@ -147,6 +147,72 @@
   {
    "date": "2026-10-22",
    "heure": "07:50",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:00",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:05",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:10",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:15",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:20",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:25",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:30",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:35",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "07:55",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "08:00",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-23",
+   "heure": "08:05",
    "capture": "large",
    "raison": "sans_couleur_thorez"
   }
