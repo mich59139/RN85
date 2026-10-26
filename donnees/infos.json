@@ -1,10 +1,10 @@
 {
- "maj": "2026-10-23T19:10+02:00",
- "releves": 381,
- "matinees": 18,
+ "maj": "2026-10-26T09:17+01:00",
+ "releves": 406,
+ "matinees": 19,
  "premiere_matinee": "2026-09-30",
- "derniere_matinee": "2026-10-23",
- "releves_acces": 340,
+ "derniere_matinee": "2026-10-26",
+ "releves_acces": 365,
  "ecartees": [
   {
    "date": "2026-10-06",
@@ -213,6 +213,18 @@
   {
    "date": "2026-10-23",
    "heure": "08:05",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-26",
+   "heure": "07:00",
+   "capture": "large",
+   "raison": "sans_couleur_thorez"
+  },
+  {
+   "date": "2026-10-26",
+   "heure": "07:10",
    "capture": "large",
    "raison": "sans_couleur_thorez"
   }
