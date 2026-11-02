@@ -1,10 +1,10 @@
 {
- "maj": "2026-10-30T09:20+01:00",
- "releves": 505,
- "matinees": 23,
+ "maj": "2026-11-02T09:16+01:00",
+ "releves": 530,
+ "matinees": 24,
  "premiere_matinee": "2026-09-30",
- "derniere_matinee": "2026-10-30",
- "releves_acces": 458,
+ "derniere_matinee": "2026-11-02",
+ "releves_acces": 483,
  "ecartees": [
   {
    "date": "2026-10-06",
