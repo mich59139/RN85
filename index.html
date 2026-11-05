@@ -403,6 +403,21 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 @media (min-width: 760px) { .pol-air { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .pol-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pol-kpis .pol-kpi:last-child { grid-column: 1 / -1; } }
 #vue-pollution .rn-note, #vue-pollution .rn-method { max-width: none; }
+.rn { --pol-alerte: #a8570a; }
+@media (prefers-color-scheme: dark) { .rn { --pol-alerte: #f2a64a; } }
+.pol-renvoi { margin: 0; padding: 12px var(--rn-gouttiere) 16px; border-top: 1px solid var(--rn-bande-filet); font-size: 14px; line-height: 1.45; color: var(--rn-bande-texte); }
+.pol-renvoi a { color: var(--rn-bande-texte); font-weight: 600; text-underline-offset: 3px; }
+.pol-renvoi b { color: #f2a64a; }
+.pol-dg-chapeau { margin: 0; font-size: 16px; line-height: 1.55; color: var(--rn-encre-douce); }
+.pol-dg-grille { display: grid; gap: 14px; }
+@media (min-width: 760px) { .pol-dg-grille { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.pol-dg { display: grid; gap: 8px; align-content: start; padding: 14px 16px 16px; background: var(--rn-fond-doux); border-left: 3px solid var(--pol-alerte); border-radius: 0 6px 6px 0; min-width: 0; }
+.pol-dg h3 { margin: 0; font-size: 16.5px; font-weight: 600; }
+.pol-dg p, .pol-dg ul { margin: 0; font-size: 14.5px; line-height: 1.55; }
+.pol-dg ul { padding-left: 1.1rem; display: grid; gap: 6px; }
+.pol-dg b { font-weight: 600; }
+.pol-dg .pol-chiffre { font-weight: 600; color: var(--pol-alerte); }
+.pol-dg-nuance { color: var(--color-fg-muted); font-size: 13.5px !important; }
 .pol-h3 { margin: 10px 0 0; font-size: 15px; font-weight: 600; }
 .pol-lecture { display: grid; gap: 8px; }
 .pol-lecture p { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--rn-encre-douce); }
@@ -466,7 +481,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <a href="#carte">La carte</a><a href="#d1091">D1091</a><a href="#jours">Jour après jour</a><a href="#troncons">Tronçons</a><a href="#methode">Méthode</a>
     </nav>
     <nav class="rn-liens" data-vue="pollution" aria-label="Parties de l’onglet pollution" hidden>
-      <a href="#pol-axes">Axe par axe</a><a href="#pol-sante">L’air</a><a href="#pol-cumuls">Cumuls</a><a href="#pol-jours">Jour après jour</a><a href="#pol-methode">Méthode</a>
+      <a href="#pol-dangers">Les dangers</a><a href="#pol-axes">Axe par axe</a><a href="#pol-sante">L’air</a><a href="#pol-cumuls">Cumuls</a><a href="#pol-jours">Jour après jour</a><a href="#pol-methode">Méthode</a>
     </nav>
   </div>
 
@@ -652,6 +667,46 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <div class="pol-kpis" id="pol-kpis"></div>
       <div class="pol-air" id="pol-air"></div>
       <p class="pol-manque" id="pol-manque" hidden></p>
+      <p class="pol-renvoi" id="pol-renvoi"></p>
+    </div>
+  </section>
+
+  <section class="rn-section pol-dangers" id="pol-dangers" aria-labelledby="pol-dangers-titre">
+    <div class="rn-card">
+      <h2 class="rn-card-title" id="pol-dangers-titre">Pourquoi s’en préoccuper</h2>
+      <p class="pol-dg-chapeau">Les hausses estimées restent loin des seuils d’alerte réglementaires : les bouchons ne créent pas un danger immédiat. Ils créent une exposition qui revient chaque jour ouvré, aux mêmes heures et aux mêmes endroits, ainsi qu’un CO2 qui ne disparaît pas.</p>
+      <div class="pol-dg-grille">
+        <article class="pol-dg">
+          <h3>Le CO2 s’accumule pour des siècles</h3>
+          <p id="pol-dg-co2"></p>
+          <p>Ce gaz ne se dissipe pas en quelques jours. Comme l’eau d’une baignoire dont le robinet coule plus vite que la bonde, selon l’image d’Hervé Nifenecker, il s’accumule dans l’atmosphère : une fois le brassage avec l’océan achevé, 20 à 35&nbsp;% du CO2 émis y restent encore pendant deux à vingt siècles. Chaque tonne ajoutée par une file d’attente pèse donc sur le climat bien après la journée qui l’a produite.</p>
+          <p class="pol-dg-nuance">Au bord de la route, le CO2 n’est pas toxique aux niveaux rencontrés : son danger est le réchauffement, pas l’air respiré.</p>
+        </article>
+        <article class="pol-dg">
+          <h3>L’air de la file se respire tout de suite</h3>
+          <p id="pol-dg-air"></p>
+          <p>Le dioxyde d’azote irrite les bronches et aggrave l’asthme, surtout chez l’enfant. Les particules fines pénètrent profondément dans les poumons et favorisent les maladies cardiaques et respiratoires : en France, elles sont tenues pour responsables de près de 40&nbsp;000 décès par an, 7&nbsp;% de la mortalité, selon Santé publique France.</p>
+          <p class="pol-dg-nuance">Une heure de file ne rend pas malade. C’est la répétition, chaque matin et chaque soir de semaine, qui compte.</p>
+        </article>
+        <article class="pol-dg">
+          <h3>Les plus exposés</h3>
+          <ul>
+            <li><b>Les automobilistes eux-mêmes</b> : au cœur du trafic, le dioxyde d’azote dans l’habitacle peut atteindre deux fois le niveau mesuré au bord de la route (Airparif).</li>
+            <li><b>Les riverains</b> de la RN85 entre l’avenue Maurice-Thorez et le premier feu, de l’avenue Maurice-Thorez et du bas de la D1091, à Vizille ; à Jarrie et à Champagnier, ceux des abords du feu de Champagnier.</li>
+            <li><b>Les piétons et les cyclistes</b> qui longent la file aux heures de pointe.</li>
+            <li><b>Les personnes fragiles</b> : enfants, personnes âgées, asthmatiques, femmes enceintes, personnes souffrant du cœur.</li>
+          </ul>
+        </article>
+        <article class="pol-dg">
+          <h3>Des gestes simples</h3>
+          <ul>
+            <li><b>Dans la file</b> : vitres fermées et air intérieur en recyclage, pour ne pas aspirer l’air des pots d’échappement ; aérer l’habitacle une fois la file passée.</li>
+            <li><b>À pied, à vélo, en courant</b> : aux heures de pointe, préférer un itinéraire à l’écart de la file.</li>
+            <li><b>À la maison, au bord de ces axes</b> : aérer chaque jour au moins dix minutes, plutôt en dehors des heures de file (avant 7 h, en milieu de journée ou après 19 h).</li>
+            <li><b>Moteur</b> : quand la file reste longuement immobile, couper le moteur si le véhicule le permet.</li>
+          </ul>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -765,6 +820,10 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <li>Atmo Auvergne-Rhône-Alpes, <a href="https://www.atmo-auvergnerhonealpes.fr/sites/aura/files/medias/documents/2024-09/Rapport_EvaluationQA_A480_VF16052024.pdf">évaluation de la qualité de l’air en proximité de l’A480</a>, 2024 (mesures de 2023).</li>
         <li>Étude de trafic du carrefour RN85 / RD64, CeRyX Trafic System pour Isère Aménagement, 2019.</li>
         <li>Calendrier des vacances scolaires, zone A : <a href="https://www.onisep.fr/vacances-scolaires-calendrier-2026-2027">Onisep</a>.</li>
+        <li>Durée de séjour du CO2 dans l’atmosphère : D. Archer et al., <a href="https://www.annualreviews.org/doi/10.1146/annurev.earth.031208.100206">Atmospheric lifetime of fossil fuel carbon dioxide</a>, Annual Review of Earth and Planetary Sciences, 2009 ; image de la baignoire : Hervé Nifenecker, présentation « Le climat », d’après Jean Poitou.</li>
+        <li>Santé publique France, <a href="https://santepubliquefrance.fr/presse/2021/pollution-de-l-air-ambiant-nouvelles-estimations-de-son-impact-sur-la-sante-des-francais">impact de la pollution de l’air ambiant sur la santé des Français</a>, 14 avril 2021.</li>
+        <li>Airparif, <a href="https://www.airparif.fr/sites/default/files/document_publication/NUMERO37.pdf">quelle pollution tout au long de la journée ?</a>, novembre 2011 (exposition dans l’habitacle).</li>
+        <li>Conseils d’aération et bons réflexes : <a href="https://www.sante.fr/node/16313451">sante.fr</a> et <a href="https://www.paris.fr/pages/les-bons-reflexes-en-cas-de-pic-de-pollution-4713">Ville de Paris</a>.</li>
       </ul>
     </div>
   </details>
@@ -3435,6 +3494,31 @@ dash.calc('soir_par_troncon', {
     });
   }
 
+  // ---------- Pourquoi s'en préoccuper : chiffres du jour et cumul ----------
+  function phrase(id, morceaux) {
+    const p = $(id); p.replaceChildren();
+    morceaux.forEach((m) => { if (typeof m === 'string') p.append(document.createTextNode(m)); else p.append(el('span', 'pol-chiffre', m.c)); });
+  }
+  function dessinerDangers(j, jours) {
+    const ref = j.type ? jours[jours.length - 1].date : j.date;
+    const cumul = jours.filter((x) => x.date <= ref).reduce((s, x) => s + x.em.co2, 0);
+    const mc = moyenne(jours, false), mv = moyenne(jours, true);
+    const an = mc ? mc.em.co2 * 175 + (mv ? mv.em.co2 : mc.em.co2 * 0.5) * 75 : 0;
+    const n = jours.filter((x) => x.date <= ref).length;
+    phrase('pol-dg-co2', ['Du ' + dateLong(jours[0].date).replace(/^\S+ /, '') + ' au ' + dateLong(ref).replace(/^\S+ /, '') + ', sur ' + n + ' journées relevées, les bouchons ont ajouté environ ', { c: fCO2(cumul) }, ' de CO2. Au rythme observé, cela représente de l’ordre de ', { c: nf(Math.round(an / 1e7) * 10) + ' tonnes' }, ' par an, qui s’ajoutent chaque année à celles des années précédentes.']);
+    const pm = j.picMax, ex = j.expose;
+    if (pm && pm.pic > 0) {
+      phrase('pol-dg-air', [(j.type ? 'Une journée de classe moyenne, pendant l’heure la plus chargée' : 'Le ' + dateLong(j.date) + ', pendant l’heure la plus chargée' + (pm.picH ? ' (de ' + finHeure(pm.picH) + ')' : '')) + ', l’air au plus près de la file, ' + pm.nom.replace(/^RN85, /, 'sur la RN85 ').replace(/^Avenue/, 'avenue') + ', contenait environ ', { c: fPlus(pm.pic) }, ' de dioxyde d’azote, soit ', { c: fPct(pm.pic / FOND_NO2) }, ' du niveau de fond moyen mesuré à Grenoble. ' + (j.type || !j.vac ? 'Cette hausse tombe au moment des trajets vers l’école et le travail.' : 'Même en période de vacances scolaires, la file revient.')]);
+    } else {
+      phrase('pol-dg-air', ['Ce jour-là, aucune file relevée n’a été assez longue pour modifier sensiblement l’air. Les jours de classe, pendant l’heure la plus chargée, la hausse de dioxyde d’azote atteint en moyenne ', { c: mc && mc.picMax ? fPlus(mc.picMax.pic) : '—' }, ' au plus près de la file.']);
+    }
+    const rv = $('pol-renvoi'); rv.replaceChildren();
+    const b = el('b', '', 'À savoir. ');
+    const a = el('a', '', 'Pourquoi s’en préoccuper'); a.href = '#pol-dangers';
+    rv.append(b, document.createTextNode('Le CO2 ajouté par les bouchons s’accumule dans l’atmosphère pour des siècles ; l’air de la file, lui, se respire tout de suite, au moment des trajets vers l’école et le travail. '), a);
+    void ex;
+  }
+
   // ---------- La journée choisie : la même que dans l'onglet des bouchons ----------
   const selJour = $('jour');
   function choisirJour(d) {
@@ -3455,6 +3539,7 @@ dash.calc('soir_par_troncon', {
     if (!j) j = jours[jours.length - 1];
     dessinerBande(j, jours);
     manques(j);
+    dessinerDangers(j, jours);
     dessinerAxes(j);
     dessinerPoints(j);
     dessinerCumuls(j, jours);
