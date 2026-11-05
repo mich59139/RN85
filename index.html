@@ -2032,6 +2032,8 @@ dash.calc('soir_par_troncon', {
       return { type: false, date: v, cr: par('carte_releves', du), ar: par('acces_releves', du), rl: par('releves', du), am: par('apres_midi', du), d1: d1Index(v) };
     }
     const aMatin = () => !!idx && (idx.type ? idx.mt.size > 0 : idx.rl.size > 0);
+    // Matinée relevée par l'accès officiel Google sans le détail par portion de 100 m (seulement le 4 novembre 2026).
+    const sansDetail = () => !!idx && !idx.type && idx.rl.size > 0 && idx.cr.size === 0;
     const aSoir = () => !!idx && (idx.type ? idx.st.size > 0 : idx.am.size > 0);
     const premierK = () => (aMatin() || !aSoir() ? 0 : NBM);
     const dernierK = () => (aSoir() ? JOURNEE_C.length - 1 : NBM - 1);
@@ -2271,7 +2273,8 @@ dash.calc('soir_par_troncon', {
       const blocs = [
         {
           titre: 'Le matin, vers Grenoble →', creneaux: CRM, ou: (d) => (d < off ? ouD1(d) : segDe(tr)(d - off)),
-          vide: aMatin() || aD1('matin') ? null : (type ? 'Pas de relevé' : 'Pas de relevé ce matin-là'),
+          vide: sansDetail() ? (etEl.clientWidth < 400 ? 'Sans détail par portion' : 'Longueurs par tronçon seulement, sans détail par portion')
+            : aMatin() || aD1('matin') ? null : (type ? 'Pas de relevé' : 'Pas de relevé ce matin-là'),
           cell: (cr, i) => (i < nbD ? celluleD1('matin')(cr, i) : rnMatin(cr, i - nbD)),
         },
         {
@@ -2405,7 +2408,8 @@ dash.calc('soir_par_troncon', {
         aucun = !rowS && !d1Ici;
         bins.forEach((b) => peindre(b, b.ligne === 'd1091' ? d1Couleur(b) : (b.ligne === 'rn85' && rowS ? couleurCode(rowS.retour[b.i]) : null)));
       }
-      if (msg) { msg.textContent = aucun ? 'Pas de relevé à cette heure' : ''; msg.hidden = !aucun; }
+      const longueursSeules = matin && !idx.type && sansDetail() && idx.rl.has(s.c);
+      if (msg) { msg.textContent = longueursSeules ? 'Longueurs relevées, sans détail par portion ce matin-là' : aucun ? 'Pas de relevé à cette heure' : ''; msg.hidden = !(aucun || longueursSeules); }
       lire(s);
       if (friseObj) friseObj.maj(state.k);
       if (etObj) etObj.curseur(state.k);
