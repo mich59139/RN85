@@ -385,7 +385,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .rn-cr-leg { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
 .rn-cr-leg-t { color: var(--color-fg); font-weight: 600; }
 .rn-sw.rn-sw-vide { background: none; border: 1px dashed var(--cds-chart-axis); width: calc(.8rem - 2px); height: calc(.8rem - 2px); }
-.rn-sw.rn-sw-pic { background: none; border: 1.5px solid var(--color-fg); width: calc(.8rem - 3px); height: calc(.8rem - 3px); }
+.rn-sw.rn-sw-pic { background: none; border: 2.5px solid var(--color-fg); width: calc(.8rem - 5px); height: calc(.8rem - 5px); }
 .rn-cr-chart { min-height: 0; cursor: crosshair; }
 #table-d1091 tr.rn-cr-groupe td { text-align: left; font-weight: 600; padding-top: 14px; color: var(--color-fg); border-bottom: 1px solid var(--color-fg); }
 #table-d1091 td:first-child { white-space: normal; min-width: 9rem; }
@@ -2874,7 +2874,14 @@ dash.calc('soir_par_troncon', {
   const insec = (t) => t.replace(/ ([:;?!])/g, ' $1').replace(/(\d) (\d{3})/g, '$1 $2')
     .replace(/(\d) (h|min|s|m|km)(?=[\s,.;)]|$)/g, '$1 $2').replace(/( h) (\d)/g, '$1 $2');
   const SEUIL_ROUGE = 50;   // une file compte à partir de 50 m en rouge sur le tronçon
-  const couleurRouge = (v, max) => (v === 0 ? { fill: cssVar('--color-border-line'), op: 0.45 } : { fill: trv('--tr-rouge'), op: 0.12 + 0.88 * Math.min(1, v / max) });
+  // Couleurs pleines (sans transparence) : saumon pour les petites files, rouge, puis rouge foncé pour les plus longues.
+  // Les petites files restent nettement visibles à côté des cases sans file (Michel, 8 novembre 2026).
+  const couleurRouge = (v, max) => {
+    if (v === 0) return { fill: trv('--tr-neutre'), op: 1 };
+    const t = Math.min(1, v / max);
+    const fill = t < 0.5 ? d3.interpolateLab('#f4a582', trv('--tr-rouge'))(t * 2) : d3.interpolateLab(trv('--tr-rouge'), trv('--tr-fonce'))((t - 0.5) * 2);
+    return { fill, op: 1 };
+  };
   function legendeRouge(el, ech) {
     el.replaceChildren();
     const d0 = document.createElement('div'); d0.className = 'rn-cr-leg';
@@ -3070,7 +3077,7 @@ dash.calc('soir_par_troncon', {
         if (v && (!pic || v > pic[0])) pic = [v, k];
       });
       // Le pic du tronçon, encadré.
-      if (pic) svg.append('rect').attr('x', xk(pic[1]) + 0.5).attr('y', y0 + 1).attr('width', Math.max(2, cw - 1)).attr('height', ch - 2).attr('rx', 2).attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 1.5).attr('pointer-events', 'none');
+      if (pic) svg.append('rect').attr('x', xk(pic[1]) + 0.5).attr('y', y0 + 1).attr('width', Math.max(2, cw - 1)).attr('height', ch - 2).attr('rx', 2).attr('fill', 'none').attr('stroke', fg).attr('stroke-width', 2.5).attr('pointer-events', 'none');
     });
     liste.forEach((c, k) => {
       if (!(c.endsWith(':00') || (!etroit && c.endsWith(':30')))) return;
