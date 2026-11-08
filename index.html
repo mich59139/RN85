@@ -418,7 +418,18 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .pol-air-rien { margin: 0; font-size: 14px; color: var(--rn-bande-doux); }
 .pol-manque { margin: 0; padding: 10px var(--rn-gouttiere) 14px; border-top: 1px solid var(--rn-bande-filet); font-size: 13px; color: var(--rn-bande-doux); }
 @media (min-width: 760px) { .pol-air { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { .pol-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pol-kpis .pol-kpi:last-child { grid-column: 1 / -1; } }
+@media (max-width: 900px) { .pol-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pol-kpis .pol-kpi:last-child { grid-column: 1 / -1; } }
+@media (max-width: 600px) { .pol-kpis { grid-template-columns: minmax(0, 1fr); } }
+/* Même route, bouchon ou pas : deux barres, avec le bouchon et si la circulation avait été normale (Michel, 8 novembre 2026). */
+.pol-duo { display: grid; gap: 8px; margin: 8px 0 6px; }
+.pol-duo-tete { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 12px; font-size: 13px; line-height: 1.35; color: var(--rn-bande-doux); }
+.pol-duo-val { font-size: 18px; font-weight: 600; line-height: 1.2; color: var(--rn-bande-texte); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pol-duo-avec .pol-duo-lib { color: var(--rn-bande-texte); }
+.pol-duo-avec .pol-duo-val { font-size: 24px; }
+.pol-duo-barre { display: flex; height: 10px; margin-top: 4px; border-radius: 2px; overflow: hidden; }
+.pol-duo-barre span { display: block; height: 100%; }
+.pol-duo-normal { background: #7c8792; }
+.pol-duo-ajout { background: #f2a64a; }
 #vue-pollution .rn-note, #vue-pollution .rn-method { max-width: none; }
 .rn { --pol-alerte: #a8570a; }
 @media (prefers-color-scheme: dark) { .rn { --pol-alerte: #f2a64a; } }
@@ -471,6 +482,12 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
 .pol-cle.pol-matin { background: var(--pol-matin); }
 .pol-cle.pol-soir { background: var(--pol-soir); }
 .pol-cle.pol-vac { background: var(--pol-vac); border: 1px solid var(--color-border-line); }
+.rn { --pol-normal: #a3adb6; }
+@media (prefers-color-scheme: dark) { .rn { --pol-normal: #6b7680; } }
+.pol-normal { fill: var(--pol-normal); }
+.pol-ajout { fill: var(--pol-alerte); }
+.pol-cle.pol-normal { background: var(--pol-normal); }
+.pol-cle.pol-ajout { background: var(--pol-alerte); }
 </style>
 </head>
 <body>
@@ -699,7 +716,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         <h2 class="rn-jour-titre" id="pol-titre"><span class="dash-skeleton">Journée</span></h2>
         <p class="rn-jour-sous" id="pol-sous"></p>
       </div>
-      <p class="pol-intro">Ce que les bouchons relevés sur la RN85, la D1091 et l’avenue Maurice-Thorez ajoutent à ce que la même circulation émettrait sans bouchon.</p>
+      <p class="pol-intro">Même route, bouchon ou pas : sur la RN85, la D1091 et l’avenue Maurice-Thorez, ce que rejettent les véhicules pris dans les files, comparé à ce que les mêmes véhicules rejetteraient au même endroit si la circulation était normale.</p>
       <div class="pol-kpis" id="pol-kpis"></div>
       <div class="pol-air" id="pol-air"></div>
       <p class="pol-manque" id="pol-manque" hidden></p>
@@ -752,7 +769,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <p class="rn-note" id="pol-axes-note"></p>
       <div class="rn-wrap">
         <table class="rn-table" id="pol-table-axes">
-          <thead><tr><th>Axe et moment</th><th>Longueur moyenne en rouge</th><th>CO2</th><th>Oxydes d’azote</th><th>Particules fines</th></tr></thead>
+          <thead><tr><th>Axe et moment</th><th>Longueur moyenne en rouge</th><th>CO2 rejeté dans la file</th><th>Oxydes d’azote rejetés dans la file</th><th>Particules fines ajoutées</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -765,7 +782,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <p class="rn-note" id="pol-sante-note"></p>
       <div class="rn-wrap rn-wrap-fige">
         <table class="rn-table" id="pol-table-points">
-          <thead><tr><th>Endroit</th><th>Dioxyde d’azote ajouté, heure la plus chargée</th><th>Dioxyde d’azote ajouté, moyenne de la journée</th><th>Part du repère journalier de l’OMS</th><th class="rn-opt">Particules fines ajoutées, moyenne de la journée</th></tr></thead>
+          <thead><tr><th>Endroit</th><th>Avec la file, heure la plus chargée</th><th>Si la circulation avait été normale, même heure</th><th>Avec la file, sur toute la période de bouchon</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -794,13 +811,13 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <p class="rn-note" id="pol-cumuls-note"></p>
       <div class="rn-wrap">
         <table class="rn-table" id="pol-table-cumuls">
-          <thead><tr><th>Période</th><th>Journées relevées</th><th>CO2</th><th>Oxydes d’azote</th><th>Particules fines</th></tr></thead>
+          <thead><tr><th>Période</th><th>Journées relevées</th><th>CO2 ajouté par les bouchons</th><th>Oxydes d’azote ajoutés</th><th>Particules fines ajoutées</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
       <div class="rn-wrap">
         <table class="rn-table" id="pol-table-types">
-          <thead><tr><th>Journée moyenne</th><th>Journées</th><th>CO2</th><th>Oxydes d’azote</th><th>Dioxyde d’azote ajouté au point le plus exposé, moyenne de la journée</th></tr></thead>
+          <thead><tr><th>Journée moyenne</th><th>Journées</th><th>CO2 ajouté par les bouchons</th><th>Oxydes d’azote ajoutés</th><th>Dioxyde d’azote au bord de la file, heure la plus chargée</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -821,7 +838,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
     <summary><h2 class="rn-h2">Méthode, limites et sources</h2></summary>
     <div class="rn-method">
       <h3>Les émissions</h3>
-      <p>Le calcul part uniquement des longueurs relevées toutes les cinq minutes sur Google Maps : en rouge et en orange sur la RN85 le matin et sur l’avenue Maurice-Thorez, en rouge sur la RN85 le soir (sens des retours) et sur la D1091. Aucun temps de trajet n’est utilisé. Pour chaque relevé, le nombre de véhicules qui traversent la file pendant cinq minutes, multiplié par la longueur de la file, donne les kilomètres parcourus en rouge et en orange. Chaque kilomètre en rouge (marche par à-coups, autour de 10 km/h) et en orange (circulation ralentie, autour de 30 km/h) reçoit le surcroît d’émission par rapport à une circulation normale, d’après les courbes du Cerema (méthode européenne Copert 5) et, pour l’usure des freins et des pneus, la méthode européenne EMEP/EEA.</p>
+      <p>Le calcul part uniquement des longueurs relevées toutes les cinq minutes sur Google Maps : en rouge et en orange sur la RN85 le matin et sur l’avenue Maurice-Thorez, en rouge sur la RN85 le soir (sens des retours) et sur la D1091. Aucun temps de trajet n’est utilisé. Pour chaque relevé, le nombre de véhicules qui traversent la file pendant cinq minutes, multiplié par la longueur de la file, donne les kilomètres parcourus en rouge et en orange. Chaque kilomètre en rouge (marche par à-coups, autour de 10 km/h) et en orange (circulation ralentie, autour de 30 km/h) reçoit le surcroît d’émission par rapport à une circulation normale, d’après les courbes du Cerema (méthode européenne Copert 5) et, pour l’usure des freins et des pneus, la méthode européenne EMEP/EEA. Le point de comparaison est la même circulation sans bouchon : les mêmes véhicules sur les mêmes kilomètres, à l’émission la plus basse des courbes du Cerema, vers 70 km/h. Pour les particules fines, seul ce que le bouchon ajoute est estimé.</p>
       <div class="rn-wrap">
         <table class="rn-table">
           <thead><tr><th>Hypothèse</th><th>Valeur</th></tr></thead>
@@ -832,16 +849,20 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
             <tr><td>Surcroît par km en rouge, voiture / poids lourd</td><td>155 g / 1 000 g de CO2<small>0,32 g / 7 g d’oxydes d’azote</small></td></tr>
             <tr><td>Surcroît par km en orange, voiture / poids lourd</td><td>45 g / 300 g de CO2<small>0,14 g / 3 g d’oxydes d’azote</small></td></tr>
             <tr><td>Particules, voiture, sous 40 km/h</td><td>4 mg (rouge) ou 1 mg (orange) à l’échappement<small>7,5 mg d’usure des freins et des pneus</small></td></tr>
+            <tr><td>Circulation normale, par km, voiture / poids lourd</td><td>162 g / 681 g de CO2<small>0,40 g / 1 g d’oxydes d’azote ; vers 70 km/h, parc de 2020</small></td></tr>
+            <tr><td>Circulation dans l’autre sens</td><td>autant de véhicules que dans le sens de la file<small>hypothèse, faute de comptage par sens</small></td></tr>
+            <tr><td>Période de bouchon, pour chaque endroit</td><td>du premier au dernier relevé où la file l’atteint sur 50 m au moins<small>dans la plage relevée</small></td></tr>
           </tbody>
         </table>
       </div>
       <h3>L’air près des files</h3>
-      <p>La hausse des concentrations est estimée pour une façade située à une dizaine de mètres de la chaussée, avec le modèle simple d’une file de véhicules qui émet sur toute sa longueur : la concentration ajoutée est égale à deux fois l’émission par mètre, divisée par la vitesse du vent (1,5 m/s, valeur courante des matinées calmes de la cuvette grenobloise) et par la hauteur de mélange de l’air au droit de la façade (3 m). Les oxydes d’azote ajoutés sont convertis en dioxyde d’azote à raison de 30 %. Les particules fines comptent les particules d’échappement et la moitié des particules d’usure. Sur chaque tronçon, la part de la longueur en rouge et en orange donne la probabilité qu’une façade se trouve le long de la file au moment du relevé. L’heure la plus chargée est la moyenne glissante sur une heure la plus élevée de la journée ; la moyenne de la journée répartit la hausse sur 24 heures.</p>
-      <p>Appliqué à un axe de plus de 100 000 véhicules par jour comme l’A480, ce modèle donne une hausse de 15 à 20 µg/m³ de dioxyde d’azote : c’est l’ordre de grandeur de l’écart mesuré en 2023 par Atmo Auvergne-Rhône-Alpes entre les abords de l’A480 et le fond urbain des Frênes (une douzaine à une quinzaine de µg/m³). Le modèle penche donc plutôt vers le haut.</p>
+      <p>La hausse des concentrations est estimée pour une façade située à une dizaine de mètres de la chaussée, avec le modèle simple d’une file de véhicules qui émet sur toute sa longueur : la concentration ajoutée est égale à deux fois l’émission par mètre, divisée par la vitesse du vent (1,5 m/s, valeur courante des matinées calmes de la cuvette grenobloise) et par la hauteur de mélange de l’air au droit de la façade (3 m). Les oxydes d’azote ajoutés sont convertis en dioxyde d’azote à raison de 30 %. Les particules fines comptent les particules d’échappement et la moitié des particules d’usure. Sur chaque tronçon, la part de la longueur en rouge et en orange donne la probabilité qu’une façade se trouve le long de la file au moment du relevé. La circulation normale est comptée de la même façon, pour les deux sens et avec autant de véhicules dans chaque sens ; s’y ajoute l’air de fond mesuré à Grenoble loin du trafic (14 µg/m³ de dioxyde d’azote en moyenne annuelle, station des Frênes). L’heure la plus chargée est la moyenne glissante sur une heure la plus élevée de la demi-journée. La période de bouchon va, pour chaque endroit, du premier au dernier relevé où la file l’atteint sur 50 m au moins.</p>
+      <p>Appliqué à un axe de plus de 100 000 véhicules par jour comme l’A480, ce modèle donne une hausse de 15 à 20 µg/m³ de dioxyde d’azote : c’est l’ordre de grandeur de l’écart mesuré en 2023 par Atmo Auvergne-Rhône-Alpes entre les abords de l’A480 et le fond urbain des Frênes (une douzaine à une quinzaine de µg/m³). Le modèle penche donc plutôt vers le haut. Sur la RN85 à Vizille, la même circulation sans bouchon donne le matin, air de fond compris, environ 35 µg/m³ au bord de la route : un peu plus que les 29 à 30 µg/m³ mesurés en moyenne sur l’année près du trafic à Grenoble, ce qui reste plausible pour une heure de pointe.</p>
       <h3>Limites</h3>
       <ul>
         <li>Ce sont des ordres de grandeur, pas des mesures de l’air. Seule une campagne de mesure d’Atmo Auvergne-Rhône-Alpes peut établir les concentrations réellement respirées le long des files.</li>
-        <li>Seul le surcroît dû aux bouchons est compté. La circulation elle-même, sans bouchon, émet bien davantage : près du trafic dense, Atmo mesure à Grenoble deux fois plus de dioxyde d’azote qu’en fond urbain.</li>
+        <li>La circulation normale est un point de comparaison calculé, pas une mesure : sa vitesse (vers 70 km/h), le parc de véhicules de 2020 et le partage entre les deux sens sont des hypothèses. Pour les particules fines, seul ce que le bouchon ajoute est estimé.</li>
+        <li>Les niveaux d’une heure ou d’une période de bouchon ne se comparent pas aux repères de l’OMS et de l’Union européenne sur 24 heures ou sur l’année ; seule la valeur limite européenne sur une heure (200 µg/m³) porte sur la même durée.</li>
         <li>Les débits datent des comptages de 2014 ; la direction des routes annonce 35 000 véhicules par jour en 2024 sur la RN85. Pour l’avenue Maurice-Thorez et la D1091, aucun comptage n’est disponible.</li>
         <li>Le vent, la stabilité de l’air et la distance réelle des façades changent fortement les concentrations : par vent nul ou par inversion de température, la hausse peut être deux à trois fois plus forte ; par vent soutenu, deux fois plus faible.</li>
         <li>Les bouchons hors des plages relevées, le week-end, sur l’A480 et la file du soir vers Grenoble ne sont pas comptés.</li>
@@ -3240,6 +3261,10 @@ dash.calc('soir_par_troncon', {
     const e = EF[c];
     return { co2: (1 - ppl) * e.vl.co2 + ppl * e.pl.co2, nox: (1 - ppl) * e.vl.nox + ppl * e.pl.nox, pm: (1 - ppl) * e.vl.pm, us: (1 - ppl) * e.vl.us };
   };
+  // Point de comparaison « même route, bouchon ou pas » (Michel, 8 novembre 2026) : les mêmes véhicules sur les mêmes
+  // kilomètres en circulation normale, à l'émission la plus basse des courbes du Cerema (vers 70 km/h, parc de 2020).
+  const NORMAL = { vl: { co2: 162, nox: 0.40 }, pl: { co2: 681, nox: 1.0 } };
+  const normal = (ppl) => ({ co2: (1 - ppl) * NORMAL.vl.co2 + ppl * NORMAL.pl.co2, nox: (1 - ppl) * NORMAL.vl.nox + ppl * NORMAL.pl.nox });
   // Débits dans les files (véhicules par heure) et part des poids lourds.
   const AXES = {
     rn85_matin: { nom: 'RN85 le matin, vers Grenoble', court: 'RN85 matin', moment: 'matin', debit: 1700, ppl: 0.03, nominal: () => 25 },
@@ -3250,9 +3275,10 @@ dash.calc('soir_par_troncon', {
   };
   const ORDRE = ['rn85_matin', 'thorez', 'd1091_matin', 'rn85_soir', 'd1091_soir'];
   // Air près des files : façade à une dizaine de mètres, vent de 1,5 m/s, hauteur de mélange de 3 m.
-  const VENT = 1.5, MELANGE = 3, PART_NO2 = 0.3, OMS_NO2_JOUR = 25, FOND_NO2 = 14;
+  const VENT = 1.5, MELANGE = 3, PART_NO2 = 0.3, FOND_NO2 = 14;
   const conc = (debit, gkm) => (2 * (debit / 3600) * gkm * 1000) / (Math.sqrt(2 * Math.PI) * VENT * MELANGE);
   const COMPLET = 0.6;
+  const FILE_MIN = 50;  // période de bouchon : la file atteint l'endroit sur 50 m au moins
   const S = ['s1', 's2', 's3', 's4', 's5', 's6', 's7'];
 
   // Endroits suivis pour l'air : tronçon, longueur, moments.
@@ -3309,18 +3335,20 @@ dash.calc('soir_par_troncon', {
       h.nominal = A.nominal(h.date);
       h.complet = h.n >= COMPLET * h.nominal;
       h.k = h.complet ? h.nominal / h.n : 1;  // demi-journée complète : ramenée à la plage entière
-      const er = surcroit('rouge', A.ppl), eo = surcroit('orange', A.ppl);
+      const er = surcroit('rouge', A.ppl), eo = surcroit('orange', A.ppl), n0 = normal(A.ppl);
       const tot = { co2: 0, nox: 0, pm: 0, us: 0 };
-      let somRouge = 0;
+      let somRouge = 0, vk = 0;
       h.creneaux.forEach((c) => {
         let R = 0, O = 0;
         Object.values(c.segs).forEach((v) => { R += v.r; O += v.o; });
         somRouge += R;
         const vkr = A.debit * (5 / 60) * (R / 1000), vko = A.debit * (5 / 60) * (O / 1000);
+        vk += vkr + vko;
         for (const p of ['co2', 'nox', 'pm', 'us']) tot[p] += vkr * er[p] + vko * eo[p];
       });
       h.rougeMoyen = h.n ? somRouge / h.n : 0;
-      h.em = { co2: tot.co2 * h.k, nox: tot.nox * h.k, pm: tot.pm * h.k, us: tot.us * h.k };  // en g
+      h.em = { co2: tot.co2 * h.k, nox: tot.nox * h.k, pm: tot.pm * h.k, us: tot.us * h.k };  // en g : ce que le bouchon ajoute
+      h.base = { co2: vk * n0.co2 * h.k, nox: vk * n0.nox * h.k };  // les mêmes kilomètres en circulation normale
     });
     return m;
   }
@@ -3331,23 +3359,30 @@ dash.calc('soir_par_troncon', {
     const er = surcroit('rouge', A.ppl), eo = surcroit('orange', A.ppl);
     const cR = conc(A.debit, er.nox) * PART_NO2, cO = conc(A.debit, eo.nox) * PART_NO2;
     const pR = conc(A.debit, er.pm + er.us / 2), pO = conc(A.debit, eo.pm + eo.us / 2);
+    // La même circulation sans bouchon, dans les deux sens, avec autant de véhicules dans chaque sens.
+    const cN = conc(2 * A.debit, normal(A.ppl).nox) * PART_NO2;
     const serie = h.creneaux.map((c) => {
       let R = 0, O = 0;
       pt.segs.forEach((s) => { const v = c.segs[s]; if (v) { R += v.r; O += v.o; } });
       const fr = Math.min(R / pt.long, 1), fo = Math.min(O / pt.long, 1 - fr);
-      return { t: minutes(c.heure), heure: c.heure, no2: fr * cR + fo * cO, pm: fr * pR + fo * pO };
+      return { t: minutes(c.heure), heure: c.heure, file: R + O, no2: fr * cR + fo * cO, pm: fr * pR + fo * pO };
     });
     // Heure la plus chargée : moyenne glissante sur une heure (12 relevés de 5 minutes).
-    let pic = 0, picH = null;
-    serie.forEach((x, i) => {
-      const f = serie.filter((y) => y.t >= x.t && y.t < x.t + 60);
-      const moy = f.reduce((s, y) => s + y.no2, 0) / Math.max(12, f.length);
-      if (moy > pic) { pic = moy; picH = x.heure; }
-      void i;
+    let pic = 0, picH = null, picPm = 0;
+    serie.forEach((x) => {
+      const f = serie.filter((y) => y.t >= x.t && y.t < x.t + 60), n = Math.max(12, f.length);
+      const moy = f.reduce((s, y) => s + y.no2, 0) / n;
+      if (moy > pic) { pic = moy; picH = x.heure; picPm = f.reduce((s, y) => s + y.pm, 0) / n; }
     });
-    const jourNo2 = serie.reduce((s, x) => s + x.no2, 0) * 5 / 1440 * h.k;
-    const jourPm = serie.reduce((s, x) => s + x.pm, 0) * 5 / 1440 * h.k;
-    return { pic, picH, jourNo2, jourPm };
+    // Période de bouchon : du premier au dernier relevé où la file atteint l'endroit sur 50 m au moins.
+    const ix = [];
+    serie.forEach((x, i) => { if (x.file >= FILE_MIN) ix.push(i); });
+    let periode = null;
+    if (ix.length) {
+      const p = serie.slice(ix[0], ix[ix.length - 1] + 1);
+      periode = { debut: p[0].heure, fin: p[p.length - 1].heure, moy: p.reduce((s, y) => s + y.no2, 0) / p.length };
+    }
+    return { pic, picH, picPm, cN, periode };
   }
 
   // ---------- Les journées ----------
@@ -3371,22 +3406,25 @@ dash.calc('soir_par_troncon', {
     const jours = Array.from(parDate.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
     jours.forEach((j) => {
       j.em = { co2: 0, nox: 0, pm: 0, us: 0 };
+      j.base = { co2: 0, nox: 0 };
       j.moments = { matin: { co2: 0, nox: 0, pm: 0, us: 0 }, soir: { co2: 0, nox: 0, pm: 0, us: 0 } };
       Object.values(j.demis).forEach((h) => {
         for (const p of ['co2', 'nox', 'pm', 'us']) { j.em[p] += h.em[p]; j.moments[AXES[h.axe].moment][p] += h.em[p]; }
+        j.base.co2 += h.base.co2; j.base.nox += h.base.nox;
       });
       j.air = pts.map((pt) => {
-        const r = { id: pt.id, nom: pt.nom, lieu: pt.lieu, pic: 0, picH: null, picMoment: null, jourNo2: 0, jourPm: 0, n: 0 };
+        const r = { id: pt.id, nom: pt.nom, lieu: pt.lieu, pic: 0, picH: null, picMoment: null, picPm: 0, cN: null, periode: null, n: 0 };
         pt.axes.forEach((a) => {
           const h = j.demis[a]; if (!h) return;
           const x = airDemi(h, pt);
-          r.n++; r.jourNo2 += x.jourNo2; r.jourPm += x.jourPm;
-          if (x.pic > r.pic) { r.pic = x.pic; r.picH = x.picH; r.picMoment = AXES[a].moment; }
+          r.n++;
+          if (r.cN === null) r.cN = x.cN;
+          // L'heure la plus chargée, la circulation normale et la période de bouchon viennent de la même demi-journée.
+          if (x.pic > r.pic) Object.assign(r, { pic: x.pic, picH: x.picH, picMoment: AXES[a].moment, picPm: x.picPm, cN: x.cN, periode: x.periode });
         });
         return r;
       });
       const avec = j.air.filter((a) => a.n);
-      j.expose = avec.length ? avec.reduce((a, b) => (b.jourNo2 > a.jourNo2 ? b : a)) : null;
       j.picMax = avec.length ? avec.reduce((a, b) => (b.pic > a.pic ? b : a)) : null;
     });
     cache = { sig, jours, pts };
@@ -3401,21 +3439,25 @@ dash.calc('soir_par_troncon', {
     ORDRE.forEach((a) => {
       const hs = js.map((j) => j.demis[a]).filter((h) => h && h.complet);
       if (!hs.length) return;
-      const em = { co2: 0, nox: 0, pm: 0, us: 0 };
-      hs.forEach((h) => { for (const p in em) em[p] += h.em[p] / hs.length; });
-      demis[a] = { axe: a, em, n: hs.length, complet: true, rougeMoyen: hs.reduce((s, h) => s + h.rougeMoyen, 0) / hs.length };
+      const em = { co2: 0, nox: 0, pm: 0, us: 0 }, base = { co2: 0, nox: 0 };
+      hs.forEach((h) => { for (const p in em) em[p] += h.em[p] / hs.length; for (const p in base) base[p] += h.base[p] / hs.length; });
+      demis[a] = { axe: a, em, base, n: hs.length, complet: true, rougeMoyen: hs.reduce((s, h) => s + h.rougeMoyen, 0) / hs.length };
     });
-    const em = { co2: 0, nox: 0, pm: 0, us: 0 }, moments = { matin: { co2: 0, nox: 0, pm: 0, us: 0 }, soir: { co2: 0, nox: 0, pm: 0, us: 0 } };
-    Object.values(demis).forEach((h) => { for (const p in em) { em[p] += h.em[p]; moments[AXES[h.axe].moment][p] += h.em[p]; } });
+    const em = { co2: 0, nox: 0, pm: 0, us: 0 }, base = { co2: 0, nox: 0 }, moments = { matin: { co2: 0, nox: 0, pm: 0, us: 0 }, soir: { co2: 0, nox: 0, pm: 0, us: 0 } };
+    Object.values(demis).forEach((h) => {
+      for (const p in em) { em[p] += h.em[p]; moments[AXES[h.axe].moment][p] += h.em[p]; }
+      for (const p in base) base[p] += h.base[p];
+    });
+    const moy = (l, f) => l.reduce((s, x) => s + f(x), 0) / l.length;
     const air = js[0].air.map((a0, i) => {
       const xs = js.map((j) => j.air.at(i)).filter((a) => a.n);
       if (!xs.length) return Object.assign({}, a0, { n: 0 });
-      return { id: a0.id, nom: a0.nom, lieu: a0.lieu, n: xs.length, pic: xs.reduce((s, a) => s + a.pic, 0) / xs.length, picH: null, picMoment: null,
-        jourNo2: xs.reduce((s, a) => s + a.jourNo2, 0) / xs.length, jourPm: xs.reduce((s, a) => s + a.jourPm, 0) / xs.length };
+      const ps = xs.filter((a) => a.periode);
+      return { id: a0.id, nom: a0.nom, lieu: a0.lieu, n: xs.length, pic: moy(xs, (a) => a.pic), picH: null, picMoment: null, picPm: moy(xs, (a) => a.picPm), cN: moy(xs, (a) => a.cN),
+        periode: ps.length ? { debut: null, fin: null, moy: moy(ps, (a) => a.periode.moy) } : null };
     });
     const avec = air.filter((a) => a.n);
-    return { type: true, vac, nb: js.length, demis, em, moments, air,
-      expose: avec.length ? avec.reduce((a, b) => (b.jourNo2 > a.jourNo2 ? b : a)) : null,
+    return { type: true, vac, nb: js.length, demis, em, base, moments, air,
       picMax: avec.length ? avec.reduce((a, b) => (b.pic > a.pic ? b : a)) : null };
   }
 
@@ -3424,15 +3466,23 @@ dash.calc('soir_par_troncon', {
   const fCO2 = (g) => (g >= 1e6 ? nf(g / 1e6, 1) + ' t' : nf(kg(g)) + ' kg');
   const fNOx = (g) => (g >= 1e4 ? nf(kg(g), 1) + ' kg' : g >= 1000 ? nf(kg(g), 2) + ' kg' : nf(g) + ' g');
   const fPart = (g) => (g >= 1000 ? nf(kg(g), 1) + ' kg' : nf(g, g < 10 ? 1 : 0) + ' g');
-  const fConc = (c) => (c >= 10 ? nf(c) : c >= 1 ? nf(c, 1) : c >= 0.01 ? nf(c, 2) : c > 0 ? 'moins de 0,01' : '0') + ' µg/m³';
+  const fConc = (c) => (c >= 10 ? nf(c) : c >= 1 ? nf(c, 1) : c >= 0.01 ? nf(c, 2) : c > 0 ? 'moins de 0,01' : '0') + '\u00a0µg/m³';
   // Le CO2 traduit en carburant, plus parlant (Michel, 6 novembre 2026) : 2,5 kg de CO2 par litre, essence et gazole mêlés.
   const litres = (g) => g / 2500;
   const arrL = (l) => nf(l >= 100 ? Math.round(l / 10) * 10 : Math.round(l));
   const pleins = (l) => { const n = Math.round(l / 50); return n <= 1 ? 'environ un plein de 50 litres' : 'environ ' + nf(n) + ' pleins de 50 litres'; };
   const fPlus = (c) => (c <= 0 ? 'aucune' : c < 0.01 ? 'moins de 0,01 µg/m³' : '+' + fConc(c));
-  const fPct = (x) => (x >= 0.095 ? nf(x * 100) : x >= 0.0095 ? nf(x * 100, 1) : x > 0 ? 'moins de 1' : '0') + ' %';
-  const fH = (t) => Math.floor(t / 60) + ' h' + (t % 60 ? ' ' + String(t % 60).padStart(2, '0') : '');
+  const fPct = (x) => (x >= 0.095 ? nf(x * 100) : x >= 0.0095 ? nf(x * 100, 1) : x > 0 ? 'moins de 1' : '0') + '\u00a0%';
+  const fH = (t) => Math.floor(t / 60) + '\u00a0h' + (t % 60 ? '\u00a0' + String(t % 60).padStart(2, '0') : '');
   const finHeure = (h) => (h ? fH(minutes(h)) + ' à ' + fH(minutes(h) + 60) : '');
+  // Bouchon ou pas : « 1,8 fois plus » ou « 30 % de plus » ; l'air au même endroit si la circulation avait été normale.
+  const fois = (avec, sans) => {
+    const r = avec / sans, v = Math.round(r * 10) / 10;
+    return r >= 1.5 ? (v % 1 === 0 ? nf(v) : nf(v, 1)) + ' fois plus' : nf(Math.round((r - 1) * 100)) + '\u00a0% de plus';
+  };
+  const sansFile = (a) => FOND_NO2 + a.cN;
+  const plage = (p) => (p.debut === p.fin ? 'vers ' + fH(minutes(p.debut)) : 'de ' + fH(minutes(p.debut)) + ' à ' + fH(minutes(p.fin)));
+  const lieuDe = (a) => a.nom.replace(/^RN85, /, 'sur la RN85, ').replace(/^D1091, /, 'sur la D1091, ').replace(/^Avenue/, 'avenue');
   const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt !== undefined) e.textContent = txt; return e; };
   const td = (txt, small) => { const c = el('td'); c.append(document.createTextNode(txt)); if (small) c.append(el('small', '', small)); return c; };
 
@@ -3446,27 +3496,53 @@ dash.calc('soir_par_troncon', {
   const separer = (s) => { const i = s.lastIndexOf(' '); return [s.slice(0, i), s.slice(i + 1)]; };
 
   // ---------- Le tableau noir ----------
+  // Deux barres : avec le bouchon, puis si la circulation avait été normale (même route, autant de véhicules).
+  function duo(libAvec, avecTxt, sansTxt, avec, sans) {
+    const d = el('div', 'pol-duo');
+    const m = Math.max(avec, sans, 1e-9);
+    const ligne = (cls, lib, val, normal, ajout) => {
+      const l = el('div', 'pol-duo-ligne ' + cls);
+      const t = el('div', 'pol-duo-tete'); t.append(el('span', 'pol-duo-lib', lib), el('span', 'pol-duo-val', val));
+      const b = el('div', 'pol-duo-barre');
+      const n = el('span', 'pol-duo-normal'); n.style.width = (100 * normal).toFixed(1) + '%'; b.append(n);
+      if (ajout > 0) { const x = el('span', 'pol-duo-ajout'); x.style.width = (100 * ajout).toFixed(1) + '%'; b.append(x); }
+      l.append(t, b);
+      return l;
+    };
+    d.append(ligne('pol-duo-avec', libAvec, avecTxt, sans / m, (avec - sans) / m), ligne('pol-duo-sans', 'Si la circulation avait été normale', sansTxt, sans / m, 0));
+    return d;
+  }
   function dessinerBande(j, jours) {
     $('pol-titre').textContent = j.type ? (j.vac ? 'Journée de vacances moyenne' : 'Journée de classe moyenne') : cap(dateLong(j.date));
     $('pol-sous').textContent = j.type ? 'Moyenne des ' + j.nb + ' journées ' + (j.vac ? 'de vacances scolaires' : 'de classe') + ' relevées'
       : (j.vac ? 'Vacances scolaires' : 'Jour de classe') + (j.date === jours[jours.length - 1].date ? ', dernière journée relevée' : '');
     const k = $('pol-kpis'); k.replaceChildren();
-    const aSoir = Object.keys(j.demis).some((a) => AXES[a].moment === 'soir');
-    const det = (p, f) => 'matin ' + f(j.moments.matin[p]) + (aSoir ? ', soir ' + f(j.moments.soir[p]) : ', soir pas encore compté');
-    const [c1, u1] = separer(fCO2(j.em.co2)), [c2, u2] = separer(fNOx(j.em.nox)), [c3, u3] = separer(fPart(j.em.pm + j.em.us));
-    k.append(kpi(c1, u1, 'CO2 ajouté', det('co2', fCO2) + '. Soit ' + arrL(litres(j.em.co2)) + ' litres de carburant brûlés en plus.'), kpi(c2, u2, 'Oxydes d’azote ajoutés', det('nox', fNOx)), kpi(c3, u3, 'Particules fines ajoutées', 'échappement, freins et pneus'));
+    const co2 = j.base.co2 + j.em.co2, nox = j.base.nox + j.em.nox;
+    const t1 = el('div', 'pol-kpi');
+    t1.append(el('div', 'pol-l', 'CO2 rejeté dans les files'), duo('Avec le bouchon', fCO2(co2), fCO2(j.base.co2), co2, j.base.co2),
+      el('div', 'pol-d', 'Soit ' + fois(co2, j.base.co2) + ' : le bouchon ajoute ' + fCO2(j.em.co2) + ', l’équivalent de ' + arrL(litres(j.em.co2)) + ' litres de carburant brûlés en plus.'));
+    const t2 = el('div', 'pol-kpi');
+    t2.append(el('div', 'pol-l', 'Oxydes d’azote rejetés dans les files'), duo('Avec le bouchon', fNOx(nox), fNOx(j.base.nox), nox, j.base.nox),
+      el('div', 'pol-d', 'Soit ' + fois(nox, j.base.nox) + ' : le bouchon ajoute ' + fNOx(j.em.nox) + '.'));
+    const [c3, u3] = separer(fPart(j.em.pm + j.em.us));
+    k.append(t1, t2, kpi(c3, u3, 'Particules fines ajoutées', 'Échappement, freins et pneus. Seul ce que le bouchon ajoute est estimé ici.'));
     const a = $('pol-air'); a.replaceChildren();
-    const pm = j.picMax, ex = j.expose;
+    const pm = j.picMax;
     if (!pm || pm.pic <= 0) { a.append(el('p', 'pol-air-rien', 'Aucune file relevée assez longue pour modifier l’air ce jour-là.')); return; }
+    const sans = sansFile(pm);
     const b1 = el('div', 'pol-air-bloc');
-    b1.append(el('div', 'pol-l', 'Pendant l’heure la plus chargée' + (pm.picH ? ', de ' + finHeure(pm.picH) : '')));
-    const v1 = el('div', 'pol-v'); v1.append(document.createTextNode('+' + separer(fConc(pm.pic))[0])); v1.append(el('span', 'pol-u', ' µg/m³'));
-    b1.append(v1, el('div', 'pol-d', 'de dioxyde d’azote au plus près de la file, ' + pm.nom.replace(/^RN85, /, 'RN85 ') + '. Soit ' + fPct(pm.pic / FOND_NO2) + ' de plus que l’air de fond de Grenoble, loin du trafic (' + FOND_NO2 + '\u00a0µg/m³).'));
-    const b2 = el('div', 'pol-air-bloc');
-    b2.append(el('div', 'pol-l', 'En moyenne sur la journée'));
-    const v2 = el('div', 'pol-v'); v2.append(document.createTextNode('+' + separer(fConc(ex.jourNo2))[0])); v2.append(el('span', 'pol-u', ' µg/m³'));
-    b2.append(v2, el('div', 'pol-d', 'au point le plus exposé (' + ex.nom.replace(/^RN85, /, 'RN85 ') + '), soit ' + fPct(ex.jourNo2 / OMS_NO2_JOUR) + ' du repère journalier de l’OMS (' + OMS_NO2_JOUR + ' µg/m³).'));
-    a.append(b1, b2);
+    b1.append(el('div', 'pol-l', 'Au bord de la file, pendant l’heure la plus chargée' + (pm.picH ? ', de ' + finHeure(pm.picH) : '')),
+      duo('Avec la file', fConc(sans + pm.pic), fConc(sans), sans + pm.pic, sans),
+      el('div', 'pol-d', 'Dioxyde d’azote au plus près de la file, ' + lieuDe(pm) + ' : ' + fPct(pm.pic / sans) + ' de plus à cause de la file. Sans bouchon, l’air y mêle déjà l’air de fond de Grenoble (' + FOND_NO2 + '\u00a0µg/m³) et la circulation des deux sens.'));
+    a.append(b1);
+    const per = pm.periode;
+    if (per) {
+      const b2 = el('div', 'pol-air-bloc');
+      b2.append(el('div', 'pol-l', 'Pendant toute la période de bouchon' + (per.debut ? ', ' + plage(per) : ', en moyenne')),
+        duo('Avec la file', fConc(sans + per.moy), fConc(sans), sans + per.moy, sans),
+        el('div', 'pol-d', 'Moyenne au même endroit, du premier au dernier relevé où la file l’atteint. La valeur limite européenne sur une heure, 200\u00a0µg/m³, reste loin ; c’est le retour de ces niveaux chaque jour ouvré qui compte.'));
+      a.append(b2);
+    }
   }
 
   function manques(j) {
@@ -3483,37 +3559,44 @@ dash.calc('soir_par_troncon', {
 
   // ---------- Les tableaux ----------
   function dessinerAxes(j) {
-    $('pol-axes-note').textContent = j.type ? 'Moyenne des demi-journées relevées aux six dixièmes au moins.' : 'Une demi-journée relevée aux six dixièmes au moins est ramenée à la plage entière.';
+    $('pol-axes-note').textContent = (j.type ? 'Moyenne des demi-journées relevées aux six dixièmes au moins.' : 'Une demi-journée relevée aux six dixièmes au moins est ramenée à la plage entière.')
+      + ' Sous le CO2 et les oxydes d’azote, ce qu’auraient rejeté les mêmes véhicules sur les mêmes kilomètres si la circulation avait été normale.';
     const tb = document.querySelector('#pol-table-axes tbody'); tb.replaceChildren();
+    const cellules = (x) => [td(fCO2(x.base.co2 + x.em.co2), 'contre ' + fCO2(x.base.co2)), td(fNOx(x.base.nox + x.em.nox), 'contre ' + fNOx(x.base.nox)), td(fPart(x.em.pm + x.em.us))];
     ORDRE.forEach((a) => {
       const h = j.demis[a]; if (!h) return;
       const tr = el('tr');
-      tr.append(td(AXES[a].nom, j.type ? h.n + ' demi-journées' : h.n + ' relevés sur ' + h.nominal), td(nf(Math.round(h.rougeMoyen / 10) * 10) + ' m'), td(fCO2(h.em.co2)), td(fNOx(h.em.nox)), td(fPart(h.em.pm + h.em.us)));
+      tr.append(td(AXES[a].nom, j.type ? h.n + ' demi-journées' : h.n + ' relevés sur ' + h.nominal), td(nf(Math.round(h.rougeMoyen / 10) * 10) + ' m'), ...cellules(h));
       tb.append(tr);
     });
     const tr = el('tr', 'pol-total');
-    tr.append(td('Total de la journée'), td(''), td(fCO2(j.em.co2)), td(fNOx(j.em.nox)), td(fPart(j.em.pm + j.em.us)));
+    tr.append(td('Total de la journée'), td(''), ...cellules(j));
     tb.append(tr);
   }
 
   function dessinerPoints(j) {
-    $('pol-sante-note').textContent = 'Hausse estimée pour une façade située à une dizaine de mètres de la chaussée, le long de chaque tronçon. Seul compte ce que les bouchons ajoutent : la circulation elle-même, sans bouchon, pèse bien davantage.';
+    $('pol-sante-note').textContent = 'Dioxyde d’azote estimé pour une façade située à une dizaine de mètres de la chaussée, le long de chaque tronçon. Chaque niveau additionne l’air de fond de Grenoble (' + FOND_NO2 + '\u00a0µg/m³), la circulation des deux sens puis, avec la file, ce que le bouchon y ajoute. La colonne du milieu donne le niveau qu’aurait eu l’air au même endroit et à la même heure, avec autant de véhicules sans bouchon.';
     const tb = document.querySelector('#pol-table-points tbody'); tb.replaceChildren();
     j.air.forEach((a) => {
       if (!a.n) return;
-      const tr = el('tr', j.expose && a.id === j.expose.id ? 'rn-choisi' : '');
-      const rien = a.pic <= 0;
-      tr.append(td(a.nom, a.lieu), td(rien ? 'aucune file relevée' : fPlus(a.pic), !rien && a.picH ? 'de ' + finHeure(a.picH) : (j.type && !rien ? 'moyenne des journées' : '')), td(rien ? '—' : fPlus(a.jourNo2)), td(rien ? '—' : fPct(a.jourNo2 / OMS_NO2_JOUR)), td(rien ? '—' : fPlus(a.jourPm)));
-      tr.lastChild.className = 'rn-opt';
+      const rien = a.pic <= 0, sans = sansFile(a), per = rien ? null : a.periode;
+      const tr = el('tr', !rien && j.picMax && a.id === j.picMax.id ? 'rn-choisi' : '');
+      tr.append(td(a.nom, a.lieu),
+        td(rien ? 'aucune file relevée' : fConc(sans + a.pic), rien ? '' : fPct(a.pic / sans) + ' de plus' + (a.picH ? ', de ' + finHeure(a.picH) : '')),
+        td(fConc(sans)),
+        td(per ? fConc(sans + per.moy) : '—', per ? (per.debut ? plage(per) : 'moyenne des journées') : ''));
       tb.append(tr);
     });
     const lec = $('pol-lecture'); lec.replaceChildren();
-    const ex = j.expose, pm = j.picMax;
-    if (!ex) return;
+    const pm = j.picMax;
+    if (!pm || pm.pic <= 0) return;
+    const sans = sansFile(pm);
     const p1 = el('p');
-    p1.textContent = 'Pendant que la file stationne, l’air s’alourdit nettement le long des tronçons les plus chargés : jusqu’à ' + fConc(pm.pic) + ' de dioxyde d’azote en plus sur une heure, soit ' + fPct(pm.pic / FOND_NO2) + ' de plus que l’air de fond de Grenoble, loin du trafic. Ramenée aux 24 heures de la journée, la hausse reste faible devant les repères : ' + fConc(ex.jourNo2) + ' au point le plus exposé, ' + fPct(ex.jourNo2 / OMS_NO2_JOUR) + ' du repère journalier de l’OMS.';
+    p1.textContent = 'À la même heure et avec autant de véhicules, c’est la file qui fait la différence. Au plus près de la file, ' + lieuDe(pm) + ', le dioxyde d’azote passe de ' + fConc(sans) + ' à ' + fConc(sans + pm.pic) + ' pendant l’heure la plus chargée, soit ' + fPct(pm.pic / sans) + ' de plus.'
+      + (pm.periode ? ' Sur toute la période de bouchon, l’air y contient en moyenne ' + fConc(sans + pm.periode.moy) + '.' : '')
+      + ' Ces niveaux d’une heure ne se comparent pas aux repères de l’OMS, qui portent sur 24 heures ou sur l’année ; la valeur limite européenne sur une heure, 200\u00a0µg/m³, reste loin. Ils reviennent en revanche chaque jour ouvré, aux mêmes heures et aux mêmes endroits.';
     const p2 = el('p');
-    p2.textContent = 'Pour la santé, ce sont les personnes présentes le long des files aux heures de pointe qui sont concernées : riverains, piétons, élèves sur le chemin de l’école, automobilistes eux-mêmes dans l’habitacle. Le dioxyde d’azote irrite les voies respiratoires et aggrave l’asthme ; les particules fines pénètrent profondément dans les poumons. Les particules ajoutées par les bouchons restent très faibles devant le niveau de fond, autour de 10 µg/m³ à Grenoble.';
+    p2.textContent = 'Les particules fines ajoutées par la file restent faibles : ' + (pm.picPm >= 0.05 ? 'environ ' + nf(pm.picPm, 1) : 'moins de 0,1') + '\u00a0µg/m³ de plus pendant l’heure la plus chargée, pour un niveau de fond d’environ 10\u00a0µg/m³ à Grenoble. Pour la santé, ce sont les personnes présentes le long des files aux heures de pointe qui sont concernées : riverains, piétons, élèves sur le chemin de l’école, automobilistes eux-mêmes dans l’habitacle. Le dioxyde d’azote irrite les voies respiratoires et aggrave l’asthme ; les particules fines pénètrent profondément dans les poumons.';
     lec.append(p1, p2);
   }
 
@@ -3522,24 +3605,34 @@ dash.calc('soir_par_troncon', {
     const ref = j.type ? jours[jours.length - 1].date : j.date;
     const l = lundi(ref), mois = ref.slice(0, 7);
     const somme = (js) => js.reduce((s, x) => { for (const p in s) s[p] += x.em[p]; return s; }, { co2: 0, nox: 0, pm: 0, us: 0 });
+    const sommeB = (js) => js.reduce((s, x) => { s.co2 += x.base.co2; s.nox += x.base.nox; return s; }, { co2: 0, nox: 0 });
     const lignes = [
       ['Semaine du ' + dateLong(l).replace(/^lundi /, 'lundi '), jours.filter((x) => x.date >= l && x.date <= ref)],
       ['Mois de ' + MOIS[dateObj(ref).getMonth()], jours.filter((x) => x.date.slice(0, 7) === mois && x.date <= ref)],
       ['Depuis le ' + dateLong(jours[0].date).replace(/^\S+ /, ''), jours.filter((x) => x.date <= ref)],
     ];
-    $('pol-cumuls-note').textContent = 'Jusqu’au ' + dateLong(ref) + ' inclus, sur les seules journées relevées.';
+    $('pol-cumuls-note').textContent = 'Jusqu’au ' + dateLong(ref) + ' inclus, sur les seules journées relevées. Sous le CO2 et les oxydes d’azote ajoutés, le total rejeté dans les files, bouchon compris.';
     const tb = document.querySelector('#pol-table-cumuls tbody'); tb.replaceChildren();
-    lignes.forEach(([lib, js]) => { const s = somme(js); const tr = el('tr'); tr.append(td(lib), td(String(js.length)), td(fCO2(s.co2)), td(fNOx(s.nox)), td(fPart(s.pm + s.us))); tb.append(tr); });
+    lignes.forEach(([lib, js]) => {
+      const s = somme(js), b = sommeB(js), tr = el('tr');
+      tr.append(td(lib), td(String(js.length)), td(fCO2(s.co2), 'sur ' + fCO2(b.co2 + s.co2) + ' dans les files'), td(fNOx(s.nox), 'sur ' + fNOx(b.nox + s.nox) + ' dans les files'), td(fPart(s.pm + s.us)));
+      tb.append(tr);
+    });
     const tt = document.querySelector('#pol-table-types tbody'); tt.replaceChildren();
     const mc = moyenne(jours, false), mv = moyenne(jours, true);
     [[mc, 'Jour de classe'], [mv, 'Jour de vacances scolaires']].forEach(([m, lib]) => {
       if (!m) return;
-      const tr = el('tr'); tr.append(td(lib), td(String(m.nb)), td(fCO2(m.em.co2)), td(fNOx(m.em.nox)), td(m.expose ? '+' + fConc(m.expose.jourNo2) : '—', m.expose ? m.expose.nom : '')); tt.append(tr);
+      const pm = m.picMax && m.picMax.pic > 0 ? m.picMax : null;
+      const tr = el('tr');
+      tr.append(td(lib), td(String(m.nb)), td(fCO2(m.em.co2), 'sur ' + fCO2(m.base.co2 + m.em.co2) + ' dans les files'), td(fNOx(m.em.nox), 'sur ' + fNOx(m.base.nox + m.em.nox) + ' dans les files'),
+        td(pm ? fConc(sansFile(pm) + pm.pic) : '—', pm ? 'contre ' + fConc(sansFile(pm)) + ' sans bouchon, ' + pm.nom : ''));
+      tt.append(tr);
     });
     const an = $('pol-annee');
     if (mc) {
       const co2 = mc.em.co2 * 175 + (mv ? mv.em.co2 : mc.em.co2 * 0.5) * 75, nox = mc.em.nox * 175 + (mv ? mv.em.nox : mc.em.nox * 0.5) * 75;
-      an.textContent = 'À ce rythme, sur une année de 250 jours ouvrés (175 jours de classe et 75 jours de vacances scolaires) : environ ' + nf(Math.round(co2 / 1e7) * 10) + ' tonnes de CO2 et ' + nf(nox / 1e6, 1) + ' tonne d’oxydes d’azote.';
+      const tn = nox / 1e6;
+      an.textContent = 'À ce rythme, sur une année de 250 jours ouvrés (175 jours de classe et 75 jours de vacances scolaires), les bouchons ajouteraient environ ' + nf(Math.round(co2 / 1e7) * 10) + ' tonnes de CO2 et ' + nf(tn, 1) + (tn >= 2 ? ' tonnes' : ' tonne') + ' d’oxydes d’azote à ce que rejetterait la même circulation sans bouchon.';
     }
   }
 
@@ -3614,47 +3707,55 @@ dash.calc('soir_par_troncon', {
 
   const incomplet = (j) => !j.demis.rn85_matin || !j.demis.rn85_matin.complet;
   function dessinerGraphes(jours, choisi) {
-    // Carburant brûlé en plus, plus parlant qu'un poids de CO2 (Michel, 6 novembre 2026).
+    // Carburant brûlé dans les files : en bas la même circulation sans bouchon, au-dessus ce que le bouchon ajoute (Michel, 8 novembre 2026).
     const mc = moyenne(jours, false), mv = moyenne(jours, true);
-    const lc = mc ? litres(mc.em.co2) : null, lv = mv ? litres(mv.em.co2) : null;
+    const tot = (x) => litres(x.base.co2 + x.em.co2);
+    const lc = mc ? tot(mc) : null, lv = mv ? tot(mv) : null;
     graphe('pol-graph-co2', jours, choisi, {
-      titre: lc ? 'Un jour de classe, les bouchons font brûler en moyenne ' + arrL(lc) + ' litres de carburant en plus, soit ' + pleins(lc) + '.' : 'Carburant brûlé en plus dans les files, journée par journée.',
-      sous: 'Litres de carburant brûlés en plus dans les files, journée par journée. Chaque litre brûlé rejette 2,5 kg de CO2 dans l’air.',
-      total: (j) => litres(j.em.co2),
+      titre: mc ? 'Un jour de classe, les véhicules pris dans les files brûlent en moyenne ' + arrL(lc) + ' litres de carburant, contre ' + arrL(litres(mc.base.co2)) + ' sans bouchon : le bouchon en ajoute ' + arrL(litres(mc.em.co2)) + ', ' + pleins(litres(mc.em.co2)) + '.' : 'Carburant brûlé dans les files, journée par journée.',
+      sous: 'Litres de carburant brûlés dans les files, journée par journée : en bas, ce qu’aurait brûlé la même circulation sans bouchon ; au-dessus, ce que le bouchon ajoute. Chaque litre brûlé rejette 2,5 kg de CO2 dans l’air.',
+      total: tot,
       barres: (g, x, y, ch) => {
         jours.forEach((j) => {
-          const vm = litres(j.moments.matin.co2), vs = litres(j.moments.soir.co2), sel = (j.date === ch ? ' pol-sel' : '') + (incomplet(j) ? ' pol-inc' : '');
-          g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(vm)).attr('height', y(0) - y(vm)).attr('class', 'pol-matin' + sel);
-          if (vs > 0) g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(vm + vs)).attr('height', y(vm) - y(vm + vs)).attr('class', 'pol-soir' + sel);
+          const vb = litres(j.base.co2), va = litres(j.em.co2), sel = (j.date === ch ? ' pol-sel' : '') + (incomplet(j) ? ' pol-inc' : '');
+          g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(vb)).attr('height', y(0) - y(vb)).attr('class', 'pol-normal' + sel);
+          if (va > 0) g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(vb + va)).attr('height', y(vb) - y(vb + va)).attr('class', 'pol-ajout' + sel);
         });
       },
       moyennes: [{ v: lc, cls: 'pol-moy-classe' }, { v: lv, cls: 'pol-moy-vac' }],
-      etiquette: (j) => arrL(litres(j.em.co2)) + ' L',
-      legende: '<span><i class="pol-cle pol-matin"></i>Le matin</span><span><i class="pol-cle pol-soir"></i>Le soir</span>'
+      etiquette: (j) => arrL(tot(j)) + ' L',
+      legende: '<span><i class="pol-cle pol-normal"></i>Même circulation sans bouchon</span><span><i class="pol-cle pol-ajout"></i>Ajouté par le bouchon</span>'
         + (lc ? '<span><i class="pol-trait pol-trait-classe"></i>Moyenne d’un jour de classe : ' + arrL(lc) + ' litres</span>' : '')
         + (lv ? '<span><i class="pol-trait pol-trait-vac"></i>Moyenne d’un jour de vacances : ' + arrL(lv) + ' litres</span>' : '')
-        + '<span><i class="pol-cle pol-vac"></i>Vacances scolaires</span><span><i class="pol-cle pol-matin pol-inc"></i>Matinée relevée en partie, sous-estimée</span>',
-      info: (j) => cap(dateLong(j.date)) + ' : ' + arrL(litres(j.em.co2)) + ' litres de carburant brûlés en plus, soit ' + fCO2(j.em.co2) + ' de CO2' + (incomplet(j) ? ', relevés incomplets' : ''),
+        + '<span><i class="pol-cle pol-vac"></i>Vacances scolaires</span><span><i class="pol-cle pol-ajout pol-inc"></i>Matinée relevée en partie, sous-estimée</span>',
+      info: (j) => cap(dateLong(j.date)) + ' : ' + arrL(tot(j)) + ' litres de carburant brûlés dans les files, contre ' + arrL(litres(j.base.co2)) + ' sans bouchon. Le bouchon en ajoute ' + arrL(litres(j.em.co2)) + ', soit ' + fCO2(j.em.co2) + ' de CO2' + (incomplet(j) ? ' ; relevés incomplets' : '') + '.',
     });
-    // L'air au bord de la file : le niveau de fond en gris, ce que la file y ajoute par-dessus.
-    const no2 = (j) => (j.picMax ? j.picMax.pic : 0);
-    const cl = jours.filter((j) => !j.vac && !incomplet(j) && no2(j) > 0);
-    const pct = cl.length ? cl.reduce((s0, j) => s0 + no2(j), 0) / cl.length / FOND_NO2 : null;
-    const pctTxt = (r) => nf(Math.round(r * 20) * 5) + ' %';
+    // L'air au bord de la file : l'air de fond, la circulation des deux sens sans bouchon, puis ce que la file ajoute.
+    const pmx = (j) => j.picMax;
+    const cl = jours.filter((j) => !j.vac && !incomplet(j) && pmx(j) && pmx(j).pic > 0);
+    const mSans = cl.length ? cl.reduce((s0, j) => s0 + sansFile(pmx(j)), 0) / cl.length : null;
+    const mAvec = cl.length ? cl.reduce((s0, j) => s0 + sansFile(pmx(j)) + pmx(j).pic, 0) / cl.length : null;
     graphe('pol-graph-no2', jours, choisi, {
-      titre: pct ? 'Aux heures les plus chargées des jours de classe, l’air au bord de la file contient en moyenne ' + pctTxt(pct) + ' de dioxyde d’azote de plus que l’air de fond de Grenoble.' : 'Dioxyde d’azote ajouté au bord des files.',
-      sous: 'En microgrammes (millionièmes de gramme) par mètre cube d’air, pendant l’heure la plus chargée de chaque journée. En gris, le niveau de fond mesuré à Grenoble loin du trafic ; en foncé, ce que la file y ajoute. La circulation sans bouchon, non comptée ici, s’y ajoute encore.',
-      total: (j) => FOND_NO2 + no2(j),
+      titre: cl.length ? 'Aux heures les plus chargées des jours de classe, la file fait passer en moyenne le dioxyde d’azote au bord de la route de ' + nf(mSans) + ' à ' + fConc(mAvec) + ' : ' + fPct(mAvec / mSans - 1) + ' de plus qu’avec la même circulation sans bouchon.' : 'Dioxyde d’azote au bord des files.',
+      sous: 'En microgrammes (millionièmes de gramme) par mètre cube d’air, pendant l’heure la plus chargée de chaque journée, à l’endroit le plus touché par la file. Chaque barre empile l’air de fond de Grenoble, la circulation des deux sens sans bouchon puis ce que la file ajoute.',
+      total: (j) => (pmx(j) ? sansFile(pmx(j)) + pmx(j).pic : FOND_NO2),
       barres: (g, x, y, ch) => {
         jours.forEach((j) => {
-          const v = no2(j), sel = (j.date === ch ? ' pol-sel' : '') + (incomplet(j) ? ' pol-inc' : '');
-          g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(FOND_NO2)).attr('height', y(0) - y(FOND_NO2)).attr('class', 'pol-fond' + (j.date === ch ? ' pol-sel' : ''));
-          if (v > 0) g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(FOND_NO2 + v)).attr('height', y(FOND_NO2) - y(FOND_NO2 + v)).attr('class', 'pol-matin' + sel);
+          const p = pmx(j), s0 = j.date === ch ? ' pol-sel' : '', sel = s0 + (incomplet(j) ? ' pol-inc' : '');
+          const bloc = (bas, haut, cls) => g.append('rect').attr('x', x(j.date)).attr('width', x.bandwidth()).attr('y', y(haut)).attr('height', y(bas) - y(haut)).attr('class', cls);
+          bloc(0, FOND_NO2, 'pol-fond' + s0);
+          if (!p) return;
+          bloc(FOND_NO2, FOND_NO2 + p.cN, 'pol-normal' + s0);
+          if (p.pic > 0) bloc(FOND_NO2 + p.cN, FOND_NO2 + p.cN + p.pic, 'pol-ajout' + sel);
         });
       },
-      etiquette: (j) => '+' + nf(Math.round(no2(j) / FOND_NO2 * 100)) + ' %',
-      legende: '<span><i class="pol-cle pol-fond"></i>Air de fond à Grenoble, loin du trafic : ' + FOND_NO2 + ' µg/m³</span><span><i class="pol-cle pol-matin"></i>Ajouté par la file</span><span><i class="pol-cle pol-vac"></i>Vacances scolaires</span><span><i class="pol-cle pol-matin pol-inc"></i>Matinée relevée en partie, sous-estimée</span>',
-      info: (j) => cap(dateLong(j.date)) + (no2(j) > 0 ? ' : +' + fConc(no2(j)) + ' de dioxyde d’azote, soit ' + nf(Math.round(no2(j) / FOND_NO2 * 100)) + ' % de plus que l’air de fond de Grenoble, ' + j.picMax.nom + (j.picMax.picH ? ', de ' + finHeure(j.picMax.picH) : '') : ' : pas de hausse estimée'),
+      etiquette: (j) => (pmx(j) && pmx(j).pic > 0 ? '+' + nf(Math.round(pmx(j).pic / sansFile(pmx(j)) * 100)) + ' %' : ''),
+      legende: '<span><i class="pol-cle pol-fond"></i>Air de fond à Grenoble, loin du trafic : ' + FOND_NO2 + ' µg/m³</span><span><i class="pol-cle pol-normal"></i>Circulation des deux sens, sans bouchon</span><span><i class="pol-cle pol-ajout"></i>Ajouté par la file</span><span><i class="pol-cle pol-vac"></i>Vacances scolaires</span><span><i class="pol-cle pol-ajout pol-inc"></i>Matinée relevée en partie, sous-estimée</span>',
+      info: (j) => {
+        const p = pmx(j);
+        if (!p || p.pic <= 0) return cap(dateLong(j.date)) + ' : pas de file relevée assez longue pour modifier l’air';
+        return cap(dateLong(j.date)) + ' : ' + fConc(sansFile(p) + p.pic) + ' de dioxyde d’azote au bord de la file, ' + p.nom + (p.picH ? ', de ' + finHeure(p.picH) : '') + ', contre ' + fConc(sansFile(p)) + ' si la circulation avait été normale';
+      },
     });
   }
 
@@ -3669,18 +3770,19 @@ dash.calc('soir_par_troncon', {
     const mc = moyenne(jours, false), mv = moyenne(jours, true);
     const an = mc ? mc.em.co2 * 175 + (mv ? mv.em.co2 : mc.em.co2 * 0.5) * 75 : 0;
     const n = jours.filter((x) => x.date <= ref).length;
-    phrase('pol-dg-co2', ['Du ' + dateLong(jours[0].date).replace(/^\S+ /, '') + ' au ' + dateLong(ref).replace(/^\S+ /, '') + ', sur ' + n + ' journées relevées, les bouchons ont ajouté environ ', { c: fCO2(cumul) }, ' de CO2. Au rythme observé, cela représente de l’ordre de ', { c: nf(Math.round(an / 1e7) * 10) + ' tonnes' }, ' par an, qui s’ajoutent chaque année à celles des années précédentes.']);
-    const pm = j.picMax, ex = j.expose;
+    phrase('pol-dg-co2', ['Du ' + dateLong(jours[0].date).replace(/^\S+ /, '') + ' au ' + dateLong(ref).replace(/^\S+ /, '') + ', sur ' + n + ' journées relevées, les bouchons ont ajouté environ ', { c: fCO2(cumul) }, ' de CO2 à ce qu’aurait rejeté la même circulation sans bouchon. Au rythme observé, cela représente de l’ordre de ', { c: nf(Math.round(an / 1e7) * 10) + ' tonnes' }, ' par an, qui s’ajoutent chaque année à celles des années précédentes.']);
+    const pm = j.picMax;
     if (pm && pm.pic > 0) {
-      phrase('pol-dg-air', [(j.type ? 'Une journée de classe moyenne, pendant l’heure la plus chargée' : 'Le ' + dateLong(j.date) + ', pendant l’heure la plus chargée' + (pm.picH ? ' (de ' + finHeure(pm.picH) + ')' : '')) + ', l’air au plus près de la file, ' + pm.nom.replace(/^RN85, /, 'sur la RN85 ').replace(/^Avenue/, 'avenue') + ', contenait environ ', { c: fPlus(pm.pic) }, ' de dioxyde d’azote, soit ', { c: fPct(pm.pic / FOND_NO2) }, ' de plus que l’air de fond de Grenoble, loin du trafic. ' + (j.type || !j.vac ? 'Cette hausse tombe au moment des trajets vers l’école et le travail.' : 'Même en période de vacances scolaires, la file revient.')]);
+      const sans = sansFile(pm);
+      phrase('pol-dg-air', [(j.type ? 'Une journée de classe moyenne, pendant l’heure la plus chargée' : 'Le ' + dateLong(j.date) + ', pendant l’heure la plus chargée' + (pm.picH ? ' (de ' + finHeure(pm.picH) + ')' : '')) + ', l’air au plus près de la file, ' + lieuDe(pm) + ', ' + (j.type ? 'contient' : 'contenait') + ' environ ', { c: fConc(sans + pm.pic) }, ' de dioxyde d’azote, contre ' + fConc(sans) + ' si la circulation avait été normale : ', { c: fPct(pm.pic / sans) + ' de plus' }, ' à cause de la file. ' + (j.type || !j.vac ? 'Cette hausse tombe au moment des trajets vers l’école et le travail.' : 'Même en période de vacances scolaires, la file revient.')]);
     } else {
-      phrase('pol-dg-air', ['Ce jour-là, aucune file relevée n’a été assez longue pour modifier sensiblement l’air. Les jours de classe, pendant l’heure la plus chargée, la hausse de dioxyde d’azote atteint en moyenne ', { c: mc && mc.picMax ? fPlus(mc.picMax.pic) : '—' }, ' au plus près de la file.']);
+      const m = mc && mc.picMax && mc.picMax.pic > 0 ? mc.picMax : null;
+      phrase('pol-dg-air', ['Ce jour-là, aucune file relevée n’a été assez longue pour modifier sensiblement l’air.'].concat(m ? [' Les jours de classe, pendant l’heure la plus chargée, la file fait passer en moyenne le dioxyde d’azote au plus près de la route de ' + fConc(sansFile(m)) + ' à ', { c: fConc(sansFile(m) + m.pic) }, '.'] : []));
     }
     const rv = $('pol-renvoi'); rv.replaceChildren();
     const b = el('b', '', 'À savoir. ');
     const a = el('a', '', 'Pourquoi s’en préoccuper'); a.href = '#pol-dangers';
     rv.append(b, document.createTextNode('Le CO2 ajouté par les bouchons s’accumule dans l’atmosphère pour des siècles ; l’air de la file, lui, se respire tout de suite, au moment des trajets vers l’école et le travail. '), a);
-    void ex;
   }
 
   // ---------- La journée choisie : la même que dans l'onglet des bouchons ----------
