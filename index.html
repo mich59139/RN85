@@ -503,6 +503,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
       <div><dt>Période</dt><dd id="fiche-periode" class="dash-skeleton">—</dd></div>
       <div><dt>Relevés Google Maps</dt><dd id="fiche-releves" class="dash-skeleton">—</dd></div>
       <div><dt>Mise à jour</dt><dd class="rn-maj" id="rn-maj">—</dd></div>
+      <div id="rn-prochain-bloc" hidden><dt>Prochain relevé</dt><dd id="rn-prochain"></dd></div>
     </dl>
   </header>
 
@@ -946,6 +947,25 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
     });
   }
 
+  // Calendrier des jours de relevés (une semaine sur trois, hors vacances et jours fériés).
+  let calendrier = null;
+  function aujourdhuiParis() {
+    return new Intl.DateTimeFormat('sv-SE', { timeZone: 'Europe/Paris' }).format(new Date());
+  }
+  function afficherProchain(cal) {
+    if (!cal || !Array.isArray(cal.jours)) return;
+    calendrier = cal.jours;
+    const auj = aujourdhuiParis();
+    const p = calendrier.find((x) => x >= auj);
+    if (!p) return;
+    const [a, m, j] = p.split('-').map(Number);
+    const NOMS = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+    const nom = NOMS[new Date(Date.UTC(a, m - 1, j)).getUTCDay()];
+    const texte = nom + ' ' + j + (j === 1 ? 'er' : '') + ' ' + MOIS[m - 1];
+    document.getElementById('rn-prochain').textContent = (p === auj ? 'aujourd’hui, ' : '') + texte + (cal.rythme ? ' (' + cal.rythme + ')' : '');
+    document.getElementById('rn-prochain-bloc').hidden = false;
+  }
+
   function afficherInfos(infos) {
     const el = document.getElementById('rn-maj');
     if (el && infos && infos.maj) {
@@ -955,8 +975,11 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
         const j = d.getDate();
         const texte = j + (j === 1 ? 'er' : '') + ' ' + MOIS[d.getMonth()] + ' à ' + d.getHours() + ' h ' + String(d.getMinutes()).padStart(2, '0');
         const jours = (Date.now() - d.getTime()) / 864e5;
-        // Plus de 4 jours sans mise à jour : quelque chose a sans doute bloqué sur le Mac.
-        if (jours > 4) { el.textContent = texte + ' : les relevés des derniers jours manquent peut-être'; el.classList.add('rn-vieux'); }
+        // Plus de 4 jours sans mise à jour : quelque chose a sans doute bloqué. Quand le calendrier
+        // des relevés est connu, l'alerte n'apparaît que si un jour de relevés est passé sans mise à jour.
+        const jourMaj = String(infos.maj).slice(0, 10), auj = aujourdhuiParis();
+        const manque = calendrier ? calendrier.some((x) => x > jourMaj && x < auj) : jours > 4;
+        if (manque) { el.textContent = texte + ' : les relevés des derniers jours manquent peut-être'; el.classList.add('rn-vieux'); }
         else el.textContent = texte;
       }
     }
@@ -992,7 +1015,7 @@ body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-fami
   }
 
   function charger() {
-    lireJSON('infos').then(afficherInfos).catch(() => { /* page utilisable sans ces informations */ });
+    lireJSON('calendrier').then(afficherProchain).catch(() => {}).then(() => lireJSON('infos')).then(afficherInfos).catch(() => { /* page utilisable sans ces informations */ });
     Promise.all(SOURCES.map((id) => lireJSON(id)
       .then((d) => { etat[id] = { status: 'ok', data: d }; })
       .catch((e) => { console.error(e); etat[id] = { status: 'error', data: null }; })))
